@@ -1,0 +1,21 @@
+services:
+  db:
+    container_name: cm4025-db
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-django-db}
+      MYSQL_USER: ${MYSQL_USER:-django}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-devpass}
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: mysql --user=$$MYSQL_USER --password=$$MYSQL_PASSWORD -e 'SHOW DATABASES;'
+      interval: 3s
+      retries: 20
+    ports:
+      - "3306:3306"
+
+volumes:
+  mysql-data:
+  node-modules:
