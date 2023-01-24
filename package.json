@@ -1,0 +1,17 @@
+{
+  "name": "y",
+  "version": "y",
+  "description": "y",
+  "main": "y",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": "y",
+  "author": "y",
+  "license": "y",
+  "bugs": {
+    "url": "https://github.com/JoaquimXG/CM4025-Enterprise-Web/issues"
+  },
+  "homepage": "https://github.com/JoaquimXG/CM4025-Enterprise-Web#readme",
+  "private": true
+}
