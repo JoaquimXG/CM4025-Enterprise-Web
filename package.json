@@ -13,5 +13,9 @@
     "url": "https://github.com/JoaquimXG/CM4025-Enterprise-Web/issues"
   },
   "homepage": "https://github.com/JoaquimXG/CM4025-Enterprise-Web#readme",
-  "private": true
+  "private": true,
+  "dependencies": {
+    "express": "^4.18.2",
+    "sequelize": "^6.28.0"
+  }
 }
