@@ -1,4 +1,4 @@
-const { ApiException } = require("./ApiException");
+const ApiException = require("./ApiException");
 
 module.exports = class ConflictException extends ApiException {
   constructor(message) {
