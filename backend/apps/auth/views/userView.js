@@ -1,4 +1,5 @@
 const { models } = require("../../../core/db/sequelize");
+const { ApiException } = require("../../../core/exceptions");
 
 const list = async (req, res) => {
   users = await models.User.findAll();
@@ -12,9 +13,12 @@ const get = async (req, res) => {
 };
 
 const create = async (req, res) => {
-  // TODO validate email
-  // TODO hash password before storing
   // TODO check if email already in system
+  let user = await models.user.findOne({ where: { email: req.body.email } });
+  if (user) return ApiException(400, "Email address already in use").send(res);
+
+  // TODO hash password before storing
+
   // TODO send verification email
   // TODO set user status to unverified
 
