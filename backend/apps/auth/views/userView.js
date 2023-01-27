@@ -1,5 +1,8 @@
 const { models } = require("../../../core/db/sequelize");
-const { ApiException } = require("../../../core/exceptions");
+const {
+  BadRequestException,
+  ConflictException,
+} = require("../../../core/exceptions");
 
 const list = async (req, res) => {
   users = await models.User.findAll();
@@ -14,8 +17,16 @@ const get = async (req, res) => {
 
 const create = async (req, res) => {
   // TODO check if email already in system
+  if (!req.body.email)
+    return BadRequestException("Email address required").send(res);
+  if (!req.body.password)
+    return BadRequestException(400, "Password required").send(res);
+
   let user = await models.user.findOne({ where: { email: req.body.email } });
-  if (user) return ApiException(400, "Email address already in use").send(res);
+  if (user)
+    return ConflictException(409, "Email address already in use").send(res);
+
+  userDefinition = req.body;
 
   // TODO hash password before storing
 
