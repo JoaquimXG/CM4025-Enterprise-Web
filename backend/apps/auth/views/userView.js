@@ -6,6 +6,8 @@ const {
 } = require("../../../core/responses/exceptions");
 const { Response } = require("../../../core/responses");
 
+
+// TODO both list and get should have some fields removed, e.g. hash, this is a common requirement and should be centralised
 const list = async (req, res) => {
   users = await models.User.findAll();
   res.status(200).json(users);
@@ -44,6 +46,8 @@ const create = async (req, res, next) => {
   return new Response(201, "User created").send(res);
 };
 
+// TODO dont' allow updating of password
+// TODO only allow user to update themselves, or admin to update any user, same for all user endpoints actually
 const update = async (req, res) => {
   await models.User.update(req.body, { where: { id: req.params.id } });
   user = await models.User.findByPk(req.params.id);
