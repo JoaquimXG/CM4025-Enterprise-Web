@@ -1,4 +1,4 @@
-module.exports = class ApiException {
+module.exports = class Response {
   constructor(code, message) {
     this.code = code;
     this.message = message;

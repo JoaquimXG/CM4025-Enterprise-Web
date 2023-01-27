@@ -1,8 +1,10 @@
+const bcrypt = require("bcrypt");
 const { models } = require("../../../core/db/sequelize");
 const {
   BadRequestException,
   ConflictException,
-} = require("../../../core/exceptions");
+} = require("../../../core/responses/exceptions");
+const { Response } = require("../../../core/responses");
 
 const list = async (req, res) => {
   users = await models.User.findAll();
@@ -15,26 +17,33 @@ const get = async (req, res) => {
   res.status(200).json(user);
 };
 
-const create = async (req, res) => {
+const create = async (req, res, next) => {
   // TODO move validation into a class based serializer as this will be repeated in other views
+  // Alternatively move validation into centralized middleware, probably still worth using class methods
   if (!req.body.email)
-    return BadRequestException("Email address required").send(res);
+    return new BadRequestException("Email address required").send(res);
   if (!req.body.password)
-    return BadRequestException(400, "Password required").send(res);
+    return new BadRequestException("Password required").send(res);
 
-  // TODO check if email already in system
-  let user = await models.user.findOne({ where: { email: req.body.email } });
+  // Check if email is taken
+  let user = await models.User.findOne({ where: { email: req.body.email } });
   if (user)
-    return ConflictException(409, "Email address already in use").send(res);
+    return new ConflictException("Email address already in use").send(res);
 
 
-  // TODO hash password before storing
+  // TODO perform validation on password, enacting restrictions, e.g., password length and complexity
+  // TODO does password need salt?
+  req.body.hash = await bcrypt.hash(req.body.password, 10)
+  try {
+    user = await models.User.create(req.body);
+  } catch(e) {
+    next(e)
+  }
 
   // TODO send verification email
-  // TODO set user status to unverified
+  // TODO set user status to unverified, should just use default field on the model
 
-  user = await models.User.create(req.body);
-  res.status(201).json(user);
+  return new Response(201, "User created").send(res)
 };
 
 const update = async (req, res) => {

@@ -29,10 +29,9 @@ const User = {
     allowNull: false,
     defaultValue: false
   },
-  paranoid: true,
 };
 
 module.exports = (sequelize) => {
-  user = sequelize.define("User", User);
+  user = sequelize.define("User", User, {paranoid: true});
   return user;
 };
