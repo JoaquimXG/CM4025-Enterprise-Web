@@ -30,20 +30,19 @@ const create = async (req, res, next) => {
   if (user)
     return new ConflictException("Email address already in use").send(res);
 
-
   // TODO perform validation on password, enacting restrictions, e.g., password length and complexity
   // TODO does password need salt?
-  req.body.hash = await bcrypt.hash(req.body.password, 10)
+  req.body.hash = await bcrypt.hash(req.body.password, 10);
   try {
     user = await models.User.create(req.body);
-  } catch(e) {
-    next(e)
+  } catch (e) {
+    next(e);
   }
 
   // TODO send verification email
   // TODO set user status to unverified, should just use default field on the model
 
-  return new Response(201, "User created").send(res)
+  return new Response(201, "User created").send(res);
 };
 
 const update = async (req, res) => {
