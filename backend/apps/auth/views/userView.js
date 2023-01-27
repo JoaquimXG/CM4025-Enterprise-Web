@@ -31,7 +31,7 @@ const create = async (req, res, next) => {
     return new BadRequestException("Password required").send(res);
 
   // Check if email is taken
-  let user = await models.User.findOne({ where: { email: req.body.email } });
+  let user = await models.User.findOne({ where: { email: req.body.email }, paranoid: false });
   if (user)
     return new ConflictException("Email address already in use").send(res);
 
