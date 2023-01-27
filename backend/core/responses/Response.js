@@ -13,4 +13,8 @@ module.exports = class Response {
   send(res) {
     res.status(this.code).send(this.toJson());
   }
-}
+
+  sendJson(res) {
+    res.status(this.code).json(this.message);
+  }
+};

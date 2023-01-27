@@ -4,19 +4,22 @@ const {
   BadRequestException,
   ConflictException,
 } = require("../../../core/responses/exceptions");
-const { Response } = require("../../../core/responses");
-
+const {
+  CreatedResponse,
+  OkResponse,
+  NoContentResponse,
+} = require("../../../core/responses");
 
 // TODO both list and get should have some fields removed, e.g. hash, this is a common requirement and should be centralised
 const list = async (req, res) => {
   users = await models.User.findAll();
-  res.status(200).json(users);
+  return new OkResponse(users).sendJson(res);
 };
 
 const get = async (req, res) => {
   user = await models.User.findByPk(req.params.id);
   if (!user) return res.status(404).send("User not found");
-  res.status(200).json(user);
+  return new OkResponse(user).sendJson(res);
 };
 
 const create = async (req, res, next) => {
@@ -38,25 +41,32 @@ const create = async (req, res, next) => {
   try {
     user = await models.User.create(req.body);
   } catch (e) {
-    next(e);
+    return next(e);
   }
 
   // TODO send verification email
-
-  return new Response(201, "User created").send(res);
+  return new CreatedResponse("User created").send(res);
 };
 
 // TODO dont' allow updating of password
 // TODO only allow user to update themselves, or admin to update any user, same for all user endpoints actually
-const update = async (req, res) => {
-  await models.User.update(req.body, { where: { id: req.params.id } });
-  user = await models.User.findByPk(req.params.id);
-  res.status(200).json(user);
+const update = async (req, res, next) => {
+  try {
+    await models.User.update(req.body, { where: { id: req.params.id } });
+    user = await models.User.findByPk(req.params.id);
+    return new OkResponse(user).sendJson(res);
+  } catch (e) {
+    next(e);
+  }
 };
 
-const destroy = async (req, res) => {
-  user = await models.User.destroy({ where: { id: req.params.id } });
-  res.status(200).json(user);
+const destroy = async (req, res, next) => {
+  try {
+    await models.User.destroy({ where: { id: req.params.id } });
+    return new NoContentResponse().send(res);
+  } catch (e) {
+    return next(e);
+  }
 };
 
 module.exports = {
