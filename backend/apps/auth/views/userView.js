@@ -16,17 +16,17 @@ const get = async (req, res) => {
 };
 
 const create = async (req, res) => {
-  // TODO check if email already in system
+  // TODO move validation into a class based serializer as this will be repeated in other views
   if (!req.body.email)
     return BadRequestException("Email address required").send(res);
   if (!req.body.password)
     return BadRequestException(400, "Password required").send(res);
 
+  // TODO check if email already in system
   let user = await models.user.findOne({ where: { email: req.body.email } });
   if (user)
     return ConflictException(409, "Email address already in use").send(res);
 
-  userDefinition = req.body;
 
   // TODO hash password before storing
 
