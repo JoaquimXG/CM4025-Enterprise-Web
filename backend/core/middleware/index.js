@@ -43,5 +43,11 @@ module.exports = (app) => {
   //Logging with winston used as middleware to log all requests made to backend
   app.use(logger);
 
+  //TODO include error handling middleware
+  app.use((err, req, res, next) => {
+    console.log(err.stack);
+    res.status(500).send("Something broke!");
+  });
+
   return app;
 };
