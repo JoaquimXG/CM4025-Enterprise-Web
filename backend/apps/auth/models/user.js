@@ -10,6 +10,9 @@ const User = {
     type: DataTypes.STRING,
     allowNull: false,
     unique: true,
+    validate: {
+      isEmail: true,
+    }
   },
   hash: {
     type: DataTypes.STRING,
