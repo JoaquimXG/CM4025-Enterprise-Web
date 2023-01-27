@@ -29,6 +29,11 @@ const User = {
     allowNull: false,
     defaultValue: false
   },
+  status: {
+    type: DataTypes.ENUM("unverified", "active"),
+    defaultValue: "unverified",
+    allowNull: false
+  }
 };
 
 module.exports = (sequelize) => {

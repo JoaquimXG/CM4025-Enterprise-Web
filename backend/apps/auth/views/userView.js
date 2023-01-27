@@ -40,7 +40,6 @@ const create = async (req, res, next) => {
   }
 
   // TODO send verification email
-  // TODO set user status to unverified, should just use default field on the model
 
   return new Response(201, "User created").send(res);
 };
