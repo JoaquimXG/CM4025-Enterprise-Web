@@ -1,6 +1,6 @@
-const BaseApiView = require("./BaseApiView");
+const ModelApiView = require("./ModelApiView");
 
-module.exports = class ApiView extends BaseApiView {
+module.exports = class ModelViewSet extends ModelApiView {
   static create_middleware = [
     this.serializer_middleware,
     this.create_object_middleware,

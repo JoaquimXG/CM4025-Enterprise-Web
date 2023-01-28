@@ -1,6 +1,6 @@
 const { OkResponse, NoContentResponse } = require("../responses");
 
-module.exports = class BaseApiView {
+module.exports = class ModelApiView {
   static lookup_field = "id";
   static model = null;
   static controller_class = null;
