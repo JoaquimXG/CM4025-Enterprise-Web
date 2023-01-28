@@ -26,3 +26,24 @@
   - As we are using express and not Django, I imagine this will be done by collecting a list of functions from the serializer/controller and using these as middleware
 - ViewRouter/BaseRouter
   - Takes a ViewSet and generates the routes for the endpoints
+  
+
+# Models
+
+- User
+- Project
+  - belongs to a User
+- Quote
+  - belongs to a Project
+- Task
+  - belongs to a Quote
+- TimeEntry
+  - belongs to a Task
+  - has a Worker
+- Worker
+  - Are these static, or can the user create new workers?
+    - Perhaps there are some that are statically defined, but they can create new ones
+  - has a rate
+    - Hourly
+    - Daily
+  - has a title
