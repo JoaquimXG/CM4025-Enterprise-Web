@@ -12,7 +12,7 @@ const User = {
     unique: true,
     validate: {
       isEmail: true,
-    }
+    },
   },
   hash: {
     type: DataTypes.STRING,
@@ -27,16 +27,15 @@ const User = {
   isAdmin: {
     type: DataTypes.BOOLEAN,
     allowNull: false,
-    defaultValue: false
+    defaultValue: false,
   },
   status: {
     type: DataTypes.ENUM("unverified", "active"),
     defaultValue: "unverified",
-    allowNull: false
-  }
+    allowNull: false,
+  },
 };
 
 module.exports = (sequelize) => {
-  user = sequelize.define("User", User, {paranoid: true});
-  return user;
+  return sequelize.define("User", User, { paranoid: true });
 };
