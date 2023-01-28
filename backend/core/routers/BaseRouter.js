@@ -1,6 +1,5 @@
 const { Router } = require("express");
 
-// TODO take a ModelViewSet and generate an express router from it containing all the standard CRUD routes
 module.exports = class BaseRouter {
   viewset = null;
   router = null;
@@ -10,7 +9,7 @@ module.exports = class BaseRouter {
     this.viewset = viewset;
     this.router = this.getRoutes();
   }
-  
+
   getRoutes() {
     router = Router();
     this.router.get(path, viewset.list_middleware);

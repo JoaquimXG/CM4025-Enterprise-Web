@@ -1,5 +1,6 @@
 const { OkResponse, NoContentResponse } = require("../responses");
 
+// TODO split non-model functions out into a separate class, ApiView, and have ModelApiView extend it
 module.exports = class ModelApiView {
   static lookup_field = "id";
   static model = null;
