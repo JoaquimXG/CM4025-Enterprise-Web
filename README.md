@@ -6,7 +6,7 @@
 2. Create User model with sequelize and integrate with passportjs
 
 
-### CRUD Endpoints Framework
+## CRUD Endpoints Framework
 
 - Model definition
   - Definition using sequelize
@@ -28,7 +28,11 @@
   - Takes a ViewSet and generates the routes for the endpoints
   
 
-# Models
+## Exceptions
+
+- Need to extend from Error to allow throwing custom exceptions through express middleware
+
+## Models
 
 - User
 - Project
