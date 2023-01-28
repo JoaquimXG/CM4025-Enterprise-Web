@@ -13,7 +13,10 @@ const sequelize = new Sequelize(
   }
 );
 
-const modelDefinitions = [require("../../apps/auth/models/user.js")];
+const modelDefinitions = [
+  require("../../apps/auth/models/user.js"),
+  require("../../apps/quoteBuilder/models/Worker.js"),
+];
 
 for (const definition of modelDefinitions) {
   model = definition(sequelize);
