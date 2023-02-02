@@ -1,14 +1,8 @@
-const Empty = require("../fields/Empty");
+const { Empty, SkipField } = require("../fields");
 // TODO maps model fields to controller fields
 field_mapping = {};
 
 // TODO review all errors, change text and update to use ValidationError
-
-// TODO move
-class SkipField extends Error {}
-
-// TODO extend from ApiException
-class ValidationError extends Error {}
 
 // TODO probably extend from Field base class
 /* TODO split class heirarchy more strictly 
