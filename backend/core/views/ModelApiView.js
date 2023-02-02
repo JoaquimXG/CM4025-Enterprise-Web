@@ -1,6 +1,7 @@
 const { OkResponse, NoContentResponse } = require("../responses");
 
 // TODO split non-model functions out into a separate class, ApiView, and have ModelApiView extend it
+// TODO some of this functionality should be concentrated in the controller and fields
 module.exports = class ModelApiView {
   static lookup_field = "id";
   static model = null;
@@ -117,8 +118,8 @@ module.exports = class ModelApiView {
     }
   }
 
-  static get_controller() {
-    return this.get_controller_class()();
+  static get_controller(...args) {
+    return this.get_controller_class()(...args);
   }
 
   static get_controller_class() {
