@@ -1,8 +1,7 @@
 const { Empty, SkipField } = require("../fields");
+const { ValidationError } = require("../responses/errors");
 // TODO maps model fields to controller fields
 field_mapping = {};
-
-// TODO review all errors, change text and update to use ValidationError
 
 // TODO probably extend from Field base class
 /* TODO split class heirarchy more strictly 
@@ -18,7 +17,6 @@ field_mapping = {};
   *
   * Controller extends from Field because controller can be used as a nested field on another controller
 */
-
 module.exports = class ModelController {
   model = null;
   _errors = null;
@@ -80,7 +78,7 @@ module.exports = class ModelController {
     this.run_validators(value); // Should throw errors if invalid
     value = this.validate(value);
     if (value === null) {
-      throw new Error("validate should return validated data, not null");
+      throw new Error("Validate should return validated data, not null");
     }
 
     return value;
@@ -108,14 +106,14 @@ module.exports = class ModelController {
     }
 
     if (this._errors && raiseException) {
-      throw new Error("Should be a validation error");
+      throw new ValidationError(this._errors);
     }
     return this._errors === null;
   }
 
   to_internal_value(data) {
-    if (type(data) !== "object") {
-      throw new Error("Data must be an object");
+    if (typeof data !== "object") {
+      throw new ValidationError("Data must be an object, not null");
     }
 
     ret = {};
