@@ -1,9 +1,9 @@
 const { Empty, SkipField } = require("../fields");
 const { ValidationError } = require("../responses/errors");
+
 // TODO maps model fields to controller fields
 field_mapping = {};
 
-// TODO probably extend from Field base class
 /* TODO split class heirarchy more strictly 
   * 1. Field
       - Holds logic that sits between all fields and all controllers
