@@ -1,19 +1,35 @@
+const { ValidationError } = require("../../responses/errors");
+
 module.exports = class BaseValidator {
-  constructor(value, limit_value, message, code) {
-    this.value = value;
+  message = (cleaned_value, limit_value) =>
+    `Ensure this value is ${limit_value} (it is ${cleaned_value}).`;
+  code = "limit_value";
+
+  constructor(limit_value, message = null) {
     this.limit_value = limit_value;
-    this.message = message;
-    this.code = code;
+    if (message !== null) this.message = message;
   }
 
-  compare(value, limit_value) {
-    throw new Error("Not implemented");
+  validate(value) {
+    try {
+      cleaned = this.clean(value);
+      limit_value =
+        this.limit_value instanceof Function
+          ? this.limit_value()
+          : this.limit_value;
+      if (this.compare(cleaned, limit_value))
+        throw new ValidationError(this.message(cleaned, limit_value));
+    } catch (e) {
+      return false;
+    }
+  }
+
+  compare(a, b) {
+    //Just a temporary implementation, to be overidden by subclasses
+    return a !== b;
   }
 
   clean(value) {
-    if (this.compare(value, this.limit_value)) {
-      return value;
-    }
-    throw new Error(this.message);
+    return value;
   }
 };
