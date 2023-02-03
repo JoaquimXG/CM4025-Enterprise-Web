@@ -25,6 +25,7 @@ module.exports = class Field {
     null: _("This field may not be null."),
   };
 
+  //TODO(IMPORTANT) merge with options
   default_validators = [];
   default_empty_html = new Empty();
   initial = null;
@@ -195,11 +196,7 @@ module.exports = class Field {
     errors = [];
     for (let validator of this.validators) {
       try {
-        if (validator.requires_context) {
-          validator(value, this);
-        } else {
-          validator(value);
-        }
+        this.run_validator(validator, value);
       } catch (e) {
         if (e instanceof ValidationError) {
           //TODO this is probably not going to work
@@ -211,6 +208,25 @@ module.exports = class Field {
       }
     }
     if (errors.length) throw new ValidationError(errors);
+  }
+
+  run_validator(validator, value) {
+    /*
+     * In addition to run_validators logic taken from DRF.
+     * Due to the lack of __call_ or similar in javascript to create callable
+     * objects, a check has to be made to see if the validator is a simple function
+     * or a subclass of BaseValidator.
+     */
+    args = [value];
+    if (validator.requires_context) {
+      args.push(this);
+    }
+
+    if (validator instanceof Function) {
+      validator(...args);
+    } else if (validator instanceof BaseValidator) {
+      validator.validate(...args);
+    }
   }
 
   to_internal_value(data) {
