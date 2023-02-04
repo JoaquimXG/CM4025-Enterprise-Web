@@ -21,8 +21,8 @@ module.exports = class Field {
 
   // TODO review
   default_error_messages = {
-    required: _("This field is required."),
-    null: _("This field may not be null."),
+    required: "This field is required.",
+    null: "This field may not be null.",
   };
 
   //TODO(IMPORTANT) merge with options
@@ -241,12 +241,16 @@ module.exports = class Field {
     throw new Error("Not Implemented");
   }
 
-  fail(error_key) {
+  fail(error_key, ...args) {
     message = this.error_messages[error_key];
     if (message === undefined) {
       message = MISSING_ERROR_MESSAGE(this.constructor.name, error_key);
       throw new Error(message);
     }
+    if (message instanceof Function) {
+      message = message(...args);
+    }
+
     throw new ValidationError(message);
   }
 
