@@ -24,6 +24,7 @@ module.exports = class BaseValidator {
     }
   }
 
+  // Return true for validation failure
   compare(a, b) {
     //Just a temporary implementation, to be overidden by subclasses
     return a !== b;
