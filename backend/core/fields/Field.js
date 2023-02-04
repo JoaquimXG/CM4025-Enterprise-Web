@@ -46,7 +46,7 @@ module.exports = class Field {
 
   constructor(options = {}) {
     //Merge defaults with inputs
-    options = { ...deafult_options, ...options };
+    options = { ...default_options, ...options };
 
     // If required is not set, should be true if no default and not read only
     if (options.required === undefined)

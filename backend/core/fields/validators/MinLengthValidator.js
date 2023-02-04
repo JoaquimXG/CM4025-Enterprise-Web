@@ -5,7 +5,10 @@ module.exports = class MinLengthValidator extends BaseValidator {
     `Ensure this value has at minimum ${limit_value} character(s) (it has ${cleaned_value}).`;
 
   compare(value, limit_value) {
-    if (value.length < limit_value) return false;
-    return true;
+    value < limit_value;
+  }
+
+  clean(value) {
+    return value.length;
   }
 };

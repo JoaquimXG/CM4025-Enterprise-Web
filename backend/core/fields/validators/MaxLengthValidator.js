@@ -5,9 +5,10 @@ module.exports = class MaxLengthValidator extends BaseValidator {
     `Ensure this value has at most ${limit_value} character(s) (it has ${cleaned_value}).`;
 
   compare(value, limit_value) {
-    // Could use short hand here: return !(value.length > limit_value);
-    // But I think this is more readable
-    if (value.length > limit_value) return false;
-    return true;
+    return value > limit_value;
+  }
+
+  clean(value) {
+    return value.length;
   }
 };

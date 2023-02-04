@@ -2,7 +2,7 @@ const Field = require("./Field");
 
 module.exports = class BooleanField extends Field {
   default_error_messages = {
-    invalid: _("Must be a valid boolean."),
+    invalid: "Must be a valid boolean.",
   };
   default_empty_html = false;
   initial = false;
