@@ -1,10 +1,13 @@
 const { Field } = require("./Field");
+const { MaxValueValidator, MinValueValidator } = require("./validators");
 
 module.exports = class IntegerField extends Field {
   default_error_messages = {
     invalid: "Must be a valid integer.",
-    max_value: (max_value) => `Ensure this value is less than or equal to ${max_value}.`,
-    min_value: (min_value) => `Ensure this value is greater than or equal to ${min_value}.`,
+    max_value: (max_value) =>
+      `Ensure this value is less than or equal to ${max_value}.`,
+    min_value: (min_value) =>
+      `Ensure this value is greater than or equal to ${min_value}.`,
     max_string_length: "String value too large.",
     disallowed_decimal: "Float values are not allowed.",
   };
@@ -29,10 +32,12 @@ module.exports = class IntegerField extends Field {
     super(options);
 
     if (max_value !== null) {
-      // TODO validator
+      message = this.default_error_messages["max_value"](max_value);
+      this.validators.push(MaxValueValidator(max_value, message));
     }
     if (min_value !== null) {
-      //TODO validator
+      message = this.default_error_messages["min_value"](min_value);
+      this.validators.push(MinValueValidator(min_value, message));
     }
   }
 
@@ -59,12 +64,3 @@ module.exports = class IntegerField extends Field {
     return parseInt(value);
   }
 };
-
-//   if self.max_value is not None:
-//       message = lazy_format(self.error_messages['max_value'], max_value=self.max_value)
-//       self.validators.append(
-//           MaxValueValidator(self.max_value, message=message))
-//   if self.min_value is not None:
-//       message = lazy_format(self.error_messages['min_value'], min_value=self.min_value)
-//       self.validators.append(
-//           MinValueValidator(self.min_value, message=message))
