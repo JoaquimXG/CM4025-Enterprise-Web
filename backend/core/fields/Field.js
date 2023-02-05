@@ -188,7 +188,7 @@ module.exports = class Field {
     let is_empty_value;
     [is_empty_value, data] = this.validate_empty_values(data);
     if (is_empty_value) return data;
-    value = this.to_internal_value(data);
+    let value = this.to_internal_value(data);
     this.run_validators(value);
     return value;
   }

@@ -48,7 +48,7 @@ module.exports = class CharField extends Field {
     // Don't allow booleans or other complex types due to possible ambiguity
     let type = typeof data;
     if (type === "string" || type === "number") {
-      value = String(data);
+      let value = String(data);
       return this.trim_whitespace ? value.trim() : value;
     }
     this.fail("invalid");
