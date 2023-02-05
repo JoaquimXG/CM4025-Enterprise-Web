@@ -18,27 +18,26 @@ module.exports = class ModelApiView {
     next()
   }
 
-  create_object(data) {
-    return this.model.create(data);
+  async create_object(data) {
+    return await this.model.create(data);
   }
 
-  create_object_middleware(req, _, next) {
+  async create_object_middleware(req, _, next) {
     try {
-      req.instance = this.create_object(req.internal_value);
+      req.instance = await this.create_object(req.internal_value);
       next();
     } catch (e) {
       next(e);
     }
   }
 
-  update_object(instance, data) {
-    return instance.update(data);
+  async update_object(instance, data) {
+    return await instance.update(data);
   }
 
-  update_object_middleware(req, _, next) {
+  async update_object_middleware(req, _, next) {
     try {
-      this.update_object(req.instance, req.internal_value);
-      req.instance.update(req.internal_value);
+      await this.update_object(req.instance, req.internal_value);
       next();
     } catch (e) {
       next(e);
@@ -61,26 +60,26 @@ module.exports = class ModelApiView {
     }
   }
 
-  list_objects() {
-    return this.model.findAll();
+  async list_objects() {
+    return await this.model.findAll();
   }
 
-  list_objects_middleware(req, _, next) {
+  async list_objects_middleware(req, _, next) {
     try {
-      req.instances = this.list_objects();
+      req.instances = await this.list_objects();
       next();
     } catch (e) {
       next(e);
     }
   }
 
-  perform_destroy(instance) {
-    instance.destroy();
+  async perform_destroy(instance) {
+    await instance.destroy();
   }
 
-  destroy_object_middleware(req, res, next) {
+  async destroy_object_middleware(req, res, next) {
     try {
-      this.perform_destroy(req.instance);
+      await this.perform_destroy(req.instance);
       return new NoContentResponse().send(res);
     } catch (e) {
       next(e);
@@ -89,8 +88,8 @@ module.exports = class ModelApiView {
 
   deserialize_middleware(req, res, next) {
     try {
-      controller = this.get_controller();
-      data = req.instance ? req.instance : req.instances;
+      let controller = this.get_controller();
+      let data = req.instance ? req.instance : req.instances;
       data = controller.to_representation(data);
       // TODO This works for retrieve, list, update, but not for create, should return 201 for create
       return new OkResponse(data).sendJson(res);
@@ -99,9 +98,9 @@ module.exports = class ModelApiView {
     }
   }
 
-  get_object_middleware(req, _, next) {
+  async get_object_middleware(req, _, next) {
     try {
-      instance = this.get_object(req.params.id, this.lookup_field === "id");
+      instance = await this.get_object(req.params.id, this.lookup_field === "id");
       req.instance = instance;
       next();
     } catch (e) {
@@ -110,16 +109,16 @@ module.exports = class ModelApiView {
     }
   }
 
-  get_object(urlValue, findById = true) {
+  async get_object(urlValue, findById = true) {
     if (findById) {
-      return this.model.findByPk(urlValue);
+      return await this.model.findByPk(urlValue);
     } else {
-      return this.model.findOne({ where: { [this.lookup_field]: urlValue } });
+      return await this.model.findOne({ where: { [this.lookup_field]: urlValue } });
     }
   }
 
   get_controller(...args) {
-    return this.get_controller_class()(...args);
+    return new (this.get_controller_class())(...args);
   }
 
   get_controller_class() {
