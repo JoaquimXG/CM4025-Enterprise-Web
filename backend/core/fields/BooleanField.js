@@ -4,7 +4,6 @@ module.exports = class BooleanField extends Field {
   default_error_messages = {
     invalid: "Must be a valid boolean.",
   };
-  default_empty_html = false;
   initial = false;
   TRUE_VALUES = new Set([
     "t",

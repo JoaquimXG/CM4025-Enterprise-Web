@@ -25,10 +25,7 @@ module.exports = class Field {
     null: "This field may not be null.",
   };
 
-  //TODO(IMPORTANT) merge with options
   default_validators = [];
-  default_empty_html = new Empty();
-  initial = null;
 
   default_options = {
     read_only: false,
@@ -73,8 +70,9 @@ module.exports = class Field {
     this.help_text = options.help_text;
     this.style = options.style === null ? {} : options.style;
 
-    // TODO default_empty_html
-    this.validators = options.validators || [];
+    this.validators = options.validators
+      ? [...options.validators, ...this.default_validators]
+      : this.default_validators;
 
     // These are set on calls to bind() when field is added to a serializer
     this.field_name = null;

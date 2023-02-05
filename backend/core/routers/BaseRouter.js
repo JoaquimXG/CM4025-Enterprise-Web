@@ -16,7 +16,7 @@ module.exports = class BaseRouter {
     router.post(this.path, this.viewset.create_middleware);
     router.patch(`${this.path}:id/`, this.viewset.update_middleware);
     router.delete(`${this.path}:id/`, this.viewset.destroy_middleware);
-    // TODO replace requires implementing non-partial update first
+    // TODO(LOW) replace requires implementing non-partial update first
     // router.put(`${this.path}:id/`, this.viewset.update_middleware); // Uses the same middleware as patch, but when getting controller context, partial is set to false
     return router;
   }
