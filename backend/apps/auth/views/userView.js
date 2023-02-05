@@ -1,9 +1,9 @@
 const bcrypt = require("bcrypt");
 const { models } = require("../../../core/db/sequelize");
 const {
-  BadRequestException,
-  ConflictException,
-} = require("../../../core/responses/exceptions");
+  BadRequestError,
+  ConflictError,
+} = require("../../../core/responses/errors");
 const {
   CreatedResponse,
   OkResponse,
@@ -26,14 +26,14 @@ const create = async (req, res, next) => {
   // TODO move validation into a class based serializer as this will be repeated in other views
   // Alternatively move validation into centralized middleware, probably still worth using class methods
   if (!req.body.email)
-    return new BadRequestException("Email address required").send(res);
+    return new BadRequestError("Email address required").send(res);
   if (!req.body.password)
-    return new BadRequestException("Password required").send(res);
+    return new BadRequestError("Password required").send(res);
 
   // Check if email is taken
   let user = await models.User.findOne({ where: { email: req.body.email }, paranoid: false });
   if (user)
-    return new ConflictException("Email address already in use").send(res);
+    return new ConflictError("Email address already in use").send(res);
 
   // TODO perform validation on password, enacting restrictions, e.g., password length and complexity
   // TODO does password need salt?

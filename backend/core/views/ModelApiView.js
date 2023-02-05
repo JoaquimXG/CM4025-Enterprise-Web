@@ -52,7 +52,7 @@ module.exports = class ModelApiView {
         req.body,
         req.controller_context.partial
       );
-      if (controller.is_valid((raiseException = true))) {
+      if (controller.is_valid((raiseError = true))) {
         req.internal_value = controller.to_internal_value(req.body);
       }
       next();

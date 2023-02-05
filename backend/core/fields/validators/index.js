@@ -4,6 +4,8 @@ const ProhibitNullCharactersValidator = require('./ProhibitNullCharactersValidat
 const ProhibitSurrogateCharactersValidator = require('./ProhibitSurrogateCharactersValidator');
 const MaxValueValidator = require("./MaxValueValidator");
 const MinValueValidator = require("./MinValueValidator")
+const FunctionValidator = require("./FunctionValidator")
+const ValidatorJsValidator = require("./ValidatorJsValidator")
 
 
 module.exports = {
@@ -12,5 +14,7 @@ module.exports = {
   ProhibitNullCharactersValidator,
   ProhibitSurrogateCharactersValidator,
   MaxValueValidator,
-  MinValueValidator
+  MinValueValidator,
+  FunctionValidator,
+  ValidatorJsValidator
 };

@@ -8,15 +8,17 @@ module.exports = class Controller extends BaseController {
     invalid: _("Invalid data. Expected a dictionary, but got {datatype}."),
   };
 
-  fields = {};
+  meta = {};
+
   _fields = null;
 
   get fields() {
     if (this._fields === null) {
-      //Loop through fields object and bind them
+      // Loop through fields and bind them
       this._fields = {};
-      for (key in this.get_fields()) {
-        field = this.fields[key];
+      declared_fields = get_fields();
+      for (key in declared_fields) {
+        field = this.declared_fields[key];
         this.bind_field(field);
         this._fields[key] = field;
       }
@@ -31,10 +33,20 @@ module.exports = class Controller extends BaseController {
     return Object.values(this.fields).filter((field) => !field.write_only);
   }
 
+  get_declared_fields() {
+    fields = {};
+    for (key in this) {
+      if (this[key] instanceof Field) {
+        fields[key] = this[key];
+      }
+    }
+    return fields;
+  }
+
   // Allows overriding logic for getting fields in child classes
   // Used by fields getter
   get_fields() {
-    return this.fields;
+    return structuredClone(this.get_declared_fields());
   }
 
   get_validators() {

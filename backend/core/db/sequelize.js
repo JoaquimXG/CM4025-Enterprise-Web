@@ -13,9 +13,29 @@ const sequelize = new Sequelize(
   }
 );
 
+// // Potential method to run custom validators instead of running standard sequelize validators
+// sequelize.addHook("beforeValidate", (instance, options) => {
+//   if (!options.validate) return;
+//   options.validate = false;
+
+//   let rawAttributes =
+//     instance.sequelize.models[instance.constructor.name].rawAttributes;
+//   for (let key in rawAttributes) {
+//     if ("validators" in rawAttributes[key]) {
+//       for (let validator of rawAttributes[key].validators) {
+//         console.log(
+//           "Validating " + key + " with " + validator.constructor.name
+//         );
+//         validator.validate(instance.dataValues[key]);
+//       }
+//     }
+//   }
+// });
+
 const modelDefinitions = [
   require("../../apps/auth/models/user.js"),
   require("../../apps/quoteBuilder/models/Worker.js"),
+  require("../../apps/quoteBuilder/models/TestModel.js"),
 ];
 
 for (const definition of modelDefinitions) {

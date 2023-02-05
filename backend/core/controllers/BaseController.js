@@ -50,7 +50,7 @@ module.exports = class BaseController extends Field {
     }
   }
 
-  is_valid(raiseException = false) {
+  is_valid(raiseError = false) {
     if (this.initial_data === null) {
       throw new Error(
         "Data must be passed to controller before calling is_valid"
@@ -71,7 +71,7 @@ module.exports = class BaseController extends Field {
       }
     }
 
-    if (this._errors && raiseException) {
+    if (this._errors && raiseError) {
       throw new ValidationError(this._errors);
     }
     return this._errors === null;

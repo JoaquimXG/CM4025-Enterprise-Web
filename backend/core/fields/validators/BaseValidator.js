@@ -11,20 +11,16 @@ module.exports = class BaseValidator {
   }
 
   validate(value) {
-    try {
-      cleaned = this.clean(value);
-      limit_value =
-        this.limit_value instanceof Function
-          ? this.limit_value()
-          : this.limit_value;
-      if (this.compare(cleaned, limit_value))
-        throw new ValidationError(this.message(cleaned, limit_value));
-    } catch (e) {
-      return false;
-    }
+    let cleaned = this.clean(value);
+    let limit_value =
+      this.limit_value instanceof Function
+        ? this.limit_value()
+        : this.limit_value;
+    if (this.compare(cleaned, limit_value))
+      throw new ValidationError(this.message(cleaned, limit_value));
   }
 
-  // Return true for validation failure
+  // Return true for validation failure, TODO perhaps it is better to flip this logic
   compare(a, b) {
     //Just a temporary implementation, to be overidden by subclasses
     return a !== b;

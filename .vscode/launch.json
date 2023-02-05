@@ -13,6 +13,24 @@
       ],
       "program": "${workspaceFolder}/index.js",
       "envFile": "${workspaceFolder}/.env"
+    },
+    {
+      "name": "NPM Run Dev",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "envFile": "${workspaceFolder}/.env",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+    },
+    {
+      "name": "NPM Run testing",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "envFile": "${workspaceFolder}/.env",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "testing"],
     }
   ]
 }

@@ -4,6 +4,7 @@
 1. Create consistent interface for standar CRUD endpoints
    - I want a similar system to how Django DRF handles standard CRUD with ViewSets supported by Serializers
 2. Create User model with sequelize and integrate with passportjs
+3. Relative imports???
 
 
 ## CRUD Endpoints Framework
@@ -28,9 +29,15 @@
   - Takes a ViewSet and generates the routes for the endpoints
   
 
-## Exceptions
+### Validators
 
-- Need to extend from Error to allow throwing custom exceptions through express middleware
+- I think it will be best to avoid the validation in place from sequelize and instead use standalone validation on controllers
+  - Sequelize makes use of validator.js for string validation, should probably do the same
+  
+
+## Errors
+
+- Need to extend from Error to allow throwing custom errors through express middleware
 
 ## Models
 
@@ -51,3 +58,5 @@
     - Hourly
     - Daily
   - has a title
+  
+
