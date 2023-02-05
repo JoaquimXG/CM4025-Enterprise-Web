@@ -1,4 +1,5 @@
 const { OkResponse, NoContentResponse } = require("../responses");
+const { NotFoundError } = require("../responses/errors");
 
 // TODO split non-model functions out into a separate class, ApiView, and have ModelApiView extend it
 // TODO some of this functionality should be concentrated in the controller and fields
@@ -15,7 +16,7 @@ module.exports = class ModelApiView {
 
   get_controller_context_middleware(req, _, next) {
     req.controller_context = this.get_controller_context(req);
-    next()
+    next();
   }
 
   async create_object(data) {
@@ -37,7 +38,10 @@ module.exports = class ModelApiView {
 
   async update_object_middleware(req, _, next) {
     try {
-      await this.update_object(req.controller.instance, req.controller.validated_data);
+      await this.update_object(
+        req.controller.instance,
+        req.controller.validated_data
+      );
       next();
     } catch (e) {
       next(e);
@@ -51,8 +55,7 @@ module.exports = class ModelApiView {
         req.body,
         req.controller_context.partial
       );
-      if (req.controller.is_valid(true))
-        next();
+      if (req.controller.is_valid(true)) next();
     } catch (e) {
       next(e);
     }
@@ -96,12 +99,15 @@ module.exports = class ModelApiView {
     }
   }
 
-  async get_object_middleware(req, _, next) {
+  async get_object_middleware(req, res, next) {
     try {
-      req.instance = await this.get_object(req.params.id, this.lookup_field === "id");
-      next();
+      req.instance = await this.get_object(
+        req.params.id,
+        this.lookup_field === "id"
+      );
+      if (!req.instance) return new NotFoundError().send(res);
+      next()
     } catch (e) {
-      // TODO get object or 404
       next(e);
     }
   }
@@ -110,7 +116,9 @@ module.exports = class ModelApiView {
     if (findById) {
       return await this.model.findByPk(urlValue);
     } else {
-      return await this.model.findOne({ where: { [this.lookup_field]: urlValue } });
+      return await this.model.findOne({
+        where: { [this.lookup_field]: urlValue },
+      });
     }
   }
 
