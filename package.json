@@ -7,7 +7,8 @@
     "start": "node index.js",
     "dev": "nodemon index.js",
     "migrate": "SEQUELIZE_MIGRATE=true node backend/core/db/sequelize.js",
-    "test-connect-db": "node backend/core/db/testConnection.js"
+    "test-connect-db": "node backend/core/db/testConnection.js",
+    "testing": "node test.js"
   },
   "repository": "https://github.com/JoaquimXG/CM4025-Enterprise-Web",
   "author": "Joaquim Gomez",
