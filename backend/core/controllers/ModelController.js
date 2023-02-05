@@ -1,10 +1,19 @@
 const { Empty, SkipField } = require("../fields");
 const { ValidationError } = require("../responses/errors");
+const { DataTypes } = require("sequelize");
+const { STRING, INTEGER } = DataTypes;
+const { CharField, IntegerField } = require("../fields");
+const { options } = require("sequelize/lib/model");
 
 // TODO maps model fields to controller fields
-field_mapping = {};
+field_mapping = {
+  STRING: CharField,
+  INTEGER: IntegerField,
+};
 
-/* TODO split class heirarchy more strictly 
+ALL_FIELDS = "__all__";
+
+/* TODO Write docs
   * 1. Field
       - Holds logic that sits between all fields and all controllers
         - Not sure, need to review
@@ -17,67 +26,310 @@ field_mapping = {};
   *
   * Controller extends from Field because controller can be used as a nested field on another controller
 */
+// TODO this is really a SequelizeModelController, there is some base functionality
+// that could be shared with other model controllers using other ORMs but this is likely out of scope
 module.exports = class ModelController {
-  model = null;
   _errors = null;
   initial_data = null;
 
-  // TODO should be able to define fields as a list of strings as field names
-  field_names = [];
-  fields = {};
+  // meta = {
+    // model: null, // sequelize model class to use
+    // fields: null, // list of field names, or ALL_FIELDS
+    // exclude: null, // list of field names, or ALL_FIELDS
+    // read_only_fields: null, // list of field names, or ALL_FIELDS
+    // extra_options: null, // dictionary of field names to keyword options for field
+  // };
 
-  constructor(instance, data = Empty, partial = false, ...args) {
-    this.instance = instance;
-    if (data !== Empty) this.initial_data = data;
-    this.partial = partial;
-    this.model_attributes = this.model.getAttributes();
-    super(...args);
+  create(validated_data) {
+    model = this.meta.model;
+    // TODO raise errors on nested writes
+    // TODO Pop many-to-many relationships from data before create ready to be added after instance is created later
+    try {
+      instance = model.create(validated_data);
+    } catch (e) {
+      // TODO get better error message on create, need to run some tests to see what errors are likely and explain here
+      throw new ValidationError(e);
+    }
+
+    // TODO create many-to-many relationships saved above
+    return instance;
   }
 
-  build_field(field_name) {
-    // Create field from model field
-    if (field_name in this.model_attributes) {
-      field_definition = this.model_attributes[field_name];
-      field = new field_mapping[field_definition.type](field_name);
-      return field;
-      // TODO create relational field and deal with how that works
+  update(instance, validated_data) {
+    // TODO raise errors on nested writes
+    // TODO(IMPORTANT) handle many-to-many relationships
+    return instance.update(validated_data);
+  }
+
+  get_field_info(model) {
+    // TODO there is also fieldRawAttributesMap, seemingly holds the same information but should review the differences
+    fields = model.rawAttributes;
+    pk_field_name = model.primaryKeyField;
+    pk_field = fields[pk_field_name];
+    // TODO relations
+
+    return { pk: pk_field, fields: fields };
+  }
+
+  get_declared_fields() {
+    let declared_fields = {};
+    for (const [key, value] of Object.entries(this)) {
+      if (value instanceof Field) {
+        declared_fields[key] = value;
+      }
     }
+    return declared_fields;
   }
 
   get_fields() {
-    fields = {};
-    for (field_name of this.field_names) {
-      if (!(field_name in this.fields)) {
-        fields[field_name] = this.build_field(field_name);
+    let declared_fields = structuredClone(this.get_declared_fields());
+    let model = this.meta.model;
+    // TODO depth for relations
+    let depth = 1;
+
+    let info = this.get_field_info(model);
+    let field_names = this.get_field_names(declared_fields, info);
+
+    let extra_options = this.get_extra_options();
+
+    let fields = {};
+    for (let field_name of field_names) {
+      // Use declared field if present, allows overriding model fields
+      if (field_name in declared_fields) {
+        fields[field_name] = declared_fields[field_name];
+        continue;
       }
+
+      let extra_field_options = extra_options[field_name] || {};
+      let source = extra_field_options.source || field_name;
+
+      field_class,
+        (field_options = this.build_field(source, info, model, depth));
+
+      // Include extra field options from meta
+      let field_options = this.include_extra_options(
+        field_options,
+        extra_field_options
+      );
+
+      fields[field_name] = field_class(field_options);
     }
+
     return fields;
   }
 
-  validate_empty_value(value) {
-    // TODO check if empty values are allowed, will be defined when the serializer is instantiated
-    // TODO should be defined on Field base class
-    throw new Error("Not implemented");
+  get_field_names(declared_fields, info) {
+    /**
+     * Returns a list of field names that this controller will validate
+     * Field names are a combination of fields declared on the controller and fields on the model
+     * All fields declared on the controller must be included in the fields list
+     * and can't be excluded.
+     */
+
+    let fields = this.meta.fields;
+    let exclude = this.meta.exclude;
+
+    if (fields && fields !== ALL_FIELDS && !Array.isArray(fields)) {
+      throw new TypeError(
+        `The 'fields' option must be a list or tuple or "${ALL_FIELDS}". Got ${typeof fields}.`
+      );
+    }
+    if (exclude && exclude !== ALL_FIELDS && !Array.isArray(exclude)) {
+      throw new TypeError(
+        `The 'fields' option must be a list or tuple or "${ALL_FIELDS}". Got ${typeof exclude}.`
+      );
+    }
+
+    if (fields && exclude) {
+      throw new TypeError(
+        `Cannot set both 'fields' and 'exclude' options on serializer ${this.constructor.name}.`
+      );
+    }
+
+    if (!fields && !exclude) {
+      throw new TypeError(
+        `Creating a ModelController without either the 'fields' attribute or the 'exclude' attribute is disallowed. Add an explicit fields = '__all__' to the ${this.constructor.name} serializer.`
+      );
+    }
+
+    if (fields === ALL_FIELDS) fields = null;
+
+    // Ensure all declared fields are included in the meta.fields option
+    let required_field_names = new Set(Object.keys(declared_fields));
+    if (fields !== null) {
+      for (let field_name of required_field_names) {
+        if (!(field_name in fields)) {
+          throw new Error(
+            `The field '${field_name}' was declared on controller ${this.constructor.name}, but has not been included in the 'fields' option.`
+          );
+        }
+      }
+
+      return fields;
+    }
+
+    fields = this.get_default_field_names(declared_fields, info);
+
+    if (exclude !== null) {
+      for (let field_name of exclude) {
+        if (field_name in required_field_names) {
+          throw new Error(
+            `The field '${field_name}' was declared on controller ${this.constructor.name}, but has been excluded by the 'exclude' option.`
+          );
+        }
+
+        if (!(field_name in fields)) {
+          throw new Error(
+            `The field '${field_name}' was excluded on controller ${this.constructor.name}, but is not included in the model fields.`
+          );
+        }
+      }
+    }
+
+    for (let field_name of exclude) delete fields[field_name];
+
+    return fields;
+  }
+
+  get_default_field_names(declared_fields, model_info) {
+    return [
+      model_info.pk_field.fieldName,
+      ...Object.keys(model_info.fields),
+      ...Object.keys(declared_fields),
+      // TOOD forward relations
+    ];
+  }
+
+  include_extra_options(options, extra_options) {
+    if (extra_options.read_only) {
+      for (key of [
+        "allow_blank",
+        "required",
+        "max_length",
+        "min_length",
+        "max_value",
+        "min_value",
+      ]) {
+        delete options[key];
+      }
+    }
+    if (extra_options.default && !options.required) {
+      delete options.required;
+    }
+
+    if (extra_options.read_only || options.read_only) {
+      delete extra_options.required;
+    }
+
+    options = { ...options, ...extra_options };
+    return options;
+  }
+
+  get_extra_options() {
+    let extra_options = structuredClone(this.meta.extra_options) || {};
+    // TODO merge read_only_fields into extra_options
+    return extra_options;
+  }
+
+  // TODO BELOW NEEDS TO BE REDONE
+
+  build_field(field_name, info, model, nested_depth = 1) {
+    if (field_name in info.fields) {
+      model_field = info.fields[field_name];
+      return this.build_standard_field(field_name, model_field);
+    }
+    throw new Error("Have not implemented other types of field yet");
+  }
+
+  build_standard_field(field_name, model_field) {
+    let field_class = field_mapping[model_field.type];
+    let field_options = this.get_field_options(field_name, model_field);
+
+    // Only allow blank on charfield TODO or choice field
+    if (!field_class instanceof CharField) {
+      delete field_options.allow_blank;
+    }
+
+    return field_class, field_options;
+  }
+
+  get_field_options(field_name, model_field) {
+    /**
+     * Get all options for the field class
+     * Options are taken from the model field definition
+     * Custom options are used under customFieldOptions alongside standard options from sequelize
+     * This is primarily because the validation options in sequelize are not very flexible and primary focus
+     * on string validation.
+     * Additionally validation is confused with constraints. In my opinion validation should be performed prior to
+     * making any database calls.
+     * e.g., sequelize has a allowNull option which enforces whether a database field can be null or not
+     * This is a database level constraint, but the controller should validate the value before a null value
+     * is entered into the database. Even, if only to provide a better error message.
+     */
+    options = {};
+    model_field = model_field.customFieldOptions
+      ? { ...model_field, ...model_field.customFieldOptions }
+      : model_field;
+
+    validator_option = model_field.validators || [];
+
+    // TODO(LOW) max_digits? decimal_places?
+
+    if (model_field.allowNull) options.allow_null = true;
+
+    // Return early for read only fields
+    if (model._autoGenerated || model.autoIncrement) {
+      options.read_only = true;
+      return options;
+    }
+
+    if (model_field.defaultValue || model_field.allowNull || model_field.blank)
+      options.required = false;
+
+    if (model_field.blank && model_field instanceof CharField)
+      options.allow_blank = true;
+
+    if (model_field.choices) options.choices = model_field.choices;
+    else {
+      let max_value = validator_option.maxValue || null;
+      if (max_value && model_field instanceof IntegerField) {
+        // TODO extend to all number fields
+        options.max_value = max_value;
+        delete validator_option.max;
+      }
+
+      min_value = validator_option.minValue || null;
+      if (min_value && model_field instanceof IntegerField) {
+        // TODO extend to all number fields
+        options.max_value = min_value;
+        delete validator_option.minValue;
+      }
+    }
+
+    max_length = model_field.maxLength || null;
+    if (max_length && model_field instanceof CharField) {
+      // TODO extend to all text fields
+      options.max_length = max_length;
+      delete validator_option.maxLength;
+    }
+
+    min_length = model_field.minLength || null;
+    if (min_length && model_field instanceof CharField) {
+      // TODO extend to all text fields
+      options.min_length = min_length;
+      delete validator_option.minLength;
+    }
+
+    /// TODO unique validator, sequelize offers a unique constraint but this is database layer
+    // Application layer should perform validation on uniqueness before passing to sequelize
+    // even if just for producing better
+
+    options.validators = validator_option;
+    return options;
   }
 
   to_representation(instance) {
     //TODO
     return instance;
-  }
-
-  update(instance, data) {
-    return instance.update(data);
-  }
-
-  create(data) {
-    return this.model.create(data);
-  }
-
-  // TODO override to get model fields
-  get fields() {
-    if (!this._fields) {
-      this._fields = this.get_fields();
-    }
-    return this._fields;
   }
 };

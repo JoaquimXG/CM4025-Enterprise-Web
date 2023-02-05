@@ -8,7 +8,7 @@ let app = express();
 //Prepare application with middleware
 app = getAppWithMiddleware(app);
 
-app.use("/api", apiRouter);
+app.use("/api/", apiRouter);
 
 app.get("/", (_, res) => {
   // TODO should render
