@@ -1,4 +1,4 @@
-const { Field } = require("./Field");
+const Field = require("./Field");
 const { MaxValueValidator, MinValueValidator } = require("./validators");
 
 module.exports = class IntegerField extends Field {

@@ -3,26 +3,26 @@ const { OkResponse, NoContentResponse } = require("../responses");
 // TODO split non-model functions out into a separate class, ApiView, and have ModelApiView extend it
 // TODO some of this functionality should be concentrated in the controller and fields
 module.exports = class ModelApiView {
-  static lookup_field = "id";
-  static model = null;
-  static controller_class = null;
+  lookup_field = "id";
+  model = null;
+  controller_class = null;
 
-  static get_controller_context(req) {
+  get_controller_context(req) {
     return {
       partial: req.method === "PATCH",
     };
   }
 
-  static get_controller_context_middleware(req, _, next) {
+  get_controller_context_middleware(req, _, next) {
     req.controller_context = get_controller_context(req);
     next()
   }
 
-  static create_object(data) {
+  create_object(data) {
     return this.model.create(data);
   }
 
-  static create_object_middleware(req, _, next) {
+  create_object_middleware(req, _, next) {
     try {
       req.instance = this.create_object(req.internal_value);
       next();
@@ -31,11 +31,11 @@ module.exports = class ModelApiView {
     }
   }
 
-  static update_object(instance, data) {
+  update_object(instance, data) {
     return instance.update(data);
   }
 
-  static update_object_middleware(req, _, next) {
+  update_object_middleware(req, _, next) {
     try {
       this.update_object(req.instance, req.internal_value);
       req.instance.update(req.internal_value);
@@ -45,7 +45,7 @@ module.exports = class ModelApiView {
     }
   }
 
-  static serializer_middleware(req, _, next) {
+  serializer_middleware(req, _, next) {
     try {
       controller = this.get_controller(
         req.instance,
@@ -61,11 +61,11 @@ module.exports = class ModelApiView {
     }
   }
 
-  static list_objects() {
+  list_objects() {
     return this.model.findAll();
   }
 
-  static list_objects_middleware(req, _, next) {
+  list_objects_middleware(req, _, next) {
     try {
       req.instances = this.list_objects();
       next();
@@ -74,11 +74,11 @@ module.exports = class ModelApiView {
     }
   }
 
-  static perform_destroy(instance) {
+  perform_destroy(instance) {
     instance.destroy();
   }
 
-  static destroy_object_middleware(req, res, next) {
+  destroy_object_middleware(req, res, next) {
     try {
       this.perform_destroy(req.instance);
       return new NoContentResponse().send(res);
@@ -87,7 +87,7 @@ module.exports = class ModelApiView {
     }
   }
 
-  static deserialize_middleware(req, res, next) {
+  deserialize_middleware(req, res, next) {
     try {
       controller = this.get_controller();
       data = req.instance ? req.instance : req.instances;
@@ -99,7 +99,7 @@ module.exports = class ModelApiView {
     }
   }
 
-  static get_object_middleware(req, _, next) {
+  get_object_middleware(req, _, next) {
     try {
       instance = this.get_object(req.params.id, this.lookup_field === "id");
       req.instance = instance;
@@ -110,7 +110,7 @@ module.exports = class ModelApiView {
     }
   }
 
-  static get_object(urlValue, findById = true) {
+  get_object(urlValue, findById = true) {
     if (findById) {
       return this.model.findByPk(urlValue);
     } else {
@@ -118,11 +118,11 @@ module.exports = class ModelApiView {
     }
   }
 
-  static get_controller(...args) {
+  get_controller(...args) {
     return this.get_controller_class()(...args);
   }
 
-  static get_controller_class() {
+  get_controller_class() {
     return this.controller_class;
   }
 };
