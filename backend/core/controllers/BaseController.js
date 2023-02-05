@@ -1,16 +1,18 @@
+"use strict";
+
 const { Empty, SkipField, Field } = require("../fields");
+const { ValidationError } = require("../responses/errors");
 
 module.exports = class BaseController extends Field {
   _errors = undefined;
-  initial_data = undefined;
   validated = undefined;
 
-  constructor(instance = null, data = Empty, options) {
+  constructor(instance = null, data = new Empty(), options = {}) {
+    super(options);
     this.instance = instance;
-    if (data !== Empty) this.initial_data = data;
+    this.initial_data = data !== new Empty() ? data : null;
     this.partial = options.partial || false;
     this._context = options.context || {};
-    super(options);
   }
 
   to_internal_value(data) {
@@ -30,10 +32,10 @@ module.exports = class BaseController extends Field {
   }
 
   save(additional_data) {
-    if (validated === undefined)
+    if (this.validated === undefined)
       throw new Error("is_valid() must be called before save()");
 
-    if (self.errors !== null)
+    if (this.errors !== null)
       throw new Error("Can't call save() on a controller with invalid data");
 
     if (this._data !== null) {
@@ -50,7 +52,7 @@ module.exports = class BaseController extends Field {
     }
   }
 
-  is_valid(raiseError = false) {
+  is_valid(raiseError) {
     if (this.initial_data === null) {
       throw new Error(
         "Data must be passed to controller before calling is_valid"
@@ -58,16 +60,17 @@ module.exports = class BaseController extends Field {
     }
     // TODO confirm that controller was initialised with data
 
-    if (this.validated_data === undefined) {
+    if (this._validated_data === undefined) {
       try {
         this._validated_data = this.run_validation(this.initial_data);
         this._errors = null;
-      } catch {
+      } catch (e) {
         // TODO should specifically catch validation errors from fields
-        self.validated_data = {};
-        self.validated = false;
+        this._validated_data = {};
+        this.validated = false;
         // TODO improve errors
-        this._errors = [{ message: "There have been some errors" }];
+        this._errors = [{ message: e.message }];
+        throw e;
       }
     }
 

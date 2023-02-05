@@ -2,13 +2,14 @@ const { Empty, SkipField } = require("../fields");
 const { ValidationError } = require("../responses/errors");
 const { DataTypes } = require("sequelize");
 const { STRING, INTEGER } = DataTypes;
-const { CharField, IntegerField } = require("../fields");
+const { Field, CharField, IntegerField } = require("../fields");
 const { options } = require("sequelize/lib/model");
+const Controller = require("./Controller");
 
 // TODO maps model fields to controller fields
 field_mapping = {
-  STRING: CharField,
-  INTEGER: IntegerField,
+  CharField: CharField,
+  IntegerField: IntegerField,
 };
 
 ALL_FIELDS = "__all__";
@@ -28,20 +29,19 @@ ALL_FIELDS = "__all__";
 */
 // TODO this is really a SequelizeModelController, there is some base functionality
 // that could be shared with other model controllers using other ORMs but this is likely out of scope
-module.exports = class ModelController {
+module.exports = class ModelController extends Controller {
   _errors = null;
-  initial_data = null;
 
   // meta = {
-    // model: null, // sequelize model class to use
-    // fields: null, // list of field names, or ALL_FIELDS
-    // exclude: null, // list of field names, or ALL_FIELDS
-    // read_only_fields: null, // list of field names, or ALL_FIELDS
-    // extra_options: null, // dictionary of field names to keyword options for field
+  // model: null, // sequelize model class to use
+  // fields: null, // list of field names, or ALL_FIELDS
+  // exclude: null, // list of field names, or ALL_FIELDS
+  // read_only_fields: null, // list of field names, or ALL_FIELDS
+  // extra_options: null, // dictionary of field names to keyword options for field
   // };
 
   create(validated_data) {
-    model = this.meta.model;
+    let model = this.meta.model;
     // TODO raise errors on nested writes
     // TODO Pop many-to-many relationships from data before create ready to be added after instance is created later
     try {
@@ -63,9 +63,9 @@ module.exports = class ModelController {
 
   get_field_info(model) {
     // TODO there is also fieldRawAttributesMap, seemingly holds the same information but should review the differences
-    fields = model.rawAttributes;
-    pk_field_name = model.primaryKeyField;
-    pk_field = fields[pk_field_name];
+    let fields = model.rawAttributes;
+    let pk_field_name = model.primaryKeyField;
+    let pk_field = fields[pk_field_name];
     // TODO relations
 
     return { pk: pk_field, fields: fields };
@@ -103,16 +103,20 @@ module.exports = class ModelController {
       let extra_field_options = extra_options[field_name] || {};
       let source = extra_field_options.source || field_name;
 
-      field_class,
-        (field_options = this.build_field(source, info, model, depth));
+      let [field_class, field_options] = this.build_field(
+        source,
+        info,
+        model,
+        depth
+      );
 
       // Include extra field options from meta
-      let field_options = this.include_extra_options(
+      field_options = this.include_extra_options(
         field_options,
         extra_field_options
       );
 
-      fields[field_name] = field_class(field_options);
+      fields[field_name] = new field_class(field_options);
     }
 
     return fields;
@@ -152,7 +156,7 @@ module.exports = class ModelController {
       );
     }
 
-    if (fields === ALL_FIELDS) fields = null;
+    if (fields === ALL_FIELDS || fields === undefined) fields = null;
 
     // Ensure all declared fields are included in the meta.fields option
     let required_field_names = new Set(Object.keys(declared_fields));
@@ -170,7 +174,7 @@ module.exports = class ModelController {
 
     fields = this.get_default_field_names(declared_fields, info);
 
-    if (exclude !== null) {
+    if (exclude !== undefined) {
       for (let field_name of exclude) {
         if (field_name in required_field_names) {
           throw new Error(
@@ -178,26 +182,25 @@ module.exports = class ModelController {
           );
         }
 
-        if (!(field_name in fields)) {
+        if (!fields.has(field_name)) {
           throw new Error(
             `The field '${field_name}' was excluded on controller ${this.constructor.name}, but is not included in the model fields.`
           );
         }
       }
+      for (let field_name of exclude) fields.delete(field_name);
     }
-
-    for (let field_name of exclude) delete fields[field_name];
 
     return fields;
   }
 
   get_default_field_names(declared_fields, model_info) {
-    return [
-      model_info.pk_field.fieldName,
+    return new Set([
+      model_info.pk.fieldName,
       ...Object.keys(model_info.fields),
       ...Object.keys(declared_fields),
       // TOOD forward relations
-    ];
+    ]);
   }
 
   include_extra_options(options, extra_options) {
@@ -235,14 +238,21 @@ module.exports = class ModelController {
 
   build_field(field_name, info, model, nested_depth = 1) {
     if (field_name in info.fields) {
-      model_field = info.fields[field_name];
+      let model_field = info.fields[field_name];
       return this.build_standard_field(field_name, model_field);
     }
     throw new Error("Have not implemented other types of field yet");
   }
 
   build_standard_field(field_name, model_field) {
-    let field_class = field_mapping[model_field.type];
+    let field_type = model_field.customFieldOptions
+      ? model_field.customFieldOptions.controllerType
+      : String(model_field.type);
+    let field_class = field_mapping[field_type];
+    if (!field_class)
+      throw new Error(
+        `No field class found for field type ${model_field.type}`
+      );
     let field_options = this.get_field_options(field_name, model_field);
 
     // Only allow blank on charfield TODO or choice field
@@ -250,7 +260,7 @@ module.exports = class ModelController {
       delete field_options.allow_blank;
     }
 
-    return field_class, field_options;
+    return [field_class, field_options];
   }
 
   get_field_options(field_name, model_field) {
@@ -266,12 +276,12 @@ module.exports = class ModelController {
      * This is a database level constraint, but the controller should validate the value before a null value
      * is entered into the database. Even, if only to provide a better error message.
      */
-    options = {};
+    let options = {};
     model_field = model_field.customFieldOptions
       ? { ...model_field, ...model_field.customFieldOptions }
       : model_field;
 
-    validator_option = model_field.validators || [];
+    let validator_option = model_field.validators || [];
 
     // TODO(LOW) max_digits? decimal_places?
 
@@ -298,7 +308,7 @@ module.exports = class ModelController {
         delete validator_option.max;
       }
 
-      min_value = validator_option.minValue || null;
+      let min_value = validator_option.minValue || null;
       if (min_value && model_field instanceof IntegerField) {
         // TODO extend to all number fields
         options.max_value = min_value;
@@ -306,14 +316,14 @@ module.exports = class ModelController {
       }
     }
 
-    max_length = model_field.maxLength || null;
+    let max_length = model_field.maxLength || null;
     if (max_length && model_field instanceof CharField) {
       // TODO extend to all text fields
       options.max_length = max_length;
       delete validator_option.maxLength;
     }
 
-    min_length = model_field.minLength || null;
+    let min_length = model_field.minLength || null;
     if (min_length && model_field instanceof CharField) {
       // TODO extend to all text fields
       options.min_length = min_length;

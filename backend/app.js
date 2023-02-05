@@ -1,7 +1,11 @@
+'use strict'
 const path = require("path");
 const express = require("express");
 const apiRouter = require("./apiRouter");
 const getAppWithMiddleware = require("./core/middleware");
+const { testConnection } = require("./core/db");
+
+testConnection();
 
 let app = express();
 

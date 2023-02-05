@@ -46,7 +46,7 @@ module.exports = class Field {
 
   constructor(options = {}) {
     //Merge defaults with inputs
-    options = { ...default_options, ...options };
+    options = { ...this.default_options, ...options };
 
     // If required is not set, should be true if no default and not read only
     if (options.required === undefined)
@@ -74,7 +74,7 @@ module.exports = class Field {
     this.style = options.style === null ? {} : options.style;
 
     // TODO default_empty_html
-    this.validators = options.validators;
+    this.validators = options.validators || [];
 
     // These are set on calls to bind() when field is added to a serializer
     this.field_name = null;
@@ -91,13 +91,13 @@ module.exports = class Field {
     this.parent = parent;
 
     if (this.label === null)
-      self.label = field_name.split(/(?=[A-Z])/).join(" ");
+      this.label = field_name.split(/(?=[A-Z])/).join(" ");
 
     if (this.source === null) this.source = field_name;
 
     // TODO this will need to be passed to sequelize to load database objects
-    if (self.source === "*") self.source_attrs = [];
-    else self.source_attrs = self.source.split(".");
+    if (this.source === "*") this.source_attrs = [];
+    else this.source_attrs = this.source.split(".");
   }
 
   get validators() {
@@ -123,7 +123,7 @@ module.exports = class Field {
   get_value(data) {
     // TODO need to think about how to handle non-JSON data, e.g., form data
     // I think the answer is that we don't handle it, because what is the point??
-    return data[field_name];
+    return data[this.field_name];
   }
 
   _get_attribute(instance, source_attrs) {
@@ -168,7 +168,7 @@ module.exports = class Field {
   validate_empty_values(data) {
     if (this.read_only) return [true, this.get_default()];
 
-    if (data === new Empty()) {
+    if (data instanceof Empty) {
       if (this.root.partial) throw new SkipField();
       if (this.required) this.fail("required");
       return [true, this.get_default()];
@@ -185,6 +185,7 @@ module.exports = class Field {
   }
 
   run_validation(data = new Empty()) {
+    let is_empty_value;
     [is_empty_value, data] = this.validate_empty_values(data);
     if (is_empty_value) return data;
     value = this.to_internal_value(data);
@@ -193,7 +194,7 @@ module.exports = class Field {
   }
 
   run_validators(value) {
-    errors = [];
+    let errors = [];
     for (let validator of this.validators) {
       try {
         this.run_validator(validator, value);
@@ -217,7 +218,7 @@ module.exports = class Field {
      * objects, a check has to be made to see if the validator is a simple function
      * or a subclass of BaseValidator.
      */
-    args = [value];
+    let args = [value];
     if (validator.requires_context) {
       args.push(this);
     }
@@ -242,7 +243,7 @@ module.exports = class Field {
   }
 
   fail(error_key, ...args) {
-    message = this.error_messages[error_key];
+    let message = this.error_messages[error_key];
     if (message === undefined) {
       message = MISSING_ERROR_MESSAGE(this.constructor.name, error_key);
       throw new Error(message);
@@ -255,7 +256,7 @@ module.exports = class Field {
   }
 
   get root() {
-    root = this;
+    let root = this;
     while (root.parent !== null) {
       root = root.parent;
     }

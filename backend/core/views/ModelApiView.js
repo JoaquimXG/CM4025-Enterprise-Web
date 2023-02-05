@@ -14,7 +14,7 @@ module.exports = class ModelApiView {
   }
 
   get_controller_context_middleware(req, _, next) {
-    req.controller_context = get_controller_context(req);
+    req.controller_context = this.get_controller_context(req);
     next()
   }
 
@@ -24,7 +24,7 @@ module.exports = class ModelApiView {
 
   async create_object_middleware(req, _, next) {
     try {
-      req.instance = await this.create_object(req.internal_value);
+      req.instance = await this.create_object(req.controller.validated_data);
       next();
     } catch (e) {
       next(e);
@@ -37,7 +37,7 @@ module.exports = class ModelApiView {
 
   async update_object_middleware(req, _, next) {
     try {
-      await this.update_object(req.instance, req.internal_value);
+      await this.update_object(req.controller.instance, req.controller.validated_data);
       next();
     } catch (e) {
       next(e);
@@ -46,15 +46,13 @@ module.exports = class ModelApiView {
 
   serializer_middleware(req, _, next) {
     try {
-      controller = this.get_controller(
-        req.instance,
+      req.controller = this.get_controller(
+        req.instance || null,
         req.body,
         req.controller_context.partial
       );
-      if (controller.is_valid((raiseError = true))) {
-        req.internal_value = controller.to_internal_value(req.body);
-      }
-      next();
+      if (req.controller.is_valid(true))
+        next();
     } catch (e) {
       next(e);
     }
@@ -100,8 +98,7 @@ module.exports = class ModelApiView {
 
   async get_object_middleware(req, _, next) {
     try {
-      instance = await this.get_object(req.params.id, this.lookup_field === "id");
-      req.instance = instance;
+      req.instance = await this.get_object(req.params.id, this.lookup_field === "id");
       next();
     } catch (e) {
       // TODO get object or 404

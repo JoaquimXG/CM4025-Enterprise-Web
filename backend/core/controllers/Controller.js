@@ -1,11 +1,11 @@
 const BaseController = require("./BaseController");
-const { Empty } = require("../fields");
+const { Empty, SkipField } = require("../fields");
 const { ValidationError } = require("../responses/errors");
 
 module.exports = class Controller extends BaseController {
   // TODO review error messages
   default_error_messages = {
-    invalid: _("Invalid data. Expected a dictionary, but got {datatype}."),
+    invalid: "Invalid data. Expected a dictionary, but got {datatype}.",
   };
 
   meta = {};
@@ -16,10 +16,10 @@ module.exports = class Controller extends BaseController {
     if (this._fields === null) {
       // Loop through fields and bind them
       this._fields = {};
-      declared_fields = get_fields();
-      for (key in declared_fields) {
-        field = this.declared_fields[key];
-        this.bind_field(field);
+      let declared_fields = this.get_fields();
+      for (let key in declared_fields) {
+        let field = declared_fields[key];
+        field.bind(key, this);
         this._fields[key] = field;
       }
     }
@@ -85,13 +85,13 @@ module.exports = class Controller extends BaseController {
     return dictionary[self.field_name];
   }
 
-  run_validation(data = Empty) {}
-
   run_validation(data = Empty()) {
     //TODO validators and validate() should return non_field errors
-    [is_empty_value, data] = validate_empty_values(data);
+    let is_empty_value;
+    [is_empty_value, data] = this.validate_empty_values(data);
 
     if (is_empty_value) return data;
+    let value;
 
     try {
       value = this.to_internal_value(data);
@@ -121,7 +121,7 @@ module.exports = class Controller extends BaseController {
     );
 
     let defaults = {};
-    for (field in fields) {
+    for (let field in fields) {
       try {
         let defaultValue = field.get_default();
         defaults[field.source] = defaultValue;
@@ -136,51 +136,54 @@ module.exports = class Controller extends BaseController {
     // TODO run through list of custom validators that are present on this class
     // I think this is unlikely to be used much for the controller but is likely to be used
     // Extensively for Field
-    //
+    let to_validate;
     if (typeof data === "object") {
       to_validate = this.read_only_defaults();
-      to_validate = { ...to_validated, ...data };
+      to_validate = { ...to_validate, ...data };
     } else {
       to_validate = data;
     }
-    super().run_validators(to_validate);
+    super.run_validators(to_validate);
   }
 
   to_internal_value(data) {
     if (typeof data !== "object")
       throw new ValidationError("Data must be an object, not null");
 
-    ret = {};
-    errors = {};
-    fields = self.writeable_fields;
+    let ret = {};
+    let errors = {};
+    let fields = this.writeable_fields;
 
-    for (field in fields) {
-      validate_method = self["validate_" + field] || null;
-      primitive_value = field.get_value(data);
+    for (let field of fields) {
+      let validate_method = this["validate_" + field] || null;
+      let primitive_value = field.get_value(data);
       try {
-        validated_value = fields[field].run_validation(primitive_value);
+        let validated_value = field.run_validation(primitive_value);
         if (validate_method) {
           validated_value = validate_method(validated_value);
         }
-        ret[field] = validated_value;
+        ret[field.field_name] = validated_value;
       } catch (e) {
         if (e instanceof SkipField) continue;
-        if (e instanceof ValidationError) errors[field] = e.message;
+        if (e instanceof ValidationError) errors[field.field_name] = e.message;
         else throw e;
       }
     }
-    if (errors !== {}) throw new ValidationError(errors);
+    // TODO shouldn't neeed to stringify here
+    if (Object.keys(errors).length !== 0)
+      throw new ValidationError(JSON.stringify(errors));
 
     return data;
   }
 
   to_representation(instance) {
-    ret = {};
-    fields = this.readable_fields;
+    let ret = {};
+    let fields = this.readable_fields;
 
-    for (field in fields) {
+    for (let field in fields) {
+      let attribute;
       try {
-        let attribute = field.get_attribute(instance);
+        attribute = field.get_attribute(instance);
       } catch (e) {
         if (e instanceof SkipField) continue;
         else throw e;

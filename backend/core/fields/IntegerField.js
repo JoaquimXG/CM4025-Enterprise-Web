@@ -17,18 +17,9 @@ module.exports = class IntegerField extends Field {
   allowed_decimal = /\.0*\s*$/; // For removing trailing .0 from decimal strings
   disallowed_decimal = /\..*\s*$/; // For catching decimal strings after removing trailing .0
 
-  default_options = {
-    ...super.default_options,
-    max_value: null,
-    min_value: null,
-  };
 
   // TODO refactor to use named parameters, see: https://masteringjs.io/tutorials/fundamentals/parameters
-  constructor(options = {}) {
-    // Merge defaults and extract options
-    options = { ...default_options, ...options };
-    ({ max_value, min_value } = options);
-
+  constructor({max_value = null, min_value = null, ...options} = {}) {
     super(options);
 
     if (max_value !== null) {

@@ -2,6 +2,7 @@ const ModelApiView = require("./ModelApiView");
 
 module.exports = class ModelViewSet extends ModelApiView {
   create_middleware = [
+    this.get_controller_context_middleware.bind(this),
     this.serializer_middleware.bind(this),
     this.create_object_middleware.bind(this),
     this.deserialize_middleware.bind(this),

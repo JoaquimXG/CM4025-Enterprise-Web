@@ -3,7 +3,7 @@ const sequelize = require("../../../core/db/sequelize");
 
 module.exports = class TestController extends ModelController {
   meta = {
-    fields: "__all__",
     model: sequelize.models.TestModel,
+    exclude: ["createdAt", "updatedAt", "deletedAt"],
   }
 }
