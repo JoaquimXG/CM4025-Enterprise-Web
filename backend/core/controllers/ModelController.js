@@ -253,7 +253,7 @@ module.exports = class ModelController extends Controller {
       throw new Error(
         `No field class found for field type ${model_field.type}`
       );
-    let field_options = this.get_field_options(field_name, model_field);
+    let field_options = this.get_field_options(field_name, model_field, field_class);
 
     // Only allow blank on charfield TODO or choice field
     if (!field_class instanceof CharField) {
@@ -263,7 +263,7 @@ module.exports = class ModelController extends Controller {
     return [field_class, field_options];
   }
 
-  get_field_options(field_name, model_field) {
+  get_field_options(field_name, model_field, field_class) {
     /**
      * Get all options for the field class
      * Options are taken from the model field definition
@@ -296,20 +296,20 @@ module.exports = class ModelController extends Controller {
     if (model_field.defaultValue || model_field.allowNull || model_field.blank)
       options.required = false;
 
-    if (model_field.blank && model_field instanceof CharField)
+    if (model_field.blank && field_class == CharField)
       options.allow_blank = true;
 
     if (model_field.choices) options.choices = model_field.choices;
     else {
       let max_value = validator_option.maxValue || null;
-      if (max_value && model_field instanceof IntegerField) {
+      if (max_value && field_class == IntegerField) {
         // TODO extend to all number fields
         options.max_value = max_value;
         delete validator_option.max;
       }
 
       let min_value = validator_option.minValue || null;
-      if (min_value && model_field instanceof IntegerField) {
+      if (min_value && field_class == IntegerField) {
         // TODO extend to all number fields
         options.max_value = min_value;
         delete validator_option.minValue;
@@ -317,14 +317,14 @@ module.exports = class ModelController extends Controller {
     }
 
     let max_length = model_field.maxLength || null;
-    if (max_length && model_field instanceof CharField) {
+    if (max_length && field_class == CharField) {
       // TODO extend to all text fields
       options.max_length = max_length;
       delete validator_option.maxLength;
     }
 
     let min_length = model_field.minLength || null;
-    if (min_length && model_field instanceof CharField) {
+    if (min_length && field_class == CharField) {
       // TODO extend to all text fields
       options.min_length = min_length;
       delete validator_option.minLength;

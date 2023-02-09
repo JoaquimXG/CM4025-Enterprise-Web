@@ -6,8 +6,8 @@ module.exports = class ProhibitSurrogateCharactersValidator extends (
 ) {
   message = 'Surrogate characters are not allowed';
 
-  validate() {
-    if (this.value.match(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g))
+  validate(value) {
+    if (value.match(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g))
       throw new ValidationError(this.message());
   }
 };

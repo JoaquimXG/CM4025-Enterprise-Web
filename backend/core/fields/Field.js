@@ -1,6 +1,7 @@
 const Empty = require("./Empty");
 const SkipField = require("./SkipField");
 const { ValidationError } = require("../responses/errors");
+const { BaseValidator} = require("./validators");
 
 NOT_READ_ONLY_WRITE_ONLY = "May not set both `read_only` and `write_only`";
 NOT_READ_ONLY_REQUIRED = "May not set both `read_only` and `required`";
@@ -203,6 +204,9 @@ module.exports = class Field {
             throw e;
           }
           errors.concat(e.detail);
+        }
+        else {
+          throw e;
         }
       }
     }

@@ -1,3 +1,4 @@
+const BaseValidator = require("./BaseValidator")
 const MaxLengthValidator = require('./MaxLengthValidator');
 const MinLengthValidator = require('./MinLengthValidator');
 const ProhibitNullCharactersValidator = require('./ProhibitNullCharactersValidator');
@@ -9,6 +10,7 @@ const ValidatorJsValidator = require("./ValidatorJsValidator")
 
 
 module.exports = {
+  BaseValidator,
   MaxLengthValidator,
   MinLengthValidator,
   ProhibitNullCharactersValidator,

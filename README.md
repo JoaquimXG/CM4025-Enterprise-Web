@@ -3,6 +3,12 @@
 ## TODO
 1. Create consistent interface for standar CRUD endpoints
    - I want a similar system to how Django DRF handles standard CRUD with ViewSets supported by Serializers
+   - TODO(HERE) - This is nearly done, currently need to fix some issues in the valdiation chain
+     - Looks like fields are not being instantiated with validators with the correct arguments
+       - In particular, CharField not being instantiated with the correct max_length
+         - Could be an issue in CharField constructor
+         - Or during get_fields on the ModelController
+
 2. Create User model with sequelize and integrate with passportjs
 3. Relative imports???
 
@@ -33,6 +39,7 @@
 
 - I think it will be best to avoid the validation in place from sequelize and instead use standalone validation on controllers
   - Sequelize makes use of validator.js for string validation, should probably do the same
+
   
 
 ## Errors
