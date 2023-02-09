@@ -1,7 +1,7 @@
 const Empty = require("./Empty");
 const SkipField = require("./SkipField");
 const { ValidationError } = require("../responses/errors");
-const { BaseValidator} = require("./validators");
+const { BaseValidator } = require("./validators");
 
 NOT_READ_ONLY_WRITE_ONLY = "May not set both `read_only` and `write_only`";
 NOT_READ_ONLY_REQUIRED = "May not set both `read_only` and `required`";
@@ -12,17 +12,10 @@ MISSING_ERROR_MESSAGE = (class_name, key) => `\
   not exist in the 'error_messages' dictionary.`;
 
 module.exports = class Field {
-  error_messages = {
+  default_error_messages = {
     required: "This field is required.",
     read_only: "This field is read only.",
     write_only: "This field is write only.",
-    null: "This field may not be null.",
-    invalid: "Invalid value.",
-  };
-
-  // TODO review
-  default_error_messages = {
-    required: "This field is required.",
     null: "This field may not be null.",
   };
 
@@ -78,6 +71,11 @@ module.exports = class Field {
     // These are set on calls to bind() when field is added to a serializer
     this.field_name = null;
     this.parent = null;
+
+    this.error_messages = {
+      ...this.default_error_messages,
+      ...options.error_messages,
+    };
 
     // TODO get static default_error attributes from parent class
   }
@@ -203,9 +201,8 @@ module.exports = class Field {
           if (e.detail instanceof Object) {
             throw e;
           }
-          errors.concat(e.detail);
-        }
-        else {
+          errors.push(e.message);
+        } else {
           throw e;
         }
       }

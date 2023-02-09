@@ -3,6 +3,7 @@ const { MaxValueValidator, MinValueValidator } = require("./validators");
 
 module.exports = class IntegerField extends Field {
   default_error_messages = {
+    ...super.default_error_messages,
     invalid: "Must be a valid integer.",
     max_value: (max_value) =>
       `Ensure this value is less than or equal to ${max_value}.`,
@@ -18,17 +19,21 @@ module.exports = class IntegerField extends Field {
   disallowed_decimal = /\..*\s*$/; // For catching decimal strings after removing trailing .0
 
 
-  // TODO refactor to use named parameters, see: https://masteringjs.io/tutorials/fundamentals/parameters
   constructor({max_value = null, min_value = null, ...options} = {}) {
     super(options);
+    this.error_messages = {
+      ...this.default_error_messages,
+      ...options.error_messages,
+    };
 
+    let message;
     if (max_value !== null) {
-      message = this.default_error_messages["max_value"](max_value);
-      this.validators.push(MaxValueValidator(max_value, message));
+      message = this.error_messages.max_value(max_value);
+      this.validators.push(new MaxValueValidator(max_value, message));
     }
     if (min_value !== null) {
-      message = this.default_error_messages["min_value"](min_value);
-      this.validators.push(MinValueValidator(min_value, message));
+      message = this.error_messages.min_value(min_value);
+      this.validators.push(new MinValueValidator(min_value, message));
     }
   }
 
@@ -51,7 +56,6 @@ module.exports = class IntegerField extends Field {
   }
 
   to_representation(value) {
-    // TODO can you get away with just return value here???, I am not sure
     return parseInt(value);
   }
 };

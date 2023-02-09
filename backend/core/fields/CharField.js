@@ -9,6 +9,7 @@ const {
 
 module.exports = class CharField extends Field {
   default_error_messages = {
+    ...super.default_error_messages,
     invalid: "Not a valid string.",
     blank: "This field may not be blank.",
     max_length: (max_length) =>
@@ -18,16 +19,26 @@ module.exports = class CharField extends Field {
   };
   initial = "";
 
-  constructor({allow_blank = false, trim_whitespace = true, max_length = null, min_length = null, ...options} = {}) {
+  constructor({
+    allow_blank = false,
+    trim_whitespace = true,
+    max_length = null,
+    min_length = null,
+    ...options
+  } = {}) {
     super(options);
+    this.error_messages = {
+      ...this.default_error_messages,
+      ...options.error_messages,
+    };
 
     let message;
     if (max_length !== undefined)
       //TODO lazy format
-      message = this.default_error_messages.max_length(max_length);
+      message = this.error_messages.max_length(max_length);
     this.validators.push(new MaxLengthValidator(max_length, message));
     if (min_length !== undefined)
-      message = this.default_error_messages.min_length(min_length);
+      message = this.error_messages.min_length(min_length);
     this.validators.push(new MinLengthValidator(min_length, message));
 
     this.validators.push(new ProhibitNullCharactersValidator());

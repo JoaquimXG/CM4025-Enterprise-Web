@@ -10,6 +10,6 @@ module.exports = class ProhibitNullCharactersValidator extends BaseValidator {
   }
 
   validate(value) {
-    if (value.includes("\x00")) throw new ValidationError(this.message());
+    if (value.includes("\0")) throw new ValidationError(this.message());
   }
 };

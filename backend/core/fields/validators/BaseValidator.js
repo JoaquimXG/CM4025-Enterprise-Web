@@ -20,7 +20,7 @@ module.exports = class BaseValidator {
       throw new ValidationError(this.message(cleaned, limit_value));
   }
 
-  // Return true for validation failure, TODO perhaps it is better to flip this logic
+  // Return true for validation failure
   compare(a, b) {
     //Just a temporary implementation, to be overidden by subclasses
     return a !== b;

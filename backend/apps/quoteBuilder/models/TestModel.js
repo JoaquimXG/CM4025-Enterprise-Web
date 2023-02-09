@@ -23,6 +23,7 @@ const TestModel = {
     customFieldOptions: {
       controllerType: "CharField",
       maxLength: 50,
+      minLength: 10,
       blank: true,
       validators: []
     },
@@ -56,6 +57,8 @@ const TestModel = {
     allowNull: true,
     customFieldOptions: {
       controllerType: "IntegerField",
+      maxValue: 100,
+      minValue: 10
     }
   },
   testIntWithDefaultValueAllowNullTrue: {

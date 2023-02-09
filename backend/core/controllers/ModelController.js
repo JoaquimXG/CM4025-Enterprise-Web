@@ -301,18 +301,16 @@ module.exports = class ModelController extends Controller {
 
     if (model_field.choices) options.choices = model_field.choices;
     else {
-      let max_value = validator_option.maxValue || null;
+      let max_value = model_field.maxValue || null;
       if (max_value && field_class == IntegerField) {
         // TODO extend to all number fields
         options.max_value = max_value;
-        delete validator_option.max;
       }
 
-      let min_value = validator_option.minValue || null;
+      let min_value = model_field.minValue || null;
       if (min_value && field_class == IntegerField) {
         // TODO extend to all number fields
-        options.max_value = min_value;
-        delete validator_option.minValue;
+        options.min_value = min_value;
       }
     }
 
