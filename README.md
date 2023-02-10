@@ -1,11 +1,28 @@
 # CM4025 Placeholder
 
-## TODO
+# DONE
 1. Create consistent interface for standar CRUD endpoints
    - I want a similar system to how Django DRF handles standard CRUD with ViewSets supported by Serializers
-
 2. Create User model with sequelize and integrate with passportjs
-3. Relative imports???
+
+## TODO
+1. Create standard CRUD endpoints for user model, without proper validation
+2. Create DateTime fields and validators
+3. Integrate User model with passportjs
+4. Create other user API endpoints
+   - Password reset
+   - /user/me?
+   - Any others??
+5. View based permissions
+  - E.g., for /user/:id/ endpoints, this should probably be for `admins` only, if there are any
+  - I don't need roles or anything complex, just standard CRUD permissions for each model
+    - view
+    - create
+    - update
+    - delete
+
+6. Relative imports???
+7. CSRFTOKEN??? Should ask whether they are likely to care about this in class
 
 ### Issues
 
