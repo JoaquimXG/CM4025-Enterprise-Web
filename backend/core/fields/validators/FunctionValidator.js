@@ -7,7 +7,7 @@
 const BaseValidator = require("./BaseValidator");
 
 module.exports = class FunctionValidator extends BaseValidator {
-  constructor(validatorFunction, message) {
+  constructor({ validatorFunction, message } = {}) {
     this.validatorFunction = validatorFunction;
     this.message = message;
   }
