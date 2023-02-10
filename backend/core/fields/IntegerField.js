@@ -29,11 +29,11 @@ module.exports = class IntegerField extends Field {
     let message;
     if (max_value !== null) {
       message = this.error_messages.max_value(max_value);
-      this.validators.push(new MaxValueValidator(max_value, message));
+      this.validators.push(new MaxValueValidator({limit_value: max_value, message}));
     }
     if (min_value !== null) {
       message = this.error_messages.min_value(min_value);
-      this.validators.push(new MinValueValidator(min_value, message));
+      this.validators.push(new MinValueValidator({limit_value: min_value, message}));
     }
   }
 

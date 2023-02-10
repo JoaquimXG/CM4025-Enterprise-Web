@@ -8,11 +8,10 @@ const User = {
   },
   email: {
     type: DataTypes.STRING,
-    allowNull: false,
     unique: true,
-    validate: {
-      isEmail: true,
-    },
+    customFieldOptions: {
+      controllerType: "EmailField",
+    }
   },
   hash: {
     type: DataTypes.STRING,

@@ -36,10 +36,14 @@ module.exports = class CharField extends Field {
     if (max_length !== undefined)
       //TODO lazy format
       message = this.error_messages.max_length(max_length);
-    this.validators.push(new MaxLengthValidator(max_length, message));
+    this.validators.push(
+      new MaxLengthValidator({ limit_value: max_length, message })
+    );
     if (min_length !== undefined)
       message = this.error_messages.min_length(min_length);
-    this.validators.push(new MinLengthValidator(min_length, message));
+    this.validators.push(
+      new MinLengthValidator({ limit_value: min_length, message })
+    );
 
     this.validators.push(new ProhibitNullCharactersValidator());
     this.validators.push(new ProhibitSurrogateCharactersValidator());

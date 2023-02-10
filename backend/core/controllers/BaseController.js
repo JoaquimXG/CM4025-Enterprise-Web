@@ -6,6 +6,7 @@ const { ValidationError } = require("../responses/errors");
 module.exports = class BaseController extends Field {
   _errors = undefined;
   validated = undefined;
+  initial = {}
 
   constructor(instance = null, data = new Empty(), options = {}) {
     super(options);
@@ -41,14 +42,18 @@ module.exports = class BaseController extends Field {
     if (this._data !== null) {
       throw new Error("Cannot save after accessing data");
     }
-    // TODO merge validated_data with data passed into save
-    // validated_data =  merge(this.validated_data, additional_data)
+    this.validated_data = {...this.validated_data, ...additional_data}
 
-    //TODO error handling, should be checking that instances are returned from these calls
     if (this.instance !== null) {
-      return this.update(this.instance, this.validated_data);
+      let instance = this.update(this.instance, this.validated_data);
+      if (!instance)
+        throw new Error("update() must return an instance");
+      return instance;
     } else {
-      return this.create(this.validated_data);
+      this.create(this.validated_data);
+      if (!instance)
+        throw new Error("create() must return an instance");
+      return instance;
     }
   }
 
@@ -93,7 +98,9 @@ module.exports = class BaseController extends Field {
       } else if (this._errors === undefined) {
         this._data = this.to_representation(this.validated_data);
       }
-      //TODO else getInitial
+      else {
+        this._data = this.get_initial()
+      }
     }
 
     return this._data;

@@ -9,6 +9,24 @@
 
 ### Issues
 
+1. Error formatting
+  - Errors should be formatted properly through the validation chai
+
+### Testing
+
+- Fields
+  - All fields need to be tested for consistency, most of the functionality is shared between them
+  - CharField
+  - IntegerField
+  - BooleanField
+  - EmailField
+- Validators
+  -  MaxLengthValidator
+  -  MinLengtValidator
+  -  MaxValueValidator
+  -  MinValueValidator
+  -  ProhibitNullCharactersValidator
+  -  ProhibitSurrogateCharactersValidator
 
 
 ## CRUD Endpoints Framework
@@ -32,11 +50,6 @@
 - ViewRouter/BaseRouter
   - Takes a ViewSet and generates the routes for the endpoints
   
-
-### Validators
-
-- I think it will be best to avoid the validation in place from sequelize and instead use standalone validation on controllers
-  - Sequelize makes use of validator.js for string validation, should probably do the same
 
   
 

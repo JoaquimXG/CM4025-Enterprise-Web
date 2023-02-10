@@ -16,7 +16,6 @@ const TestModel = {
       controllerType: "CharField",
     }
   },
-  // TODO document custom field optoins and validation process
   testStringWithLength: {
     type: DataTypes.STRING(50),
     allowNull: true,

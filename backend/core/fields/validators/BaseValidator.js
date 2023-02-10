@@ -5,7 +5,7 @@ module.exports = class BaseValidator {
     `Ensure this value is ${limit_value} (it is ${cleaned_value}).`;
   code = "limit_value";
 
-  constructor(limit_value, message = null) {
+  constructor({ limit_value, message = null } = {}) {
     this.limit_value = limit_value;
     if (message !== null) this.message = message;
   }
