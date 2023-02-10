@@ -3,6 +3,7 @@ const Empty = require("./Empty");
 const Field = require("./Field");
 const CharField = require("./CharField");
 const IntegerField = require("./IntegerField");
+const EmailField = require("./EmailField");
 
 module.exports = {
   SkipField,
@@ -10,4 +11,5 @@ module.exports = {
   Field,
   IntegerField,
   CharField,
+  EmailField,
 };

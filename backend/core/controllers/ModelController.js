@@ -1,20 +1,16 @@
-const { Empty, SkipField } = require("../fields");
 const { ValidationError } = require("../responses/errors");
-const { DataTypes } = require("sequelize");
-const { STRING, INTEGER } = DataTypes;
-const { Field, CharField, IntegerField } = require("../fields");
-const { options } = require("sequelize/lib/model");
+const { Field, CharField, IntegerField, EmailField } = require("../fields");
 const Controller = require("./Controller");
 
-// TODO maps model fields to controller fields
 field_mapping = {
   CharField: CharField,
   IntegerField: IntegerField,
+  EmailField: EmailField,
 };
 
 ALL_FIELDS = "__all__";
 
-/* TODO Write docs
+/* TODO Write docs, include notes on meta field below
   * 1. Field
       - Holds logic that sits between all fields and all controllers
         - Not sure, need to review
@@ -27,7 +23,7 @@ ALL_FIELDS = "__all__";
   *
   * Controller extends from Field because controller can be used as a nested field on another controller
 */
-// TODO this is really a SequelizeModelController, there is some base functionality
+// Note: this is really a SequelizeModelController, there is some base functionality
 // that could be shared with other model controllers using other ORMs but this is likely out of scope
 module.exports = class ModelController extends Controller {
   _errors = null;
@@ -62,7 +58,6 @@ module.exports = class ModelController extends Controller {
   }
 
   get_field_info(model) {
-    // TODO there is also fieldRawAttributesMap, seemingly holds the same information but should review the differences
     let fields = model.rawAttributes;
     let pk_field_name = model.primaryKeyField;
     let pk_field = fields[pk_field_name];
@@ -84,7 +79,8 @@ module.exports = class ModelController extends Controller {
   get_fields() {
     let declared_fields = structuredClone(this.get_declared_fields());
     let model = this.meta.model;
-    // TODO depth for relations
+    // TODO depth for relations, I think I won't use depth here and instead will focus on using nested controllers
+    // Depth has some weird consequences for writes that I don't want to deal with
     let depth = 1;
 
     let info = this.get_field_info(model);
@@ -234,8 +230,6 @@ module.exports = class ModelController extends Controller {
     return extra_options;
   }
 
-  // TODO BELOW NEEDS TO BE REDONE
-
   build_field(field_name, info, model, nested_depth = 1) {
     if (field_name in info.fields) {
       let model_field = info.fields[field_name];
@@ -253,7 +247,11 @@ module.exports = class ModelController extends Controller {
       throw new Error(
         `No field class found for field type ${model_field.type}`
       );
-    let field_options = this.get_field_options(field_name, model_field, field_class);
+    let field_options = this.get_field_options(
+      field_name,
+      model_field,
+      field_class
+    );
 
     // Only allow blank on charfield TODO or choice field
     if (!field_class instanceof CharField) {
