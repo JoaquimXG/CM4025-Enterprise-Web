@@ -5,6 +5,7 @@ const {
   IntegerField,
   EmailField,
   BooleanField,
+  ChoiceField,
 } = require("../fields");
 const Controller = require("./Controller");
 
@@ -254,19 +255,48 @@ module.exports = class ModelController extends Controller {
   }
 
   build_standard_field(field_name, model_field) {
-    let field_type = model_field.customFieldOptions
-      ? model_field.customFieldOptions.controllerType
+    model_field = model_field.customFieldOptions
+      ? { ...model_field, ...model_field.customFieldOptions }
+      : model_field;
+
+    let field_type = model_field.controllerType
+      ? model_field.controllerType
       : String(model_field.type);
+
     let field_class = field_mapping[field_type];
+
     if (!field_class)
       throw new Error(
         `No field class found for field type ${model_field.type}`
       );
+
     let field_options = this.get_field_options(
       field_name,
       model_field,
       field_class
     );
+
+    if (model_field.choices) {
+      field_class = ChoiceField;
+      let valid_options = new Set([
+        "read_only",
+        "write_only",
+        "required",
+        "default",
+        "initial",
+        "source",
+        "error_messages",
+        "validators",
+        "allow_null",
+        "allow_blank",
+        "choices",
+      ]);
+      for (let key of Object.keys(field_options)) {
+        if (!valid_options.has(key)) {
+          delete field_options[key];
+        }
+      }
+    }
 
     // Only allow blank on charfield TODO or choice field
     if (!field_class instanceof CharField) {
@@ -290,9 +320,6 @@ module.exports = class ModelController extends Controller {
      * is entered into the database. Even, if only to provide a better error message.
      */
     let options = {};
-    model_field = model_field.customFieldOptions
-      ? { ...model_field, ...model_field.customFieldOptions }
-      : model_field;
 
     let validator_option = model_field.validators || [];
 

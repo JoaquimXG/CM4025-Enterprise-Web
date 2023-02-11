@@ -5,6 +5,7 @@ const CharField = require("./CharField");
 const IntegerField = require("./IntegerField");
 const EmailField = require("./EmailField");
 const BooleanField = require("./BooleanField");
+const ChoiceField = require("./ChoiceField");
 
 module.exports = {
   SkipField,
@@ -14,4 +15,5 @@ module.exports = {
   CharField,
   EmailField,
   BooleanField,
+  ChoiceField,
 };
