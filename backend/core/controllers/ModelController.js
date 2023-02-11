@@ -5,7 +5,6 @@ const {
   IntegerField,
   EmailField,
   BooleanField,
-  SkipField,
 } = require("../fields");
 const Controller = require("./Controller");
 
