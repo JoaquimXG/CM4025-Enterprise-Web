@@ -1,4 +1,4 @@
-const log = require("../utils/winstonLogger");
+const { log } = require("../utils/");
 
 //Creates a middleware function which will be run
 //whenever a request is made to express. This function
@@ -6,7 +6,7 @@ const log = require("../utils/winstonLogger");
 //and logs some of the more important pieces of information.
 //This is useful when developing and debugging the application
 module.exports = (req, res, next) => {
-  log.http({
+  log.info({
     req: {
       headers: {
         cookie: req.cookies,

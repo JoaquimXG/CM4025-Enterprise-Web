@@ -1,11 +1,12 @@
 const { createLogger, format, transports } = require("winston");
+const settings = require("../settings");
 
 //Creates a Winston logger object which can be used instead of console.log
 const log = createLogger({
-  level: "http",
   format: format.combine(format.errors({ stack: true })),
   transports: [
     new transports.File({
+      level: settings.FILE_LOG_LEVEL,
       filename: "./logs/server.log",
       format: format.combine(
         format.timestamp({
@@ -25,10 +26,10 @@ const logFormat = format.printf(function (info) {
 
 // Adds a debug level logger which is only utilised when
 // the app is not being deployed into production
-if (process.env.NODE_ENV !== "production") {
+if (settings.LOG_CONSOLE) {
   log.add(
     new transports.Console({
-      level: "debug",
+      level: settings.CONSOLE_LOG_LEVEL,
       format: format.combine(format.colorize(), logFormat),
       silent: process.argv.indexOf("--silent") >= 0,
     })

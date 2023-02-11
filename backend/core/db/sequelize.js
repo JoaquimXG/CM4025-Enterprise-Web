@@ -1,6 +1,6 @@
 const { Sequelize } = require("sequelize");
 const settings = require("../settings");
-const log = require("../utils/winstonLogger");
+const { log } = require("../utils/");
 
 const sequelize = new Sequelize(
   settings.MYSQL_DATABASE,
