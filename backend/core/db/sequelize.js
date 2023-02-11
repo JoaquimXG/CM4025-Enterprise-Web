@@ -34,8 +34,8 @@ const sequelize = new Sequelize(
 
 const modelDefinitions = [
   require("../../apps/auth/models/User.js"),
-  require("../../apps/quoteBuilder/models/Worker.js"),
-  require("../../apps/quoteBuilder/models/TestModel.js"),
+  require("../../apps/test/models/Worker.js"),
+  require("../../apps/test/models/TestModel.js"),
 ];
 
 for (const definition of modelDefinitions) {

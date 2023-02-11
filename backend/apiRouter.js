@@ -4,7 +4,7 @@ let apiRouter = Router();
 
 let routers = [
   ["/auth/", require("./apps/auth/routes")],
-  ["/quote/", require("./apps/quoteBuilder/routes")],
+  ["/test/", require("./apps/test/routes")],
 ];
 
 for (const [route, router] of routers) {
