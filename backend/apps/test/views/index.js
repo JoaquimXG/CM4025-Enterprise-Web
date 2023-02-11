@@ -1,5 +1,7 @@
-const TestViewSet = require("./TestViewSet");
+const IntegerViewSet = require("./IntegerViewSet");
+const StringViewSet = require("./StringViewSet");
 
 module.exports = {
-  TestViewSet,
+  IntegerViewSet,
+  StringViewSet,
 };

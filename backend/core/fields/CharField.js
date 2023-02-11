@@ -21,7 +21,7 @@ module.exports = class CharField extends Field {
   constructor({
     allow_blank = false,
     trim_whitespace = true,
-    max_length = null,
+    max_length = 255, // Standard length of CharField in Sequelize
     min_length = null,
     ...options
   } = {}) {

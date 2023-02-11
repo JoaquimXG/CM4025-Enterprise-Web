@@ -17,7 +17,11 @@ module.exports = class IntegerField extends Field {
   allowed_decimal = /\.0*\s*$/; // For removing trailing .0 from decimal strings
   disallowed_decimal = /\..*\s*$/; // For catching decimal strings after removing trailing .0
 
-  constructor({ max_value = null, min_value = null, ...options } = {}) {
+  constructor({
+    max_value = 2147483647, // 2^31 - 1, Max value of a 32-bit signed integer for MySQL
+    min_value = -2147483648, // -2^31, Min value of a 32-bit signed integer for MySQL
+    ...options
+  } = {}) {
     options.error_messages = {
       ...IntegerField.default_error_messages,
       ...options.error_messages,

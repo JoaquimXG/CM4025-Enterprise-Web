@@ -1,5 +1,7 @@
-const TestController = require("./TestController");
+const IntegerController = require("./IntegerController");
+const StringController = require("./StringController");
 
 module.exports = {
-  TestController,
+  IntegerController,
+  StringController,
 };

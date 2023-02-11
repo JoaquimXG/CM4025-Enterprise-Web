@@ -1,10 +1,13 @@
 const { BaseRouter } = require("../../../core/routers");
-const { TestViewSet } = require("../views");
+const { StringViewSet, IntegerViewSet } = require("../views");
 const { Router } = require("express");
 
-quoteRouter = Router();
+let testRouter = Router();
 
-let testRouter = new BaseRouter("/test", new TestViewSet());
-quoteRouter.use("/", testRouter.router);
+let stringRouter = new BaseRouter("/string", new StringViewSet());
+let intRouter = new BaseRouter("/int", new IntegerViewSet());
 
-module.exports = quoteRouter;
+testRouter.use("/", stringRouter.router);
+testRouter.use("/", intRouter.router);
+
+module.exports = testRouter;

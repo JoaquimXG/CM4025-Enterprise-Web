@@ -32,11 +32,17 @@ const sequelize = new Sequelize(
 //   }
 // });
 
-const modelDefinitions = [
+let modelDefinitions = [
   require("../../apps/auth/models/User.js"),
-  require("../../apps/test/models/Worker.js"),
-  require("../../apps/test/models/TestModel.js"),
+  require("../../apps/quoteBuilder/models/Worker.js"),
 ];
+
+if (settings.INIT_TEST_MODELS) {
+  modelDefinitions = modelDefinitions.concat([
+    require("../../apps/test/models/StringModel.js"),
+    require("../../apps/test/models/IntegerModel.js"),
+  ]);
+}
 
 for (const definition of modelDefinitions) {
   model = definition(sequelize);
