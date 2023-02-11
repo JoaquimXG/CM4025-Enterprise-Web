@@ -4,16 +4,16 @@
 1. Create consistent interface for standar CRUD endpoints
    - I want a similar system to how Django DRF handles standard CRUD with ViewSets supported by Serializers
 2. Create User model with sequelize and integrate with passportjs
+3. Create standard CRUD endpoints for user model, without proper validation
 
 ## TODO
-1. Create standard CRUD endpoints for user model, without proper validation
-2. Create DateTime fields and validators
-3. Integrate User model with passportjs
-4. Create other user API endpoints
+1. Create DateTime fields and validators
+2. Integrate User model with passportjs
+3. Create other user API endpoints
    - Password reset
    - /user/me?
    - Any others??
-5. View based permissions
+4. View based permissions
   - E.g., for /user/:id/ endpoints, this should probably be for `admins` only, if there are any
   - I don't need roles or anything complex, just standard CRUD permissions for each model
     - view
@@ -21,8 +21,8 @@
     - update
     - delete
 
-6. Relative imports???
-7. CSRFTOKEN??? Should ask whether they are likely to care about this in class
+5. Relative imports???
+6. CSRFTOKEN??? Should ask whether they are likely to care about this in class
 
 ### Issues
 
@@ -34,23 +34,13 @@
 1. Error formatting
   - Errors should be formatted properly through the validation chai
 
-
 ### Testing
 
 - Fields
-  - All fields need to be tested for consistency, most of the functionality is shared between them
-  - CharField
-  - IntegerField
-  - BooleanField
   - EmailField
+  - DateTimeField
 - Validators
-  -  MaxLengthValidator
-  -  MinLengtValidator
-  -  MaxValueValidator
-  -  MinValueValidator
-  -  ProhibitNullCharactersValidator
-  -  ProhibitSurrogateCharactersValidator
-
+  - EmailValidator
 
 ## CRUD Endpoints Framework
 
@@ -72,9 +62,6 @@
   - As we are using express and not Django, I imagine this will be done by collecting a list of functions from the serializer/controller and using these as middleware
 - ViewRouter/BaseRouter
   - Takes a ViewSet and generates the routes for the endpoints
-  
-
-  
 
 ## Errors
 
@@ -99,5 +86,3 @@
     - Hourly
     - Daily
   - has a title
-  
-
