@@ -1,11 +1,19 @@
 const { ValidationError } = require("../responses/errors");
-const { Field, CharField, IntegerField, EmailField } = require("../fields");
+const {
+  Field,
+  CharField,
+  IntegerField,
+  EmailField,
+  BooleanField,
+  SkipField,
+} = require("../fields");
 const Controller = require("./Controller");
 
 field_mapping = {
   CharField: CharField,
   IntegerField: IntegerField,
   EmailField: EmailField,
+  BooleanField: BooleanField,
 };
 
 ALL_FIELDS = "__all__";
@@ -294,34 +302,30 @@ module.exports = class ModelController extends Controller {
     if (model_field.defaultValue || model_field.allowNull || model_field.blank)
       options.required = false;
 
-    if (model_field.blank && field_class == CharField)
+    if (model_field.blank && Field.is_child(field_class, CharField))
       options.allow_blank = true;
 
     if (model_field.choices) options.choices = model_field.choices;
     else {
       let max_value = model_field.maxValue || null;
-      if (max_value && field_class == IntegerField) {
-        // TODO extend to all number fields
+      if (max_value && Field.is_child(field_class, IntegerField)) {
         options.max_value = max_value;
       }
 
       let min_value = model_field.minValue || null;
-      if (min_value && field_class == IntegerField) {
-        // TODO extend to all number fields
+      if (min_value && Field.is_child(field_class, IntegerField)) {
         options.min_value = min_value;
       }
     }
 
     let max_length = model_field.maxLength || null;
-    if (max_length && field_class == CharField) {
-      // TODO extend to all text fields
+    if (max_length && Field.is_child(field_class, CharField)) {
       options.max_length = max_length;
       delete validator_option.maxLength;
     }
 
     let min_length = model_field.minLength || null;
-    if (min_length && field_class == CharField) {
-      // TODO extend to all text fields
+    if (min_length && Field.is_child(field_class, CharField)) {
       options.min_length = min_length;
       delete validator_option.minLength;
     }
@@ -332,10 +336,5 @@ module.exports = class ModelController extends Controller {
 
     options.validators = validator_option;
     return options;
-  }
-
-  to_representation(instance) {
-    //TODO
-    return instance;
   }
 };

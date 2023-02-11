@@ -5,7 +5,7 @@ module.exports = class ProhibitNullCharactersValidator extends BaseValidator {
   message = () => "Null characters are not allowed.";
 
   constructor({ message = null } = {}) {
-    super(null, null);
+    super({});
     if (message !== null) this.message = message;
   }
 

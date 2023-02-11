@@ -33,7 +33,7 @@ const sequelize = new Sequelize(
 // });
 
 const modelDefinitions = [
-  require("../../apps/auth/models/user.js"),
+  require("../../apps/auth/models/User.js"),
   require("../../apps/quoteBuilder/models/Worker.js"),
   require("../../apps/quoteBuilder/models/TestModel.js"),
 ];

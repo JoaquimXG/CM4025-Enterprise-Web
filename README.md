@@ -26,8 +26,14 @@
 
 ### Issues
 
+#### ModelController
+
+1. Fields aren't removed from representation when in exclucded
+
+#### Other
 1. Error formatting
   - Errors should be formatted properly through the validation chai
+
 
 ### Testing
 

@@ -50,11 +50,11 @@ module.exports = class ModelApiView {
 
   serializer_middleware(req, _, next) {
     try {
-      req.controller = this.get_controller(
-        req.instance || null,
-        req.body,
-        req.controller_context.partial
-      );
+      req.controller = this.get_controller({
+        instance: req.instance || null,
+        data: req.body,
+        options: { partial: req.controller_context.partial },
+      });
       if (req.controller.is_valid(true)) next();
     } catch (e) {
       next(e);
@@ -89,8 +89,9 @@ module.exports = class ModelApiView {
 
   deserialize_middleware(req, res, next) {
     try {
-      let controller = this.get_controller();
+      let many = req.instances ? true : false;
       let data = req.instance ? req.instance : req.instances;
+      let controller = this.get_controller({ options: {many} });
       data = controller.to_representation(data);
       // TODO This works for retrieve, list, update, but not for create, should return 201 for create
       return new OkResponse(data).sendJson(res);
@@ -106,7 +107,7 @@ module.exports = class ModelApiView {
         this.lookup_field === "id"
       );
       if (!req.instance) return new NotFoundError().send(res);
-      next()
+      next();
     } catch (e) {
       next(e);
     }

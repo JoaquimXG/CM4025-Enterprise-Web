@@ -4,6 +4,7 @@ const Field = require("./Field");
 const CharField = require("./CharField");
 const IntegerField = require("./IntegerField");
 const EmailField = require("./EmailField");
+const BooleanField = require("./BooleanField");
 
 module.exports = {
   SkipField,
@@ -12,4 +13,5 @@ module.exports = {
   IntegerField,
   CharField,
   EmailField,
+  BooleanField,
 };
