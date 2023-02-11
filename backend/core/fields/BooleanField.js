@@ -1,7 +1,7 @@
 const Field = require("./Field");
 
 module.exports = class BooleanField extends Field {
-  default_error_messages = {
+  static default_error_messages = {
     invalid: "Must be a valid boolean.",
   };
   initial = false;
@@ -42,6 +42,14 @@ module.exports = class BooleanField extends Field {
     0.0,
     false,
   ]);
+
+  constructor({ options = {} } = {}) {
+    options.error_messages = {
+      ...BooleanField.default_error_messages,
+      ...options.error_messages,
+    };
+    super(options);
+  }
 
   NULL_VALUES = new Set(["null", "Null", "NULL", "", null]);
 

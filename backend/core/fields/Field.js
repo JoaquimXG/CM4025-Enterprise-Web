@@ -12,7 +12,7 @@ MISSING_ERROR_MESSAGE = (class_name, key) => `\
   not exist in the 'error_messages' dictionary.`;
 
 module.exports = class Field {
-  default_error_messages = {
+  static default_error_messages = {
     required: "This field is required.",
     read_only: "This field is read only.",
     write_only: "This field is write only.",
@@ -38,10 +38,14 @@ module.exports = class Field {
   constructor(options = {}) {
     //Merge defaults with inputs
     options = { ...this.default_options, ...options };
+    this.error_messages = {
+      ...Field.default_error_messages,
+      ...options.error_messages,
+    };
 
     // If required is not set, should be true if no default and not read only
     if (options.required === undefined)
-      this.required = options.default === new Empty() && !options.read_only;
+      this.required = options.default instanceof Empty && !options.read_only;
 
     // Some options combinations are invalid
     if (options.read_only && options.write_only)
@@ -55,7 +59,6 @@ module.exports = class Field {
     this.read_only = options.read_only;
     this.write_only = options.write_only;
     this.allow_null = options.allow_null;
-    this.required = options.required;
     this.default = options.default;
     this.source = options.source;
     this.initial =
@@ -71,11 +74,6 @@ module.exports = class Field {
     // These are set on calls to bind() when field is added to a serializer
     this.field_name = null;
     this.parent = null;
-
-    this.error_messages = {
-      ...this.default_error_messages,
-      ...options.error_messages,
-    };
 
     // TODO get static default_error attributes from parent class
   }
@@ -133,6 +131,7 @@ module.exports = class Field {
       else instance.get(attr);
       //TODO some other error handling is going to be required here
     }
+    return instance;
   }
 
   get_attribute(instance) {
@@ -265,5 +264,9 @@ module.exports = class Field {
   get context() {
     if (this.root._context !== undefined) return this.root._context;
     return {};
+  }
+
+  static is_child(field_class, type) {
+    return field_class.prototype instanceof type || field_class === type;
   }
 };

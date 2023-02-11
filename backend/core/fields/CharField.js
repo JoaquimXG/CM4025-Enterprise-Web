@@ -8,8 +8,7 @@ const {
 } = require("./validators");
 
 module.exports = class CharField extends Field {
-  default_error_messages = {
-    ...super.default_error_messages,
+  static default_error_messages = {
     invalid: "Not a valid string.",
     blank: "This field may not be blank.",
     max_length: (max_length) =>

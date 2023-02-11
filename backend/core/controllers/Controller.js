@@ -121,7 +121,7 @@ module.exports = class Controller extends BaseController {
     );
 
     let defaults = {};
-    for (let field in fields) {
+    for (let field of fields) {
       try {
         let defaultValue = field.get_default();
         defaults[field.source] = defaultValue;
@@ -169,18 +169,15 @@ module.exports = class Controller extends BaseController {
         else throw e;
       }
     }
-    // TODO shouldn't neeed to stringify here
-    if (Object.keys(errors).length !== 0)
-      throw new ValidationError(JSON.stringify(errors));
+    if (Object.keys(errors).length !== 0) throw new ValidationError(errors);
 
-    return data;
+    return ret;
   }
 
-  to_representation(instance) {
+  _to_representation(instance, fields) {
     let ret = {};
-    let fields = this.readable_fields;
 
-    for (let field in fields) {
+    for (let field of fields) {
       let attribute;
       try {
         attribute = field.get_attribute(instance);
@@ -193,6 +190,19 @@ module.exports = class Controller extends BaseController {
       if (attribute === null) ret[field.field_name] = null;
       else ret[field.field_name] = field.to_representation(attribute);
     }
+    return ret;
+  }
+
+  to_representation(data) {
+    let ret = this.many ? [] : {};
+    let fields = this.readable_fields;
+    // TODO should use a proper ListController but this is fine for now
+
+    if (this.many) {
+      for (let instance of data)
+        ret.push(this._to_representation(instance, fields));
+    } else ret = this._to_representation(data, fields);
+
     return ret;
   }
 

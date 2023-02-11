@@ -1,19 +1,19 @@
 "use strict";
-
-const { Empty, SkipField, Field } = require("../fields");
+const { Empty, Field } = require("../fields");
 const { ValidationError } = require("../responses/errors");
 
 module.exports = class BaseController extends Field {
   _errors = undefined;
   validated = undefined;
-  initial = {}
+  initial = {};
 
-  constructor(instance = null, data = new Empty(), options = {}) {
+  constructor({ instance = null, data = new Empty(), options = {} } = {}) {
     super(options);
     this.instance = instance;
     this.initial_data = data !== new Empty() ? data : null;
     this.partial = options.partial || false;
     this._context = options.context || {};
+    this.many = options.many || false;
   }
 
   to_internal_value(data) {
@@ -42,17 +42,15 @@ module.exports = class BaseController extends Field {
     if (this._data !== null) {
       throw new Error("Cannot save after accessing data");
     }
-    this.validated_data = {...this.validated_data, ...additional_data}
+    this.validated_data = { ...this.validated_data, ...additional_data };
 
     if (this.instance !== null) {
       let instance = this.update(this.instance, this.validated_data);
-      if (!instance)
-        throw new Error("update() must return an instance");
+      if (!instance) throw new Error("update() must return an instance");
       return instance;
     } else {
       this.create(this.validated_data);
-      if (!instance)
-        throw new Error("create() must return an instance");
+      if (!instance) throw new Error("create() must return an instance");
       return instance;
     }
   }
@@ -97,9 +95,8 @@ module.exports = class BaseController extends Field {
         this._data = this.to_representation(this.instance);
       } else if (this._errors === undefined) {
         this._data = this.to_representation(this.validated_data);
-      }
-      else {
-        this._data = this.get_initial()
+      } else {
+        this._data = this.get_initial();
       }
     }
 

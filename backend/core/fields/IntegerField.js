@@ -2,8 +2,7 @@ const Field = require("./Field");
 const { MaxValueValidator, MinValueValidator } = require("./validators");
 
 module.exports = class IntegerField extends Field {
-  default_error_messages = {
-    ...super.default_error_messages,
+  static default_error_messages = {
     invalid: "Must be a valid integer.",
     max_value: (max_value) =>
       `Ensure this value is less than or equal to ${max_value}.`,
@@ -18,22 +17,25 @@ module.exports = class IntegerField extends Field {
   allowed_decimal = /\.0*\s*$/; // For removing trailing .0 from decimal strings
   disallowed_decimal = /\..*\s*$/; // For catching decimal strings after removing trailing .0
 
-
-  constructor({max_value = null, min_value = null, ...options} = {}) {
-    super(options);
-    this.error_messages = {
-      ...this.default_error_messages,
+  constructor({ max_value = null, min_value = null, ...options } = {}) {
+    options.error_messages = {
+      ...IntegerField.default_error_messages,
       ...options.error_messages,
     };
+    super(options);
 
     let message;
     if (max_value !== null) {
       message = this.error_messages.max_value(max_value);
-      this.validators.push(new MaxValueValidator({limit_value: max_value, message}));
+      this.validators.push(
+        new MaxValueValidator({ limit_value: max_value, message })
+      );
     }
     if (min_value !== null) {
       message = this.error_messages.min_value(min_value);
-      this.validators.push(new MinValueValidator({limit_value: min_value, message}));
+      this.validators.push(
+        new MinValueValidator({ limit_value: min_value, message })
+      );
     }
   }
 
