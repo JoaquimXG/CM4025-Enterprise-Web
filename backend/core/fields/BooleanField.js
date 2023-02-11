@@ -43,7 +43,7 @@ module.exports = class BooleanField extends Field {
     false,
   ]);
 
-  constructor({ options = {} } = {}) {
+  constructor(options = {}) {
     options.error_messages = {
       ...BooleanField.default_error_messages,
       ...options.error_messages,
