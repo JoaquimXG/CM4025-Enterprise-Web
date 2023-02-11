@@ -4,6 +4,7 @@ const {
   IntegerViewSet,
   BooleanViewSet,
   NullDefaultViewSet,
+  ChoiceViewSet,
 } = require("../views");
 const { Router } = require("express");
 
@@ -16,10 +17,12 @@ let nullDefaultRouter = new BaseRouter(
   "/nullDefault",
   new NullDefaultViewSet()
 );
+let choiceRouter = new BaseRouter("/choice", new ChoiceViewSet());
 
 testRouter.use("/", stringRouter.router);
 testRouter.use("/", intRouter.router);
 testRouter.use("/", boolRouter.router);
 testRouter.use("/", nullDefaultRouter.router);
+testRouter.use("/", choiceRouter.router);
 
 module.exports = testRouter;

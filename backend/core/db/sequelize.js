@@ -43,6 +43,7 @@ if (settings.INIT_TEST_MODELS) {
     require("../../apps/test/models/IntegerModel.js"),
     require("../../apps/test/models/BooleanModel.js"),
     require("../../apps/test/models/NullDefaultModel.js"),
+    require("../../apps/test/models/ChoiceModel.js"),
   ]);
 }
 
