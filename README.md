@@ -5,6 +5,7 @@
    - I want a similar system to how Django DRF handles standard CRUD with ViewSets supported by Serializers
 2. Create User model with sequelize and integrate with passportjs
 3. Create standard CRUD endpoints for user model, without proper validation
+4. Create ChoiceField
 
 ## TODO
 1. Create DateTime fields and validators
