@@ -54,16 +54,16 @@ module.exports = class BooleanField extends Field {
   NULL_VALUES = new Set(["null", "Null", "NULL", "", null]);
 
   to_internal_value(data) {
-    if (data in this.TRUE_VALUES) return true;
-    if (data in this.FALSE_VALUES) return false;
-    if (data in this.NULL_VALUES && this.allow_null) return null;
-    this.fail("invalid", (input = data));
+    if (this.TRUE_VALUES.has(data)) return true;
+    if (this.FALSE_VALUES.has(data)) return false;
+    if (this.NULL_VALUES.has(data) && this.allow_null) return null;
+    this.fail("invalid");
   }
 
   to_representation(value) {
-    if (value in this.TRUE_VALUES) return true;
-    if (value in this.FALSE_VALUES) return false;
-    if (value in this.NULL_VALUES && this.allow_null) return null;
+    if (this.TRUE_VALUES.has(value)) return true;
+    if (this.FALSE_VALUES.has(value)) return false;
+    if (this.NULL_VALUES.has(value) && this.allow_null) return null;
     return !!value;
   }
 };

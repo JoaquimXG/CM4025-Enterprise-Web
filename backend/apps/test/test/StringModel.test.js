@@ -53,7 +53,7 @@ const createUpdateTests = (f) => {
     });
   }
 
-  for (const value of ["", LONGEST_VALUE + "_"]) {
+  for (const value of ["", LONGEST_VALUE + "_", null]) {
     it(`string: '${value}', out of range -> should return 400`, () => {
       let test = { ...base, string: value };
       return f().send(test).expect(400);

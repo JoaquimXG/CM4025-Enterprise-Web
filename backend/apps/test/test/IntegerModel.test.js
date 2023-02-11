@@ -52,7 +52,7 @@ const createUpdateTests = (f) => {
     });
   }
 
-  for (const value of [MIN_VALUE - 1, MAX_VALUE + 1]) {
+  for (const value of [MIN_VALUE - 1, MAX_VALUE + 1, null]) {
     it(`int: ${value}, out of range -> should return 400`, () => {
       let test = { ...base, int: value };
       return f().send(test).expect(400);

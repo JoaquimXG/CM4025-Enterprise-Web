@@ -41,6 +41,7 @@ if (settings.INIT_TEST_MODELS) {
   modelDefinitions = modelDefinitions.concat([
     require("../../apps/test/models/StringModel.js"),
     require("../../apps/test/models/IntegerModel.js"),
+    require("../../apps/test/models/BooleanModel.js"),
   ]);
 }
 
