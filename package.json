@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "migrate": "SEQUELIZE_MIGRATE=true node backend/core/db/sequelize.js",
+    "migrate": "LOG_CONSOLE=true CONSOLE_LOG_LEVEL=debug SEQUELIZE_MIGRATE=true node backend/core/db/sequelize.js",
     "test-connect-db": "node backend/core/db/testConnection.js",
     "testing": "node test.js",
     "test": "LOG_CONSOLE=true CONSOLE_LOG_LEVEL=warn jest",

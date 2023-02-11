@@ -145,7 +145,7 @@ module.exports = class Field {
   }
 
   get_default() {
-    if (this.defualt === new Empty() || this.root.partial === true)
+    if (this.default instanceof Empty || this.root.partial === true)
       // No default, or this is a partial update.
       throw new SkipField();
     if (this.default instanceof Function) {
