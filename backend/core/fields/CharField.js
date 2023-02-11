@@ -56,7 +56,7 @@ module.exports = class CharField extends Field {
       return "";
     }
 
-    super.run_validation(data);
+    return super.run_validation(data);
   }
 
   to_internal_value(data) {

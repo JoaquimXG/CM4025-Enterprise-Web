@@ -11,7 +11,8 @@
     "testing": "node test.js",
     "test": "LOG_CONSOLE=true CONSOLE_LOG_LEVEL=warn jest",
     "test-info": "LOG_CONSOLE=true CONSOLE_LOG_LEVEL=info jest",
-    "test-debug": "LOG_CONSOLE=true CONSOLE_LOG_LEVEL=debug jest"
+    "test-debug": "LOG_CONSOLE=true CONSOLE_LOG_LEVEL=debug jest",
+    "test-specific": "LOG_CONSOLE=true CONSOLE_LOG_LEVEL=debug jest backend/apps/test/test/StringModel.test.js"
   },
   "repository": "https://github.com/JoaquimXG/CM4025-Enterprise-Web",
   "author": "Joaquim Gomez",

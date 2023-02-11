@@ -306,7 +306,7 @@ module.exports = class ModelController extends Controller {
       return options;
     }
 
-    if (model_field.defaultValue || model_field.allowNull || model_field.blank)
+    if (model_field.defaultValue || model_field.allowNull)
       options.required = false;
 
     if (model_field.blank && Field.is_child(field_class, CharField))

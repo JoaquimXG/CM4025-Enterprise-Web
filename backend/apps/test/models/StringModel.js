@@ -17,7 +17,7 @@ const StringModel = {
     },
   },
   stringMaxLength: {
-    type: DataTypes.STRING(),
+    type: DataTypes.STRING(50),
     allowNull: false,
     customFieldOptions: {
       controllerType: "CharField",
@@ -30,7 +30,6 @@ const StringModel = {
     customFieldOptions: {
       controllerType: "CharField",
       minLength: 10,
-      blank: true,
     },
   },
   stringBlank: {
