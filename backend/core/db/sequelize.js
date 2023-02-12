@@ -45,6 +45,7 @@ if (settings.INIT_TEST_MODELS) {
     require("../../apps/test/models/NullDefaultModel.js"),
     require("../../apps/test/models/ChoiceModel.js"),
     require("../../apps/test/models/DateTimeModel.js"),
+    require("../../apps/test/models/EmailModel.js"),
   ]);
 }
 

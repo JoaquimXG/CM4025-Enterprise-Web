@@ -1,4 +1,5 @@
 const config = {
+  maxConcurrency: 10,
   testTimeout: 1000,
   reporters: [
     "default",
