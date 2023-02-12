@@ -5,6 +5,7 @@ const {
   BooleanViewSet,
   NullDefaultViewSet,
   ChoiceViewSet,
+  DateTimeViewSet,
 } = require("../views");
 const { Router } = require("express");
 
@@ -18,11 +19,13 @@ let nullDefaultRouter = new BaseRouter(
   new NullDefaultViewSet()
 );
 let choiceRouter = new BaseRouter("/choice", new ChoiceViewSet());
+let dateTimeRouter = new BaseRouter("/dateTime", new DateTimeViewSet());
 
 testRouter.use("/", stringRouter.router);
 testRouter.use("/", intRouter.router);
 testRouter.use("/", boolRouter.router);
 testRouter.use("/", nullDefaultRouter.router);
 testRouter.use("/", choiceRouter.router);
+testRouter.use("/", dateTimeRouter.router)
 
 module.exports = testRouter;
