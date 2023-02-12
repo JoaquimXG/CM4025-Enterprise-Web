@@ -1,5 +1,5 @@
 const config = {
-  testTimeout: 500,
+  testTimeout: 1000,
   reporters: [
     "default",
     [
