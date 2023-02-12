@@ -8,6 +8,7 @@ const MinValueValidator = require("./MinValueValidator")
 const FunctionValidator = require("./FunctionValidator")
 const ValidatorJsValidator = require("./ValidatorJsValidator")
 const EmailValidator = require("./EmailValidator")
+const DateTimeValidator = require("./DateTimeValidator")
 
 
 module.exports = {
@@ -20,5 +21,6 @@ module.exports = {
   MinValueValidator,
   FunctionValidator,
   ValidatorJsValidator,
-  EmailValidator
+  EmailValidator,
+  DateTimeValidator
 };

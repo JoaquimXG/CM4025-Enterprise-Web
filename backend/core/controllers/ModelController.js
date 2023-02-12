@@ -6,6 +6,7 @@ const {
   EmailField,
   BooleanField,
   ChoiceField,
+  DateTimeField,
 } = require("../fields");
 const Controller = require("./Controller");
 
@@ -14,6 +15,8 @@ field_mapping = {
   IntegerField: IntegerField,
   EmailField: EmailField,
   BooleanField: BooleanField,
+  DateTimeField: DateTimeField,
+  DATETIME: DateTimeField,
 };
 
 ALL_FIELDS = "__all__";
@@ -199,9 +202,12 @@ module.exports = class ModelController extends Controller {
   }
 
   get_default_field_names(declared_fields, model_info) {
+    let fieldsWithoutDeletedAt = Object.keys(model_info.fields).filter(
+      (field) => field !== "deletedAt"
+    );
     return new Set([
       model_info.pk.fieldName,
-      ...Object.keys(model_info.fields),
+      ...fieldsWithoutDeletedAt,
       ...Object.keys(declared_fields),
       // TOOD forward relations
     ]);
@@ -240,6 +246,22 @@ module.exports = class ModelController extends Controller {
       throw new TypeError("read_only_fields must be an array");
 
     for (let field of this.meta.read_only_fields) {
+      if (!(field in extra_options)) extra_options[field] = { read_only: true };
+      else extra_options[field].read_only = true;
+    }
+
+    // Set "createdAt" and "updatedAt" and "deletedAt" to read only
+    extra_options = this.force_read_only_fields(
+      extra_options,
+      "createdAt",
+      "updatedAt",
+      "deletedAt"
+    );
+    return extra_options;
+  }
+
+  force_read_only_fields(extra_options, ...fields) {
+    for (let field of fields) {
       if (!(field in extra_options)) extra_options[field] = { read_only: true };
       else extra_options[field].read_only = true;
     }
@@ -342,12 +364,18 @@ module.exports = class ModelController extends Controller {
     if (model_field.choices) options.choices = model_field.choices;
     else {
       let max_value = model_field.maxValue || null;
-      if (max_value && Field.is_child(field_class, IntegerField)) {
+      if (
+        max_value &&
+        Field.is_child(field_class, [IntegerField, DateTimeField])
+      ) {
         options.max_value = max_value;
       }
 
       let min_value = model_field.minValue || null;
-      if (min_value && Field.is_child(field_class, IntegerField)) {
+      if (
+        min_value &&
+        Field.is_child(field_class, [IntegerField, DateTimeField])
+      ) {
         options.min_value = min_value;
       }
     }

@@ -266,7 +266,12 @@ module.exports = class Field {
     return {};
   }
 
-  static is_child(field_class, type) {
-    return field_class.prototype instanceof type || field_class === type;
+  static is_child(field_class, types) {
+    if (!Array.isArray(types)) types = [types];
+    for (let type of types) {
+      if (field_class.prototype instanceof type || field_class === type)
+        return true;
+    }
+    return false;
   }
 };

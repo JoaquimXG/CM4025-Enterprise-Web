@@ -6,6 +6,7 @@ const IntegerField = require("./IntegerField");
 const EmailField = require("./EmailField");
 const BooleanField = require("./BooleanField");
 const ChoiceField = require("./ChoiceField");
+const DateTimeField = require("./DateTimeField");
 
 module.exports = {
   SkipField,
@@ -16,4 +17,5 @@ module.exports = {
   EmailField,
   BooleanField,
   ChoiceField,
+  DateTimeField,
 };
