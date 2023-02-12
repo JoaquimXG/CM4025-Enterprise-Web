@@ -3,14 +3,15 @@ const { Empty, SkipField } = require("../fields");
 const { ValidationError } = require("../responses/errors");
 
 module.exports = class Controller extends BaseController {
-  static default_error_messages = {
+  // TODO review error messages
+  staticdefault_error_messages = {
     invalid: "Invalid data. Expected a dictionary, but got {datatype}.",
   };
 
   meta = {};
 
   _fields = null;
-
+  
   constructor(options = {}) {
     options.error_messages = {
       ...Controller.default_error_messages,
@@ -71,8 +72,7 @@ module.exports = class Controller extends BaseController {
           .map((field_name) => [field_name, this.fields[field_name]])
           .filter(
             ([_, field]) =>
-              !field.get_value(this.initial_data) instanceof Empty &&
-              !field.read_only
+              !field.get_value(this.initial_data) instanceof Empty && !field.read_only
           )
       );
     }
@@ -158,7 +158,7 @@ module.exports = class Controller extends BaseController {
     let fields = this.writeable_fields;
 
     for (let field of fields) {
-      let validate_method = this["validate_" + field] || null;
+      let validate_method = this["validate_" + field.field_name] || null;
       let primitive_value = field.get_value(data);
       try {
         let validated_value = field.run_validation(primitive_value);

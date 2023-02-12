@@ -46,6 +46,8 @@ module.exports = class Field {
     // If required is not set, should be true if no default and not read only
     if (options.required === undefined)
       this.required = options.default instanceof Empty && !options.read_only;
+    else
+      this.required = options.required;
 
     // Some options combinations are invalid
     if (options.read_only && options.write_only)

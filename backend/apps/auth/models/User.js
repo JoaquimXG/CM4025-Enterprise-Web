@@ -20,7 +20,7 @@ const User = {
   },
   hash: {
     type: DataTypes.STRING,
-    allowNull: true, // TODO(IMPORTANT)TODOTODO(IMPORTANT)
+    allowNull: false,
     customFieldOptions: {
       controllerType: "CharField",
     },
