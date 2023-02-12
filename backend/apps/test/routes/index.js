@@ -8,6 +8,7 @@ const {
   DateTimeViewSet,
   EmailViewSet,
 } = require("../views");
+const controllerOptionsRouter = require("./controller-options")
 const { Router } = require("express");
 
 let testRouter = Router();
@@ -30,5 +31,6 @@ testRouter.use("/", nullDefaultRouter.router);
 testRouter.use("/", choiceRouter.router);
 testRouter.use("/", dateTimeRouter.router)
 testRouter.use("/", emailRouter.router)
+testRouter.use("/controllerOptions/", controllerOptionsRouter)
 
 module.exports = testRouter;

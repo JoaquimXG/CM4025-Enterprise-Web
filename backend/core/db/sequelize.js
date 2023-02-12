@@ -37,7 +37,7 @@ let modelDefinitions = [
   require("../../apps/quoteBuilder/models/Worker.js"),
 ];
 
-if (settings.INIT_TEST_MODELS) {
+if (settings.INIT_TESTS) {
   modelDefinitions = modelDefinitions.concat([
     require("../../apps/test/models/StringModel.js"),
     require("../../apps/test/models/IntegerModel.js"),
@@ -46,6 +46,7 @@ if (settings.INIT_TEST_MODELS) {
     require("../../apps/test/models/ChoiceModel.js"),
     require("../../apps/test/models/DateTimeModel.js"),
     require("../../apps/test/models/EmailModel.js"),
+    require("../../apps/test/models/ReadOnlyDefaultModel.js"),
   ]);
 }
 

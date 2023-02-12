@@ -22,7 +22,7 @@ FILE_LOG_LEVEL = process.env.FILE_LOG_LEVEL || "info";
 CONSOLE_LOG_LEVEL = process.env.CONSOLE_LOG_LEVEL || "debug";
 
 // Testing
-INIT_TEST_MODELS = process.env.INIT_TEST_MODELS || false;
+INIT_TESTS = process.env.INIT_TESTS || false;
 
 SESSION_SECRET = process.env.SESSION_SECRET
   ? process.env.SESSION_SECRET
@@ -43,5 +43,5 @@ module.exports = {
   LOG_CONSOLE,
   FILE_LOG_LEVEL,
   CONSOLE_LOG_LEVEL,
-  INIT_TEST_MODELS,
+  INIT_TESTS,
 };
