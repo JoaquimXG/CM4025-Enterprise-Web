@@ -1,4 +1,5 @@
 const { DataTypes } = require("sequelize");
+const { UserStatusChoice } = require("../enums");
 
 const User = {
   id: {
@@ -7,34 +8,36 @@ const User = {
     primaryKey: true,
     customFieldOptions: {
       controllerType: "IntegerField",
-    }
+    },
   },
   email: {
     type: DataTypes.STRING,
     unique: true,
     customFieldOptions: {
       controllerType: "EmailField",
-      maxLength: 255
-    }
+      maxLength: 255,
+    },
   },
   hash: {
     type: DataTypes.STRING,
     allowNull: false,
     customFieldOptions: {
       controllerType: "CharField",
-    }
+    },
   },
   firstName: {
     type: DataTypes.STRING,
+    allowNull: false,
     customFieldOptions: {
       controllerType: "CharField",
-    }
+    },
   },
   lastName: {
     type: DataTypes.STRING,
+    allowNull: false,
     customFieldOptions: {
       controllerType: "CharField",
-    }
+    },
   },
   isAdmin: {
     type: DataTypes.BOOLEAN,
@@ -42,12 +45,16 @@ const User = {
     defaultValue: false,
     customFieldOptions: {
       controllerType: "BooleanField",
-    }
+    },
   },
   status: {
-    type: DataTypes.ENUM("unverified", "active"),
+    type: DataTypes.INTEGER,
     defaultValue: "unverified",
     allowNull: false,
+    customFieldOptions: {
+      controllerType: "IntegerField",
+      choices: UserStatusChoice.values,
+    }
   },
 };
 

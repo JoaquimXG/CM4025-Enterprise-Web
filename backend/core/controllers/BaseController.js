@@ -24,15 +24,15 @@ module.exports = class BaseController extends Field {
     throw new Error("to_representation() must be implemented.");
   }
 
-  update(instance) {
+  async update(instance) {
     throw new Error("update() must be implemented.");
   }
 
-  create(instance) {
+  async create(instance) {
     throw new Error("create() must be implemented.");
   }
 
-  save(additional_data) {
+  async save(additional_data) {
     if (this.validated === undefined)
       throw new Error("is_valid() must be called before save()");
 
@@ -45,13 +45,13 @@ module.exports = class BaseController extends Field {
     this.validated_data = { ...this.validated_data, ...additional_data };
 
     if (this.instance !== null) {
-      let instance = this.update(this.instance, this.validated_data);
-      if (!instance) throw new Error("update() must return an instance");
-      return instance;
+      this.instance = await this.update(this.instance, this.validated_data);
+      if (!this.instance) throw new Error("update() must return an instance");
+      return this.instance;
     } else {
-      this.create(this.validated_data);
-      if (!instance) throw new Error("create() must return an instance");
-      return instance;
+      this.instance = await this.create(this.validated_data);
+      if (!this.instance) throw new Error("create() must return an instance");
+      return this.instance;
     }
   }
 

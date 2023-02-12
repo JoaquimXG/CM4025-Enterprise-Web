@@ -24,29 +24,29 @@ module.exports = class ModelApiView {
     next();
   }
 
-  async create_object(data) {
-    return await this.model.create(data);
+  async create_object(controller) {
+    return await controller.create(controller.validated_data);
   }
 
   async create_object_middleware(req, _, next) {
     try {
-      req.instance = await this.create_object(req.controller.validated_data);
+      req.instance = await this.create_object(req.controller);
       next();
     } catch (e) {
       next(e);
     }
   }
 
-  async update_object(instance, data) {
-    return await instance.update(data);
+  async update_object(controller) {
+    return await controller.update(
+      controller.instance,
+      controller.validated_data
+    );
   }
 
   async update_object_middleware(req, _, next) {
     try {
-      await this.update_object(
-        req.controller.instance,
-        req.controller.validated_data
-      );
+      await this.update_object(req.controller);
       next();
     } catch (e) {
       next(e);

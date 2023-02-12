@@ -45,7 +45,7 @@ module.exports = class ModelController extends Controller {
   //   extra_options: {}, // dictionary of field names to keyword options for field
   // };
 
-  create(validated_data) {
+  async create(validated_data) {
     let model = this.meta.model;
     /**
      * TODO(RELATIONS)
@@ -54,21 +54,20 @@ module.exports = class ModelController extends Controller {
      * 3. Manually create many-to-many relationships saved in step 2 after instance is created
      */
     try {
-      instance = model.create(validated_data);
+      return await model.create(validated_data);
     } catch (e) {
       throw new ValidationError(e);
     }
-    return instance;
   }
 
-  update(instance, validated_data) {
+  async update(instance, validated_data) {
     /**
      * TODO(RELATIONS)
      * 1. Raise errors on nested writes before attempting to update instance
      * 2. Handle many to many relationship updates (ID only)
      */
     try {
-      return instance.update(validated_data);
+      return await instance.update(validated_data);
     } catch (e) {
       throw new ValidationError(e);
     }

@@ -14,7 +14,8 @@
    - Password reset
    - /user/me?
    - Any others??
-3. View based permissions
+3. Relations
+4. View based permissions
   - E.g., for /user/:id/ endpoints, this should probably be for `admins` only, if there are any
   - I don't need roles or anything complex, just standard CRUD permissions for each model
     - view
@@ -22,8 +23,8 @@
     - update
     - delete
 
-4. Relative imports???
-5. CSRFTOKEN??? Should ask whether they are likely to care about this in class
+5. Relative imports???
+6. CSRFTOKEN??? Should ask whether they are likely to care about this in class
 
 ### Tags
 
