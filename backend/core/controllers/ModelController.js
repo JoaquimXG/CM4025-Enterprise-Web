@@ -7,8 +7,11 @@ const {
   BooleanField,
   ChoiceField,
   DateTimeField,
+  DeclaredField,
 } = require("../fields");
+const { convertSequelizeValidationError } = require("../db/utils");
 const Controller = require("./Controller");
+const SequelizeValidationError = require("sequelize").ValidationError;
 
 field_mapping = {
   CharField: CharField,
@@ -36,6 +39,7 @@ ALL_FIELDS = "__all__";
 */
 // Note: this is really a SequelizeModelController, there is some base functionality
 // that could be shared with other model controllers using other ORMs but this is likely out of scope
+
 module.exports = class ModelController extends Controller {
   // meta = {
   //   model: null, // sequelize model class to use
@@ -56,6 +60,9 @@ module.exports = class ModelController extends Controller {
     try {
       return await model.create(validated_data);
     } catch (e) {
+      if (e instanceof SequelizeValidationError) {
+        throw convertSequelizeValidationError(e);
+      }
       throw new ValidationError(e);
     }
   }
@@ -69,6 +76,9 @@ module.exports = class ModelController extends Controller {
     try {
       return await instance.update(validated_data);
     } catch (e) {
+      if (e instanceof SequelizeValidationError) {
+        throw convertSequelizeValidationError(e);
+      }
       throw new ValidationError(e);
     }
   }
@@ -85,15 +95,15 @@ module.exports = class ModelController extends Controller {
   get_declared_fields() {
     let declared_fields = {};
     for (const [key, value] of Object.entries(this)) {
-      if (value instanceof Field) {
-        declared_fields[key] = value;
+      if (value instanceof DeclaredField) {
+        declared_fields[key] = value.get_field();
       }
     }
     return declared_fields;
   }
 
   get_fields() {
-    let declared_fields = structuredClone(this.get_declared_fields());
+    let declared_fields = this.get_declared_fields();
     let model = this.meta.model;
     // TODO(RELATIONS) depth for relations, I think I won't use depth here and instead will focus on using nested controllers
     // Depth has some weird consequences for writes that I don't want to deal with

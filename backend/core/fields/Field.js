@@ -52,7 +52,7 @@ module.exports = class Field {
       throw new Error(NOT_READ_ONLY_WRITE_ONLY);
     if (options.read_only && options.required)
       throw new Error(NOT_READ_ONLY_REQUIRED);
-    if (options.required && options.default !== new Empty())
+    if (options.required && !options.default instanceof Empty)
       throw new Error(NOT_REQUIRED_DEFAULT);
     // DRF USE_READONLYFIELD
 

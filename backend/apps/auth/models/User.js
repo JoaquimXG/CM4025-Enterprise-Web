@@ -49,7 +49,7 @@ const User = {
   },
   status: {
     type: DataTypes.INTEGER,
-    defaultValue: "unverified",
+    defaultValue: UserStatusChoice.UNVERIFIED,
     allowNull: false,
     customFieldOptions: {
       controllerType: "IntegerField",
