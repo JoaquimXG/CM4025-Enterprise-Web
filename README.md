@@ -25,6 +25,12 @@
 4. Relative imports???
 5. CSRFTOKEN??? Should ask whether they are likely to care about this in class
 
+### Tags
+
+TODO - Things that need to be done
+DRF - Things that could be taken from Django Rest Framework, likely look at DRF implementation for details
+
+
 ### Issues
 
 #### ModelController
@@ -33,18 +39,7 @@
 
 #### Other
 1. Error formatting
-  - Errors should be formatted properly through the validation chai
-
-### Testing
-
-- Fields
-  - EmailField
-- Validators
-  - EmailValidator
-- Controller Options
-  - fields
-  - exclude
-  - read_only_fields
+  - Errors should be formatted properly through the validation chain
 
 ## CRUD Endpoints Framework
 

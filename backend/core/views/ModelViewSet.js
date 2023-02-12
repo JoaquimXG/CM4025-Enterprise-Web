@@ -17,13 +17,15 @@ module.exports = class ModelViewSet extends ModelApiView {
   ];
 
   retrieve_middleware = [
+    this.get_controller_context_middleware.bind(this),
     this.get_object_middleware.bind(this),
     this.deserialize_middleware.bind(this),
   ];
 
   list_middleware = [
+    this.get_controller_context_middleware.bind(this),
     this.list_objects_middleware.bind(this),
-    // TODO
+    // TODO(LOW) Add filter and pagination middleware
     // this.filter_objects_middleware,
     // this.paginate_objects_middleware,
     this.deserialize_middleware.bind(this),

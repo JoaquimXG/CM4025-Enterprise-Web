@@ -37,8 +37,6 @@ ALL_FIELDS = "__all__";
 // Note: this is really a SequelizeModelController, there is some base functionality
 // that could be shared with other model controllers using other ORMs but this is likely out of scope
 module.exports = class ModelController extends Controller {
-  _errors = null;
-
   // meta = {
   //   model: null, // sequelize model class to use
   //   fields: null, // list of field names, or ALL_FIELDS
@@ -49,30 +47,38 @@ module.exports = class ModelController extends Controller {
 
   create(validated_data) {
     let model = this.meta.model;
-    // TODO raise errors on nested writes
-    // TODO Pop many-to-many relationships from data before create ready to be added after instance is created later
+    /**
+     * TODO(RELATIONS)
+     * 1. Raise errors on nested writes before attempting to create instance
+     * 2. Pop many-to-many relationships from data before create ready to be added after instance is created later
+     * 3. Manually create many-to-many relationships saved in step 2 after instance is created
+     */
     try {
       instance = model.create(validated_data);
     } catch (e) {
-      // TODO get better error message on create, need to run some tests to see what errors are likely and explain here
       throw new ValidationError(e);
     }
-
-    // TODO create many-to-many relationships saved above
     return instance;
   }
 
   update(instance, validated_data) {
-    // TODO raise errors on nested writes
-    // TODO(IMPORTANT) handle many-to-many relationships
-    return instance.update(validated_data);
+    /**
+     * TODO(RELATIONS)
+     * 1. Raise errors on nested writes before attempting to update instance
+     * 2. Handle many to many relationship updates (ID only)
+     */
+    try {
+      return instance.update(validated_data);
+    } catch (e) {
+      throw new ValidationError(e);
+    }
   }
 
   get_field_info(model) {
     let fields = model.rawAttributes;
     let pk_field_name = model.primaryKeyField;
     let pk_field = fields[pk_field_name];
-    // TODO relations
+    // TODO(RELATIONS) Get relationship fields
 
     return { pk: pk_field, fields: fields };
   }
@@ -90,7 +96,7 @@ module.exports = class ModelController extends Controller {
   get_fields() {
     let declared_fields = structuredClone(this.get_declared_fields());
     let model = this.meta.model;
-    // TODO depth for relations, I think I won't use depth here and instead will focus on using nested controllers
+    // TODO(RELATIONS) depth for relations, I think I won't use depth here and instead will focus on using nested controllers
     // Depth has some weird consequences for writes that I don't want to deal with
     let depth = 1;
 
@@ -209,7 +215,7 @@ module.exports = class ModelController extends Controller {
       model_info.pk.fieldName,
       ...fieldsWithoutDeletedAt,
       ...Object.keys(declared_fields),
-      // TOOD forward relations
+      // TOOD(RELATIONS) forward relations
     ]);
   }
 
@@ -345,7 +351,7 @@ module.exports = class ModelController extends Controller {
 
     let validator_option = model_field.validators || [];
 
-    // TODO(LOW) max_digits? decimal_places?
+    // DRF max_digits? decimal_places? for decimal field
 
     if (model_field.allowNull) options.allow_null = true;
 
@@ -392,7 +398,7 @@ module.exports = class ModelController extends Controller {
       delete validator_option.minLength;
     }
 
-    /// TODO unique validator, sequelize offers a unique constraint but this is database layer
+    /// DRF unique validator, sequelize offers a unique constraint but this is database layer
     // Application layer should perform validation on uniqueness before passing to sequelize
     // even if just for producing better
 

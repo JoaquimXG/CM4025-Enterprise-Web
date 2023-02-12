@@ -16,9 +16,9 @@ const base = {
   notNullableDefault: true,
 };
 
-const createUpdateTests = (f) => {
-  it("base -> should return 200 OK", () => {
-    return f().send(base).expect(200);
+const createUpdateTests = (f, status) => {
+  it(`base -> should return ${status} OK`, () => {
+    return f().send(base).expect(status);
   });
 
   it("base -> should return object", async () => {
@@ -29,7 +29,7 @@ const createUpdateTests = (f) => {
 };
 
 describe(`POST ${API_ROOT}`, () => {
-  createUpdateTests(() => request(app).post(API_ROOT));
+  createUpdateTests(() => request(app).post(API_ROOT), 201);
 });
 
 describe(`GET ${API_ROOT}`, () => {

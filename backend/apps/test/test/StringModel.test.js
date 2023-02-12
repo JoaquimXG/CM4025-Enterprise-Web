@@ -27,9 +27,9 @@ const base = {
 const SHORTEST_VALUE = "_";
 const LONGEST_VALUE = "_".repeat(255);
 
-const createUpdateTests = (f) => {
-  it("base -> should return 200 OK", () => {
-    return f().send(base).expect(200);
+const createUpdateTests = (f, status) => {
+  it(`base -> should return ${status} OK`, () => {
+    return f().send(base).expect(status);
   });
 
   it("base -> should return object", async () => {
@@ -47,9 +47,9 @@ const createUpdateTests = (f) => {
     SHORTEST_VALUE,
     LONGEST_VALUE,
   ]) {
-    it(`string: '${value}' -> should return 200 OK`, () => {
+    it(`string: '${value}' -> should return ${status} OK`, () => {
       let test = { ...base, string: value };
-      return f().send(test).expect(200);
+      return f().send(test).expect(status);
     });
   }
 
@@ -61,17 +61,17 @@ const createUpdateTests = (f) => {
   }
 
   for (const key of Object.keys(base)) {
-    it(`key: ${key} int instead of string -> should return 200 OK`, () => {
+    it(`key: ${key} int instead of string -> should return ${status} OK`, () => {
       let test = { ...base };
       test[key] = 1000000000; // Should be 10 characters long
-      return f().send(test).expect(200);
+      return f().send(test).expect(status);
     });
   }
 
   for (const value of [SHORTEST_VALUE, "_".repeat(50)]) {
-    it(`stringMaxLength(50): '${value}' -> should return 200 OK`, () => {
+    it(`stringMaxLength(50): '${value}' -> should return ${status} OK`, () => {
       let test = { ...base, stringMaxLength: value };
-      return f().send(test).expect(200);
+      return f().send(test).expect(status);
     });
   }
 
@@ -83,9 +83,9 @@ const createUpdateTests = (f) => {
   }
 
   for (const value of ["_".repeat(10), LONGEST_VALUE]) {
-    it(`stringMinLength(10): '${value}' -> should return 200 OK`, () => {
+    it(`stringMinLength(10): '${value}' -> should return ${status} OK`, () => {
       let test = { ...base, stringMinLength: value };
-      return f().send(test).expect(200);
+      return f().send(test).expect(status);
     });
   }
 
@@ -97,9 +97,9 @@ const createUpdateTests = (f) => {
   }
 
   for (const value of [SHORTEST_VALUE, LONGEST_VALUE]) {
-    it(`stringBlank: '${value}' -> should return 200 OK`, () => {
+    it(`stringBlank: '${value}' -> should return ${status} OK`, () => {
       let test = { ...base, stringBlank: value };
-      return f().send(test).expect(200);
+      return f().send(test).expect(status);
     });
   }
 
@@ -110,7 +110,7 @@ const createUpdateTests = (f) => {
 };
 
 describe(`POST ${API_ROOT}`, () => {
-  createUpdateTests(() => request(app).post(API_ROOT));
+  createUpdateTests(() => request(app).post(API_ROOT), 201);
 });
 
 describe(`GET ${API_ROOT}`, () => {

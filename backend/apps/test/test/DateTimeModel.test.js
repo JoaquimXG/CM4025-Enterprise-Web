@@ -24,9 +24,9 @@ const base = {
   dateTimeMinValue: "2025-01-01T00:00:00.000Z",
 };
 
-const createUpdateTests = (f) => {
-  it("base -> should return 200 OK", () => {
-    return f().send(base).expect(200);
+const createUpdateTests = (f, status) => {
+  it(`base -> should return ${status} OK`, () => {
+    return f().send(base).expect(status);
   });
 
   it("base -> should return object", async () => {
@@ -51,9 +51,9 @@ const createUpdateTests = (f) => {
     // SHORTEST_VALUE,
     // LONGEST_VALUE,
   ]) {
-    it(`dateTime: '${value}' -> should return 200 OK`, () => {
+    it(`dateTime: '${value}' -> should return ${status} OK`, () => {
       let test = { ...base, dateTime: value };
-      return f().send(test).expect(200);
+      return f().send(test).expect(status);
     });
   }
 
@@ -76,9 +76,9 @@ const createUpdateTests = (f) => {
   }
 
   for (const value of ["2024-12-31T23:59:59.999Z", "2025-01-01T00:00:00.000Z"]) {
-    it(`dateTimeMaxValue(2025-01-01): ${value} -> should return 200 OK`, () => {
+    it(`dateTimeMaxValue(2025-01-01): ${value} -> should return ${status} OK`, () => {
       let test = { ...base, dateTimeMaxValue: value };
-      return f().send(test).expect(200);
+      return f().send(test).expect(status);
     });
   }
 
@@ -90,9 +90,9 @@ const createUpdateTests = (f) => {
   }
 
   for (const value of ["2020-01-01T00:00:00.001Z", "2020-01-01T00:00:00.000Z"]) {
-    it(`dateTimeMinValue(2020-01-01): ${value} -> should return 200 OK`, () => {
+    it(`dateTimeMinValue(2020-01-01): ${value} -> should return ${status} OK`, () => {
       let test = { ...base, dateTimeMinValue: value };
-      return f().send(test).expect(200);
+      return f().send(test).expect(status);
     });
   }
 
@@ -105,7 +105,7 @@ const createUpdateTests = (f) => {
 };
 
 describe(`POST ${API_ROOT}`, () => {
-  createUpdateTests(() => request(app).post(API_ROOT));
+  createUpdateTests(() => request(app).post(API_ROOT), 201);
 });
 
 describe(`GET ${API_ROOT}`, () => {

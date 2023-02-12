@@ -22,9 +22,9 @@ const base = {
   bool: true,
 };
 
-const createUpdateTests = (f) => {
-  it("base -> should return 200 OK", () => {
-    return f().send(base).expect(200);
+const createUpdateTests = (f, status) => {
+  it(`base -> should return ${status} OK`, () => {
+    return f().send(base).expect(status);
   });
 
   it("base -> should return object", async () => {
@@ -33,9 +33,9 @@ const createUpdateTests = (f) => {
   });
 
   for (const value of ["a", "b", "c"]) {
-    it(`string: '${value}' -> should return 200 OK`, () => {
+    it(`string: '${value}' -> should return ${status} OK`, () => {
       let test = { ...base, string: value };
-      return f().send(test).expect(200);
+      return f().send(test).expect(status);
     });
   }
 
@@ -47,9 +47,9 @@ const createUpdateTests = (f) => {
   }
 
   for (const value of [1, 2, 3, "1", "2", "3"]) {
-    it(`int: '${value}' -> should return 200 OK`, () => {
+    it(`int: '${value}' -> should return ${status} OK`, () => {
       let test = { ...base, int: value };
-      return f().send(test).expect(200);
+      return f().send(test).expect(status);
     });
   }
 
@@ -61,9 +61,9 @@ const createUpdateTests = (f) => {
   }
 
   for (const value of [true, false, "true", "false"]) {
-    it(`bool: '${value}' -> should return 200 OK`, () => {
+    it(`bool: '${value}' -> should return ${status} OK`, () => {
       let test = { ...base, bool: value };
-      return f().send(test).expect(200);
+      return f().send(test).expect(status);
     });
   }
 
@@ -76,7 +76,7 @@ const createUpdateTests = (f) => {
 };
 
 describe(`POST ${API_ROOT}`, () => {
-  createUpdateTests(() => request(app).post(API_ROOT));
+  createUpdateTests(() => request(app).post(API_ROOT), 201);
 });
 
 describe(`GET ${API_ROOT}`, () => {

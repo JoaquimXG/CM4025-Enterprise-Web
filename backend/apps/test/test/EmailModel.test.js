@@ -18,9 +18,9 @@ const base = {
   email: "t@t.com",
 };
 
-const createUpdateTests = (f) => {
-  it("base -> should return 200 OK", () => {
-    return f().send(base).expect(200);
+const createUpdateTests = (f, status) => {
+  it(`base -> should return ${status} OK`, () => {
+    return f().send(base).expect(status);
   });
 
   it("base -> should return object", async () => {
@@ -44,9 +44,9 @@ const createUpdateTests = (f) => {
     "firstname-lastname@example.com",
     "あいうえお@example.com",
   ]) {
-    it(`email: '${value}' -> should return 200 OK`, () => {
+    it(`email: '${value}' -> should return ${status} OK`, () => {
       let test = { ...base, email: value };
-      return f().send(test).expect(200);
+      return f().send(test).expect(status);
     });
   }
 
@@ -75,7 +75,7 @@ const createUpdateTests = (f) => {
 };
 
 describe(`POST ${API_ROOT}`, () => {
-  createUpdateTests(() => request(app).post(API_ROOT));
+  createUpdateTests(() => request(app).post(API_ROOT), 201);
 });
 
 describe(`GET ${API_ROOT}`, () => {

@@ -3,14 +3,21 @@ const { Empty, SkipField } = require("../fields");
 const { ValidationError } = require("../responses/errors");
 
 module.exports = class Controller extends BaseController {
-  // TODO review error messages
-  default_error_messages = {
+  static default_error_messages = {
     invalid: "Invalid data. Expected a dictionary, but got {datatype}.",
   };
 
   meta = {};
 
   _fields = null;
+
+  constructor(options = {}) {
+    options.error_messages = {
+      ...Controller.default_error_messages,
+      ...options.error_messages,
+    };
+    super(options);
+  }
 
   get fields() {
     if (this._fields === null) {
@@ -56,7 +63,6 @@ module.exports = class Controller extends BaseController {
   }
 
   get_initial() {
-    // TODO check this whole function
     if (this.initial_data) {
       if (typeof this.initial_data !== "object") return {};
 
@@ -65,7 +71,8 @@ module.exports = class Controller extends BaseController {
           .map((field_name) => [field_name, this.fields[field_name]])
           .filter(
             ([_, field]) =>
-              field.get_value(this.initial_data) !== Empty && !field.read_only
+              !field.get_value(this.initial_data) instanceof Empty &&
+              !field.read_only
           )
       );
     }
@@ -80,13 +87,11 @@ module.exports = class Controller extends BaseController {
     );
   }
 
-  // TODO get_value -> I don't think we need this one but need to check
   get_value(dictionary) {
     return dictionary[self.field_name];
   }
 
-  run_validation(data = Empty()) {
-    //TODO validators and validate() should return non_field errors
+  run_validation(data = new Empty()) {
     let is_empty_value;
     [is_empty_value, data] = this.validate_empty_values(data);
 
@@ -99,9 +104,7 @@ module.exports = class Controller extends BaseController {
       value = this.validate(value);
     } catch (e) {
       if (e instanceof ValidationError)
-        // TODO should coerce this error into a non_field error
-        // See DRF implementation
-        throw e;
+        throw new ValidationError({ non_field_errors: e.message });
       else throw e;
     }
     if (value === null) {
@@ -133,7 +136,7 @@ module.exports = class Controller extends BaseController {
   }
 
   run_validators(data) {
-    // TODO run through list of custom validators that are present on this class
+    // DRF run through list of custom validators that are present on this class
     // I think this is unlikely to be used much for the controller but is likely to be used
     // Extensively for Field
     let to_validate;
@@ -186,7 +189,7 @@ module.exports = class Controller extends BaseController {
         else throw e;
       }
 
-      // TODO check for none on pk_only_fields
+      // DRF check for none on pk_only_fields
       if (attribute === null) ret[field.field_name] = null;
       else ret[field.field_name] = field.to_representation(attribute);
     }
@@ -196,7 +199,7 @@ module.exports = class Controller extends BaseController {
   to_representation(data) {
     let ret = this.many ? [] : {};
     let fields = this.readable_fields;
-    // TODO should use a proper ListController but this is fine for now
+    // DRF should use a proper ListController but this is fine for now
 
     if (this.many) {
       for (let instance of data)
@@ -211,17 +214,17 @@ module.exports = class Controller extends BaseController {
     return data;
   }
 
-  //TODO(LOW) iter and getitem implementations -> I am not convinced they will be required for this simple app
+  //DRF iter and getitem implementations -> I am not convinced they will be required for this simple app
 
   get data() {
     ret = super.data;
-    // TODO ReturnDict is used in DRF, stores a reference to the current serializer alongside data
+    // DRF ReturnDict is used in DRF, stores a reference to the current serializer alongside data
     // May not be required in our case
     return ret;
   }
 
   get errors() {
-    //TOOD similar point here, there is an additional point about coeercing errors, review DRF implementation
+    //DRF similar point here, there is an additional point about coeercing errors, review DRF implementation
     ret = super.errors;
     return ret;
   }

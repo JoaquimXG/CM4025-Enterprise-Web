@@ -31,16 +31,12 @@ module.exports = class CharField extends Field {
     };
     super(options);
 
-    // let message;
     if (max_length !== null) {
-      // message = this.error_messages.max_length(max_length);
       this.validators.push(
         new MaxLengthValidator({ limit_value: max_length})
       );
     }
-    //TODO lazy formt
     if (min_length !== null) {
-      // message = this.error_messages.min_length(min_length);
       this.validators.push(
         new MinLengthValidator({ limit_value: min_length})
       );

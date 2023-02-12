@@ -61,17 +61,17 @@ module.exports = class BaseController extends Field {
         "Data must be passed to controller before calling is_valid"
       );
     }
-    // TODO confirm that controller was initialised with data
 
     if (this._validated_data === undefined) {
       try {
         this._validated_data = this.run_validation(this.initial_data);
         this._errors = null;
       } catch (e) {
-        // TODO should specifically catch validation errors from fields
+        if (!(e instanceof ValidationError)) {
+          throw e;
+        }
         this._validated_data = {};
         this.validated = false;
-        // TODO improve errors
         this._errors = [{ message: e.message }];
         throw e;
       }
@@ -80,12 +80,11 @@ module.exports = class BaseController extends Field {
     if (this._errors && raiseError) {
       throw new ValidationError(this._errors);
     }
-    return this._errors === null;
+    this.validated = this._errors === null;
+    return this.validated;
   }
 
   get data() {
-    // TODO review this, it should be implemented so that this fails if is_valid
-    // has not been called
     if (!this.validated) {
       throw new Error("Must validate before getting data");
     }

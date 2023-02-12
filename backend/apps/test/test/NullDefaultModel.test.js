@@ -24,9 +24,9 @@ const base = {
   notNullableDefault: true,
 };
 
-const createUpdateTests = (f) => {
-  it("base -> should return 200 OK", () => {
-    return f().send(base).expect(200);
+const createUpdateTests = (f, status) => {
+  it(`base -> should return ${status} OK`, () => {
+    return f().send(base).expect(status);
   });
 
   it("base -> should return object", async () => {
@@ -34,9 +34,9 @@ const createUpdateTests = (f) => {
     expect(response.body).toEqual(expect.objectContaining(defaultTest));
   });
 
-  it("nullable: null -> should return 200 OK", () => {
+  it("nullable: null -> should return ${status} OK", () => {
     let test = { ...base, nullable: null };
-    return f().send(test).expect(200);
+    return f().send(test).expect(status);
   });
 
   it("nullable: null -> should return object", async () => {
@@ -50,9 +50,9 @@ const createUpdateTests = (f) => {
     return f().send(test).expect(400);
   });
 
-  it("nullableDefault: null -> should return 200 OK", () => {
+  it(`nullableDefault: null -> should return ${status} OK`, () => {
     let test = { ...base, nullableDefault: null };
-    return f().send(test).expect(200);
+    return f().send(test).expect(status);
   });
 
   it("nullableDefault: null -> should return object", async () => {
@@ -66,15 +66,15 @@ const createUpdateTests = (f) => {
     return f().send(test).expect(400);
   });
 
-  it("notNullableDefault: Empty -> should return 200 OK", () => {
+  it(`notNullableDefault: Empty -> should return ${status} OK`, () => {
     let test = { ...base };
     delete test.notNullableDefault;
-    return f().send(test).expect(200);
+    return f().send(test).expect(status);
   });
 };
 
 describe(`POST ${API_ROOT}`, () => {
-  createUpdateTests(() => request(app).post(API_ROOT));
+  createUpdateTests(() => request(app).post(API_ROOT), 201);
 
   it("notNullable: Empty -> should 400", () => {
     let test = { ...base };

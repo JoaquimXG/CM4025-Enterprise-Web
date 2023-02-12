@@ -1,8 +1,12 @@
-const { OkResponse, NoContentResponse } = require("../responses");
+const {
+  OkResponse,
+  NoContentResponse,
+  CreatedResponse,
+} = require("../responses");
 const { NotFoundError } = require("../responses/errors");
 
-// TODO split non-model functions out into a separate class, ApiView, and have ModelApiView extend it
-// TODO some of this functionality should be concentrated in the controller and fields
+// DRF split non-model functions out into a separate class, ApiView, and have ModelApiView extend it
+// DRF some of this functionality should be concentrated in the controller and fields
 module.exports = class ModelApiView {
   lookup_field = "id";
   model = null;
@@ -11,6 +15,7 @@ module.exports = class ModelApiView {
   get_controller_context(req) {
     return {
       partial: req.method === "PATCH",
+      create: req.method === "POST",
     };
   }
 
@@ -91,10 +96,11 @@ module.exports = class ModelApiView {
     try {
       let many = req.instances ? true : false;
       let data = req.instance ? req.instance : req.instances;
-      let controller = this.get_controller({ options: {many} });
+      let controller = this.get_controller({ options: { many } });
       data = controller.to_representation(data);
-      // TODO This works for retrieve, list, update, but not for create, should return 201 for create
-      return new OkResponse(data).sendJson(res);
+      if (req.controller_context.create)
+        return new CreatedResponse(data).sendJson(res);
+      else return new OkResponse(data).sendJson(res);
     } catch (e) {
       next(e);
     }

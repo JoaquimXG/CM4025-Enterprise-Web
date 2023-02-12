@@ -12,7 +12,7 @@ module.exports = (API_ROOT, base, createUpdateTests) => {
       })
   );
 
-  createUpdateTests(() => request(app).patch(`${API_ROOT}${id}/`));
+  createUpdateTests(() => request(app).patch(`${API_ROOT}${id}/`), 200);
 
   it(`should return 404 Not Found`, async () => {
     return request(app).patch(`${API_ROOT}999999/`).expect(404);

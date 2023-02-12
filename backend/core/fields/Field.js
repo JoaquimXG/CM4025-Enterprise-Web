@@ -54,7 +54,7 @@ module.exports = class Field {
       throw new Error(NOT_READ_ONLY_REQUIRED);
     if (options.required && options.default !== new Empty())
       throw new Error(NOT_REQUIRED_DEFAULT);
-    // TODO USE_READONLYFIELD
+    // DRF USE_READONLYFIELD
 
     this.read_only = options.read_only;
     this.write_only = options.write_only;
@@ -74,8 +74,6 @@ module.exports = class Field {
     // These are set on calls to bind() when field is added to a serializer
     this.field_name = null;
     this.parent = null;
-
-    // TODO get static default_error attributes from parent class
   }
 
   bind(field_name, parent) {
@@ -90,7 +88,7 @@ module.exports = class Field {
 
     if (this.source === null) this.source = field_name;
 
-    // TODO this will need to be passed to sequelize to load database objects
+    // TODO(RELATIONS) this will need to be passed to sequelize to load database objects
     if (this.source === "*") this.source_attrs = [];
     else this.source_attrs = this.source.split(".");
   }
@@ -116,15 +114,13 @@ module.exports = class Field {
   }
 
   get_value(data) {
-    // TODO need to think about how to handle non-JSON data, e.g., form data
-    // I think the answer is that we don't handle it, because what is the point??
     return data[this.field_name];
   }
 
   _get_attribute(instance, source_attrs) {
     for (let attr of source_attrs) {
       if (typeof instance === "object") instance = instance[attr];
-      // TODO need to review this,
+      // TODO(RELATIONS) need to review this,
       // it is likely that an instance will be from sequelize
       // so need to think about what the standard method of
       // getting attributes from sequelize is
@@ -149,9 +145,6 @@ module.exports = class Field {
       // No default, or this is a partial update.
       throw new SkipField();
     if (this.default instanceof Function) {
-      // TODO not sure about passing context in javascript, how can a
-      // callable have additional attributes??
-      // Apparently they can but this needs some reading
       if (this.default.requires_context) {
         return this.default(this);
       } else {
@@ -172,7 +165,7 @@ module.exports = class Field {
 
     if (data === null) {
       if (!this.allow_null) this.fail("null");
-      // TODO review
+      // DRF review
       if (this.source === "*") return [false, data];
       throw new SkipField();
     }
@@ -196,10 +189,6 @@ module.exports = class Field {
         this.run_validator(validator, value);
       } catch (e) {
         if (e instanceof ValidationError) {
-          //TODO this is probably not going to work
-          if (e.detail instanceof Object) {
-            throw e;
-          }
           errors.push(e.message);
         } else {
           throw e;
@@ -229,14 +218,13 @@ module.exports = class Field {
   }
 
   to_internal_value(data) {
-    // TODO extend error message should include class name and desdription
+    // DRF extend error message should include class name and desdription
     // See DRF implementation
     throw new Error("Not Implemented");
   }
 
   to_representation(data) {
-    // TODO extend error message should include class name and desdription
-    // See DRF implementation
+    // DRF extend error message should include class name and desdription
     throw new Error("Not Implemented");
   }
 
