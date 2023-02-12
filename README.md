@@ -6,15 +6,15 @@
 2. Create User model with sequelize and integrate with passportjs
 3. Create standard CRUD endpoints for user model, without proper validation
 4. Create ChoiceField
+5. Create DateTime fields and validators
 
 ## TODO
-1. Create DateTime fields and validators
-2. Integrate User model with passportjs
-3. Create other user API endpoints
+1. Integrate User model with passportjs
+2. Create other user API endpoints
    - Password reset
    - /user/me?
    - Any others??
-4. View based permissions
+3. View based permissions
   - E.g., for /user/:id/ endpoints, this should probably be for `admins` only, if there are any
   - I don't need roles or anything complex, just standard CRUD permissions for each model
     - view
@@ -22,8 +22,8 @@
     - update
     - delete
 
-5. Relative imports???
-6. CSRFTOKEN??? Should ask whether they are likely to care about this in class
+4. Relative imports???
+5. CSRFTOKEN??? Should ask whether they are likely to care about this in class
 
 ### Issues
 
@@ -39,9 +39,12 @@
 
 - Fields
   - EmailField
-  - DateTimeField
 - Validators
   - EmailValidator
+- Controller Options
+  - fields
+  - exclude
+  - read_only_fields
 
 ## CRUD Endpoints Framework
 
