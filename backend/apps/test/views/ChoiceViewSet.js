@@ -4,5 +4,5 @@ const { ChoiceController } = require("../controllers");
 
 module.exports = class ChoiceViewSet extends ModelViewSet {
   model = sequelize.models.ChoiceModel;
-  controller_class = ChoiceController;
+  controllerClass = ChoiceController;
 };

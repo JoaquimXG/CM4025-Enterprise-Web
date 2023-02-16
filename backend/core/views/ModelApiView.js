@@ -9,97 +9,97 @@ const { NotFoundError } = require("../responses/errors");
 // DRF split non-model functions out into a separate class, ApiView, and have ModelApiView extend it
 // DRF some of this functionality should be concentrated in the controller and fields
 module.exports = class ModelApiView extends ApiView {
-  lookup_field = "id";
+  lookupField = "id";
   model = null;
-  controller_class = null;
+  controllerClass = null;
 
-  get_controller_context(req) {
+  getControllerContext(req) {
     return {
       partial: req.method === "PATCH",
       create: req.method === "POST",
     };
   }
 
-  get_controller_context_middleware(req, _, next) {
-    req.controller_context = this.get_controller_context(req);
+  getControllerContextMiddleware(req, _, next) {
+    req.controllerContext = this.getControllerContext(req);
     return next();
   }
 
-  async create_object(controller) {
-    return await controller.create(controller.validated_data);
+  async createObject(controller) {
+    return await controller.create(controller.validatedData);
   }
 
-  async create_object_middleware(req, _, next) {
+  async createObjectMiddleware(req, _, next) {
     try {
-      req.instance = await this.create_object(req.controller);
+      req.instance = await this.createObject(req.controller);
       return next();
     } catch (e) {
       return next(e);
     }
   }
 
-  async update_object(controller) {
+  async updateObject(controller) {
     return await controller.update(
       controller.instance,
-      controller.validated_data
+      controller.validatedData
     );
   }
 
-  async update_object_middleware(req, _, next) {
+  async updateObjectMiddleware(req, _, next) {
     try {
-      await this.update_object(req.controller);
+      await this.updateObject(req.controller);
       return next();
     } catch (e) {
       return next(e);
     }
   }
 
-  serializer_middleware(req, _, next) {
+  serializerMiddleware(req, _, next) {
     try {
-      req.controller = this.get_controller({
+      req.controller = this.getController({
         instance: req.instance || null,
         data: req.body,
-        options: { partial: req.controller_context.partial },
+        options: { partial: req.controllerContext.partial },
       });
-      if (req.controller.is_valid(true)) next();
+      if (req.controller.isValid(true)) next();
     } catch (e) {
       return next(e);
     }
   }
 
-  async list_objects() {
+  async listObjects() {
     return await this.model.findAll();
   }
 
-  async list_objects_middleware(req, _, next) {
+  async listObjectsMiddleware(req, _, next) {
     try {
-      req.instances = await this.list_objects();
+      req.instances = await this.listObjects();
       return next();
     } catch (e) {
       return next(e);
     }
   }
 
-  async perform_destroy(instance) {
+  async performDestroy(instance) {
     await instance.destroy();
   }
 
-  async destroy_object_middleware(req, res, next) {
+  async destroyObjectMiddleware(req, res, next) {
     try {
-      await this.perform_destroy(req.instance);
+      await this.performDestroy(req.instance);
       return new NoContentResponse().send(res);
     } catch (e) {
       return next(e);
     }
   }
 
-  deserialize_middleware(req, res, next) {
+  deserializeMiddleware(req, res, next) {
     try {
       let many = req.instances ? true : false;
       let data = req.instance ? req.instance : req.instances;
-      let controller = this.get_controller({ options: { many } });
-      data = controller.to_representation(data);
-      if (req.controller_context.create)
+      let controller = this.getController({ options: { many } });
+      data = controller.toRepresentation(data);
+      if (req.controllerContext.create)
         return new CreatedResponse(data).sendJson(res);
       else return new OkResponse(data).sendJson(res);
     } catch (e) {
@@ -107,11 +107,11 @@ module.exports = class ModelApiView extends ApiView {
     }
   }
 
-  async get_object_middleware(req, res, next) {
+  async getObjectMiddleware(req, res, next) {
     try {
-      req.instance = await this.get_object(
+      req.instance = await this.getObject(
         req.params.id,
-        this.lookup_field === "id"
+        this.lookupField === "id"
       );
       if (!req.instance) return new NotFoundError().send(res);
       return next();
@@ -120,21 +120,21 @@ module.exports = class ModelApiView extends ApiView {
     }
   }
 
-  async get_object(urlValue, findById = true) {
+  async getObject(urlValue, findById = true) {
     if (findById) {
       return await this.model.findByPk(urlValue);
     } else {
       return await this.model.findOne({
-        where: { [this.lookup_field]: urlValue },
+        where: { [this.lookupField]: urlValue },
       });
     }
   }
 
-  get_controller(...args) {
-    return new (this.get_controller_class())(...args);
+  getController(...args) {
+    return new (this.getControllerClass())(...args);
   }
 
-  get_controller_class() {
-    return this.controller_class;
+  getControllerClass() {
+    return this.controllerClass;
   }
 };

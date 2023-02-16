@@ -1,8 +1,8 @@
 const BaseValidator = require("./BaseValidator");
 
 module.exports = class MaxValueValidator extends BaseValidator {
-  message = (cleaned_value, max_value) =>
-    `Ensure this value is less than or equal to ${max_value}. (value: ${cleaned_value})`;
+  message = (cleanedValue, maxValue) =>
+    `Ensure this value is less than or equal to ${maxValue}. (value: ${cleanedValue})`;
 
   compare(a, b) {
     return a > b;

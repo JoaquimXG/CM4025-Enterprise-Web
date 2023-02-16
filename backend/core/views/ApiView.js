@@ -10,18 +10,18 @@ module.exports = class ApiView {
    * Instance attribute names can be HTTP methods, e.g., get, post, put, delete, patch.
    * In this case they will automatically be bound as route handlers to the router at the root path.
    *
-   * Instance attribute names can also be any arbitraty name, and then when calling as_router, a
+   * Instance attribute names can also be any arbitraty name, and then when calling asRouter, a
    * mapping of HTTP methods to attribute names must be provided.
    */
   asRouter(methodMap) {
     /**
      * methodMap in format
      * {
-     *  get: {handler: <method_name>, route: <route>},
+     *  get: {handler: <methodName>, route: <route>},
      *  // OR can be a list of routes for each method, e.g.,
      *  post: [
-     *    {handler: <method_name>, route: <route>},
-     *    {handler: <method_name>, route: <route>},
+     *    {handler: <methodName>, route: <route>},
+     *    {handler: <methodName>, route: <route>},
      *  ]
      *
      * }

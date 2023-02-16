@@ -4,5 +4,5 @@ const { PartialFieldsController } = require("../../../controllers/fields");
 
 module.exports = class PartialFieldsViewSet extends ModelViewSet {
   model = sequelize.models.ReadOnlyDefaultModel;
-  controller_class = PartialFieldsController;
+  controllerClass = PartialFieldsController;
 };

@@ -4,5 +4,5 @@ const { PartialExcludeController } = require("../../../controllers/exclude");
 
 module.exports = class PartialExcludeViewSet extends ModelViewSet {
   model = sequelize.models.ReadOnlyDefaultModel;
-  controller_class = PartialExcludeController;
+  controllerClass = PartialExcludeController;
 };

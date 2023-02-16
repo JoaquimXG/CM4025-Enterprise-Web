@@ -1,26 +1,26 @@
 const Field = require("./Field");
 
 module.exports = class ChoiceField extends Field {
-  static default_error_messages = {
-    invalid_choice: (input) => `'${input}' is not a valid choice`,
+  static defaultErrorMessages = {
+    invalidChoice: (input) => `'${input}' is not a valid choice`,
   };
 
   constructor({ choices, ...options } = {}) {
-    options.error_messages = {
-      ...ChoiceField.default_error_messages,
-      ...options.error_messages,
+    options.errorMessages = {
+      ...ChoiceField.defaultErrorMessages,
+      ...options.errorMessages,
     };
     super(options);
     this.choices = choices;
   }
 
-  to_internal_value(data) {
+  toInternalValue(data) {
     let res = this.choices[String(data)];
-    if (res === undefined) this.fail("invalid_choice", data);
+    if (res === undefined) this.fail("invalidChoice", data);
     return res;
   }
 
-  to_representation(value) {
+  toRepresentation(value) {
     return this.choices[String(value)];
   }
 

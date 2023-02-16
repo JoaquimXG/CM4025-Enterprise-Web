@@ -18,8 +18,8 @@ const Worker = {
 };
 
 module.exports = (sequelize) => {
-  worker = sequelize.define("Worker", Worker, { paranoid: true });
-  worker.get_day_rate = (rate) => {
+  let worker = sequelize.define("Worker", Worker, { paranoid: true });
+  worker.getDayRate = (rate) => {
     return rate * 8;
   };
   return worker;

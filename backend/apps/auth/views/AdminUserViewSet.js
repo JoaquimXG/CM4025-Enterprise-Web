@@ -7,5 +7,5 @@ module.exports = class UserViewSet extends ModelViewSet {
   permissions = [new IsAdmin()];
 
   model = sequelize.models.User;
-  controller_class = UserController;
+  controllerClass = UserController;
 };

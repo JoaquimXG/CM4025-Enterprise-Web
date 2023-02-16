@@ -1,11 +1,11 @@
 const BaseValidator = require("./BaseValidator");
 
 module.exports = class MinLengthValidator extends BaseValidator {
-  message = (cleaned_value, limit_value) =>
-    `Ensure this value has at minimum ${limit_value} character(s) (it has ${cleaned_value}).`;
+  message = (cleanedValue, limitValue) =>
+    `Ensure this value has at minimum ${limitValue} character(s) (it has ${cleanedValue}).`;
 
-  compare(value, limit_value) {
-    return value < limit_value;
+  compare(value, limitValue) {
+    return value < limitValue;
   }
 
   clean(value) {

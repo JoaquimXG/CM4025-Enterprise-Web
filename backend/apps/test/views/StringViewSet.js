@@ -4,5 +4,5 @@ const { StringController } = require("../controllers");
 
 module.exports = class StringViewSet extends ModelViewSet {
   model = sequelize.models.StringModel;
-  controller_class = StringController;
+  controllerClass = StringController;
 };

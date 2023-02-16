@@ -16,38 +16,38 @@ module.exports = class DateTimeField extends Field {
    * This field is designed to work with Sequelize's DATE type and MySQL DATETIME type.
    */
 
-  static default_error_messages = {
+  static defaultErrorMessages = {
     invalid:
       "Datetime has wrong format. ISO 8601 UTC formatted string required (YYYY-MM-DDTHH:MM:SS.mmmZ)",
-    max_value: (max_value) =>
-      `Ensure this date is before or equal to ${max_value.toISOString()}.`,
-    min_value: (min_value) =>
-      `Ensure this date is after or equal to ${min_value.toISOString()}.`,
+    maxValue: (maxValue) =>
+      `Ensure this date is before or equal to ${maxValue.toISOString()}.`,
+    minValue: (minValue) =>
+      `Ensure this date is after or equal to ${minValue.toISOString()}.`,
   };
 
-  constructor({ max_value = null, min_value = null, ...options } = {}) {
-    options.error_messages = {
-      ...DateTimeField.default_error_messages,
-      ...options.error_messages,
+  constructor({ maxValue = null, minValue = null, ...options } = {}) {
+    options.errorMessages = {
+      ...DateTimeField.defaultErrorMessages,
+      ...options.errorMessages,
     };
     super(options);
 
     let message;
-    if (max_value !== null) {
-      message = this.error_messages.max_value(max_value);
+    if (maxValue !== null) {
+      message = this.errorMessages.maxValue(maxValue);
       this.validators.push(
-        new MaxValueValidator({ limit_value: max_value, message })
+        new MaxValueValidator({ limitValue: maxValue, message })
       );
     }
-    if (min_value !== null) {
-      message = this.error_messages.min_value(min_value);
+    if (minValue !== null) {
+      message = this.errorMessages.minValue(minValue);
       this.validators.push(
-        new MinValueValidator({ limit_value: min_value, message })
+        new MinValueValidator({ limitValue: minValue, message })
       );
     }
   }
 
-  to_internal_value(data) {
+  toInternalValue(data) {
     let validator = new DateTimeValidator();
     try {
       validator.validate(data);
@@ -57,7 +57,7 @@ module.exports = class DateTimeField extends Field {
     return new Date(data);
   }
 
-  to_representation(value) {
+  toRepresentation(value) {
     return value.toISOString();
   }
 };

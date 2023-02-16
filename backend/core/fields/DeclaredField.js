@@ -11,13 +11,13 @@
  */
   
 module.exports = class DeclaredField {
-  constructor(field_class, field_options) {
-    this.field_class = field_class;
-    this.field_options = field_options;
+  constructor(fieldClass, fieldOptions) {
+    this.fieldClass = fieldClass;
+    this.fieldOptions = fieldOptions;
   }
 
-  get_field() {
-    return new this.field_class(this.field_options);
+  getField() {
+    return new this.fieldClass(this.fieldOptions);
   }
 }
   

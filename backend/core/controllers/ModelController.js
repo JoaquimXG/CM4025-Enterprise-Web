@@ -13,7 +13,7 @@ const { convertSequelizeValidationError } = require("../db/utils");
 const Controller = require("./Controller");
 const SequelizeValidationError = require("sequelize").ValidationError;
 
-field_mapping = {
+fieldMapping = {
   CharField: CharField,
   IntegerField: IntegerField,
   EmailField: EmailField,
@@ -45,11 +45,11 @@ module.exports = class ModelController extends Controller {
   //   model: null, // sequelize model class to use
   //   fields: null, // list of field names, or ALL_FIELDS
   //   exclude: [], // list of field names, or ALL_FIELDS
-  //   read_only_fields: [], // list of field names, or ALL_FIELDS
-  //   extra_options: {}, // dictionary of field names to keyword options for field
+  //   readOnlyFields: [], // list of field names, or ALL_FIELDS
+  //   extraOptions: {}, // dictionary of field names to keyword options for field
   // };
 
-  async create(validated_data) {
+  async create(validatedData) {
     let model = this.meta.model;
     /**
      * TODO(RELATIONS)
@@ -58,7 +58,7 @@ module.exports = class ModelController extends Controller {
      * 3. Manually create many-to-many relationships saved in step 2 after instance is created
      */
     try {
-      return await model.create(validated_data);
+      return await model.create(validatedData);
     } catch (e) {
       if (e instanceof SequelizeValidationError) {
         throw convertSequelizeValidationError(e);
@@ -67,14 +67,14 @@ module.exports = class ModelController extends Controller {
     }
   }
 
-  async update(instance, validated_data) {
+  async update(instance, validatedData) {
     /**
      * TODO(RELATIONS)
      * 1. Raise errors on nested writes before attempting to update instance
      * 2. Handle many to many relationship updates (ID only)
      */
     try {
-      return await instance.update(validated_data);
+      return await instance.update(validatedData);
     } catch (e) {
       if (e instanceof SequelizeValidationError) {
         throw convertSequelizeValidationError(e);
@@ -83,49 +83,49 @@ module.exports = class ModelController extends Controller {
     }
   }
 
-  get_field_info(model) {
+  getFieldInfo(model) {
     let fields = model.rawAttributes;
-    let pk_field_name = model.primaryKeyField;
-    let pk_field = fields[pk_field_name];
+    let pkFieldName = model.primaryKeyField;
+    let pkField = fields[pkFieldName];
     // TODO(RELATIONS) Get relationship fields
 
-    return { pk: pk_field, fields: fields };
+    return { pk: pkField, fields: fields };
   }
 
-  get_declared_fields() {
-    let declared_fields = {};
+  getDeclaredFields() {
+    let declaredFields = {};
     for (const [key, value] of Object.entries(this)) {
       if (value instanceof DeclaredField) {
-        declared_fields[key] = value.get_field();
+        declaredFields[key] = value.getField();
       }
     }
-    return declared_fields;
+    return declaredFields;
   }
 
-  get_fields() {
-    let declared_fields = this.get_declared_fields();
+  getFields() {
+    let declaredFields = this.getDeclaredFields();
     let model = this.meta.model;
     // TODO(RELATIONS) depth for relations, I think I won't use depth here and instead will focus on using nested controllers
     // Depth has some weird consequences for writes that I don't want to deal with
     let depth = 1;
 
-    let info = this.get_field_info(model);
-    let field_names = this.get_field_names(declared_fields, info);
+    let info = this.getFieldInfo(model);
+    let fieldNames = this.getFieldNames(declaredFields, info);
 
-    let extra_options = this.get_extra_options();
+    let extraOptions = this.getExtraOptions();
 
     let fields = {};
-    for (let field_name of field_names) {
+    for (let fieldName of fieldNames) {
       // Use declared field if present, allows overriding model fields
-      if (field_name in declared_fields) {
-        fields[field_name] = declared_fields[field_name];
+      if (fieldName in declaredFields) {
+        fields[fieldName] = declaredFields[fieldName];
         continue;
       }
 
-      let extra_field_options = extra_options[field_name] || {};
-      let source = extra_field_options.source || field_name;
+      let extraFieldOptions = extraOptions[fieldName] || {};
+      let source = extraFieldOptions.source || fieldName;
 
-      let [field_class, field_options] = this.build_field(
+      let [fieldClass, fieldOptions] = this.buildField(
         source,
         info,
         model,
@@ -133,18 +133,18 @@ module.exports = class ModelController extends Controller {
       );
 
       // Include extra field options from meta
-      field_options = this.include_extra_options(
-        field_options,
-        extra_field_options
+      fieldOptions = this.includeExtraOptions(
+        fieldOptions,
+        extraFieldOptions
       );
 
-      fields[field_name] = new field_class(field_options);
+      fields[fieldName] = new fieldClass(fieldOptions);
     }
 
     return fields;
   }
 
-  get_field_names(declared_fields, info) {
+  getFieldNames(declaredFields, info) {
     /**
      * Returns a list of field names that this controller will validate
      * Field names are a combination of fields declared on the controller and fields on the model
@@ -181,12 +181,12 @@ module.exports = class ModelController extends Controller {
     if (fields === ALL_FIELDS || fields === undefined) fields = null;
 
     // Ensure all declared fields are included in the meta.fields option
-    let required_field_names = new Set(Object.keys(declared_fields));
+    let requiredFieldNames = new Set(Object.keys(declaredFields));
     if (fields !== null) {
-      for (let field_name of required_field_names) {
-        if (!(field_name in fields)) {
+      for (let fieldName of requiredFieldNames) {
+        if (!(fieldName in fields)) {
           throw new Error(
-            `The field '${field_name}' was declared on controller ${this.constructor.name}, but has not been included in the 'fields' option.`
+            `The field '${fieldName}' was declared on controller ${this.constructor.name}, but has not been included in the 'fields' option.`
           );
         }
       }
@@ -194,156 +194,156 @@ module.exports = class ModelController extends Controller {
       return fields;
     }
 
-    fields = this.get_default_field_names(declared_fields, info);
+    fields = this.getDefaultFieldNames(declaredFields, info);
 
     if (exclude !== undefined) {
-      for (let field_name of exclude) {
-        if (field_name in required_field_names) {
+      for (let fieldName of exclude) {
+        if (fieldName in requiredFieldNames) {
           throw new Error(
-            `The field '${field_name}' was declared on controller ${this.constructor.name}, but has been excluded by the 'exclude' option.`
+            `The field '${fieldName}' was declared on controller ${this.constructor.name}, but has been excluded by the 'exclude' option.`
           );
         }
 
-        if (!fields.has(field_name)) {
+        if (!fields.has(fieldName)) {
           throw new Error(
-            `The field '${field_name}' was excluded on controller ${this.constructor.name}, but is not included in the model fields.`
+            `The field '${fieldName}' was excluded on controller ${this.constructor.name}, but is not included in the model fields.`
           );
         }
       }
-      for (let field_name of exclude) fields.delete(field_name);
+      for (let fieldName of exclude) fields.delete(fieldName);
     }
 
     return fields;
   }
 
-  get_default_field_names(declared_fields, model_info) {
-    let fieldsWithoutDeletedAt = Object.keys(model_info.fields).filter(
+  getDefaultFieldNames(declaredFields, modelInfo) {
+    let fieldsWithoutDeletedAt = Object.keys(modelInfo.fields).filter(
       (field) => field !== "deletedAt"
     );
     return new Set([
-      model_info.pk.fieldName,
+      modelInfo.pk.fieldName,
       ...fieldsWithoutDeletedAt,
-      ...Object.keys(declared_fields),
+      ...Object.keys(declaredFields),
       // TOOD(RELATIONS) forward relations
     ]);
   }
 
-  include_extra_options(options, extra_options) {
-    if (extra_options.read_only) {
+  includeExtraOptions(options, extraOptions) {
+    if (extraOptions.readOnly) {
       for (let key of [
-        "allow_blank",
+        "allowBlank",
         "required",
-        "max_length",
-        "min_length",
-        "max_value",
-        "min_value",
+        "maxLength",
+        "minLength",
+        "maxValue",
+        "minValue",
       ]) {
         delete options[key];
       }
     }
-    if (extra_options.default && !options.required) {
+    if (extraOptions.default && !options.required) {
       delete options.required;
     }
 
-    if (extra_options.read_only || options.read_only) {
-      delete extra_options.required;
+    if (extraOptions.readOnly || options.readOnly) {
+      delete extraOptions.required;
     }
 
-    options = { ...options, ...extra_options };
+    options = { ...options, ...extraOptions };
     return options;
   }
 
-  get_extra_options() {
-    let extra_options = structuredClone(this.meta.extra_options) || {};
-    if (this.meta.read_only_fields === undefined) return extra_options;
+  getExtraOptions() {
+    let extraOptions = structuredClone(this.meta.extraOptions) || {};
+    if (this.meta.readOnlyFields === undefined) return extraOptions;
 
-    if (!Array.isArray(this.meta.read_only_fields))
-      throw new TypeError("read_only_fields must be an array");
+    if (!Array.isArray(this.meta.readOnlyFields))
+      throw new TypeError("readOnlyFields must be an array");
 
-    for (let field of this.meta.read_only_fields) {
-      if (!(field in extra_options)) extra_options[field] = { read_only: true };
-      else extra_options[field].read_only = true;
+    for (let field of this.meta.readOnlyFields) {
+      if (!(field in extraOptions)) extraOptions[field] = { readOnly: true };
+      else extraOptions[field].readOnly = true;
     }
 
     // Set "createdAt" and "updatedAt" and "deletedAt" to read only
-    extra_options = this.force_read_only_fields(
-      extra_options,
+    extraOptions = this.forceReadOnlyFields(
+      extraOptions,
       "createdAt",
       "updatedAt",
       "deletedAt"
     );
-    return extra_options;
+    return extraOptions;
   }
 
-  force_read_only_fields(extra_options, ...fields) {
+  forceReadOnlyFields(extraOptions, ...fields) {
     for (let field of fields) {
-      if (!(field in extra_options)) extra_options[field] = { read_only: true };
-      else extra_options[field].read_only = true;
+      if (!(field in extraOptions)) extraOptions[field] = { readOnly: true };
+      else extraOptions[field].readOnly = true;
     }
-    return extra_options;
+    return extraOptions;
   }
 
-  build_field(field_name, info, model, nested_depth = 1) {
-    if (field_name in info.fields) {
-      let model_field = info.fields[field_name];
-      return this.build_standard_field(field_name, model_field);
+  buildField(fieldName, info, model, nestedDepth = 1) {
+    if (fieldName in info.fields) {
+      let modelField = info.fields[fieldName];
+      return this.buildStandardField(fieldName, modelField);
     }
     throw new Error("Have not implemented other types of field yet");
   }
 
-  build_standard_field(field_name, model_field) {
-    model_field = model_field.customFieldOptions
-      ? { ...model_field, ...model_field.customFieldOptions }
-      : model_field;
+  buildStandardField(fieldName, modelField) {
+    modelField = modelField.customFieldOptions
+      ? { ...modelField, ...modelField.customFieldOptions }
+      : modelField;
 
-    let field_type = model_field.controllerType
-      ? model_field.controllerType
-      : String(model_field.type);
+    let fieldType = modelField.controllerType
+      ? modelField.controllerType
+      : String(modelField.type);
 
-    let field_class = field_mapping[field_type];
+    let fieldClass = fieldMapping[fieldType];
 
-    if (!field_class)
+    if (!fieldClass)
       throw new Error(
-        `No field class found for field type ${model_field.type}`
+        `No field class found for field type ${modelField.type}`
       );
 
-    let field_options = this.get_field_options(
-      field_name,
-      model_field,
-      field_class
+    let fieldOptions = this.getFieldOptions(
+      fieldName,
+      modelField,
+      fieldClass
     );
 
-    if (model_field.choices) {
-      field_class = ChoiceField;
-      let valid_options = new Set([
-        "read_only",
-        "write_only",
+    if (modelField.choices) {
+      fieldClass = ChoiceField;
+      let validOptions = new Set([
+        "readOnly",
+        "writeOnly",
         "required",
         "default",
         "initial",
         "source",
-        "error_messages",
+        "errorMessages",
         "validators",
-        "allow_null",
-        "allow_blank",
+        "allowNull",
+        "allowBlank",
         "choices",
       ]);
-      for (let key of Object.keys(field_options)) {
-        if (!valid_options.has(key)) {
-          delete field_options[key];
+      for (let key of Object.keys(fieldOptions)) {
+        if (!validOptions.has(key)) {
+          delete fieldOptions[key];
         }
       }
     }
 
     // Only allow blank on charfield TODO or choice field
-    if (!field_class instanceof CharField) {
-      delete field_options.allow_blank;
+    if (!fieldClass instanceof CharField) {
+      delete fieldOptions.allowBlank;
     }
 
-    return [field_class, field_options];
+    return [fieldClass, fieldOptions];
   }
 
-  get_field_options(field_name, model_field, field_class) {
+  getFieldOptions(fieldName, modelField, fieldClass) {
     /**
      * Get all options for the field class
      * Options are taken from the model field definition
@@ -358,60 +358,60 @@ module.exports = class ModelController extends Controller {
      */
     let options = {};
 
-    let validator_option = model_field.validators || [];
+    let validatorOption = modelField.validators || [];
 
-    // DRF max_digits? decimal_places? for decimal field
+    // DRF maxDigits? decimalPlaces? for decimal field
 
-    if (model_field.allowNull) options.allow_null = true;
+    if (modelField.allowNull) options.allowNull = true;
 
     // Return early for read only fields
-    if (model_field._autoGenerated || model_field.autoIncrement) {
-      options.read_only = true;
+    if (modelField._autoGenerated || modelField.autoIncrement) {
+      options.readOnly = true;
       return options;
     }
 
-    if (model_field.defaultValue || model_field.allowNull)
+    if (modelField.defaultValue || modelField.allowNull)
       options.required = false;
 
-    if (model_field.blank && Field.is_child(field_class, CharField))
-      options.allow_blank = true;
+    if (modelField.blank && Field.isChild(fieldClass, CharField))
+      options.allowBlank = true;
 
-    if (model_field.choices) options.choices = model_field.choices;
+    if (modelField.choices) options.choices = modelField.choices;
     else {
-      let max_value = model_field.maxValue || null;
+      let maxValue = modelField.maxValue || null;
       if (
-        max_value &&
-        Field.is_child(field_class, [IntegerField, DateTimeField])
+        maxValue &&
+        Field.isChild(fieldClass, [IntegerField, DateTimeField])
       ) {
-        options.max_value = max_value;
+        options.maxValue = maxValue;
       }
 
-      let min_value = model_field.minValue || null;
+      let minValue = modelField.minValue || null;
       if (
-        min_value &&
-        Field.is_child(field_class, [IntegerField, DateTimeField])
+        minValue &&
+        Field.isChild(fieldClass, [IntegerField, DateTimeField])
       ) {
-        options.min_value = min_value;
+        options.minValue = minValue;
       }
     }
 
-    let max_length = model_field.maxLength || null;
-    if (max_length && Field.is_child(field_class, CharField)) {
-      options.max_length = max_length;
-      delete validator_option.maxLength;
+    let maxLength = modelField.maxLength || null;
+    if (maxLength && Field.isChild(fieldClass, CharField)) {
+      options.maxLength = maxLength;
+      delete validatorOption.maxLength;
     }
 
-    let min_length = model_field.minLength || null;
-    if (min_length && Field.is_child(field_class, CharField)) {
-      options.min_length = min_length;
-      delete validator_option.minLength;
+    let minLength = modelField.minLength || null;
+    if (minLength && Field.isChild(fieldClass, CharField)) {
+      options.minLength = minLength;
+      delete validatorOption.minLength;
     }
 
     /// DRF unique validator, sequelize offers a unique constraint but this is database layer
     // Application layer should perform validation on uniqueness before passing to sequelize
     // even if just for producing better
 
-    options.validators = validator_option;
+    options.validators = validatorOption;
     return options;
   }
 };

@@ -3,8 +3,7 @@ const { Empty, SkipField } = require("../fields");
 const { ValidationError } = require("../responses/errors");
 
 module.exports = class Controller extends BaseController {
-  // TODO review error messages
-  staticdefault_error_messages = {
+  static defaultErrorMessages = {
     invalid: "Invalid data. Expected a dictionary, but got {datatype}.",
   };
 
@@ -13,9 +12,9 @@ module.exports = class Controller extends BaseController {
   _fields = null;
   
   constructor(options = {}) {
-    options.error_messages = {
-      ...Controller.default_error_messages,
-      ...options.error_messages,
+    options.errorMessages = {
+      ...Controller.defaultErrorMessages,
+      ...options.errorMessages,
     };
     super(options);
   }
@@ -24,9 +23,9 @@ module.exports = class Controller extends BaseController {
     if (this._fields === null) {
       // Loop through fields and bind them
       this._fields = {};
-      let declared_fields = this.get_fields();
-      for (let key in declared_fields) {
-        let field = declared_fields[key];
+      let declaredFields = this.getFields();
+      for (let key in declaredFields) {
+        let field = declaredFields[key];
         field.bind(key, this);
         this._fields[key] = field;
       }
@@ -34,14 +33,14 @@ module.exports = class Controller extends BaseController {
     return this._fields;
   }
 
-  get writeable_fields() {
-    return Object.values(this.fields).filter((field) => !field.read_only);
+  get writeableFields() {
+    return Object.values(this.fields).filter((field) => !field.readOnly);
   }
-  get readable_fields() {
-    return Object.values(this.fields).filter((field) => !field.write_only);
+  get readableFields() {
+    return Object.values(this.fields).filter((field) => !field.writeOnly);
   }
 
-  get_declared_fields() {
+  getDeclaredFields() {
     fields = {};
     for (key in this) {
       if (this[key] instanceof Field) {
@@ -53,58 +52,58 @@ module.exports = class Controller extends BaseController {
 
   // Allows overriding logic for getting fields in child classes
   // Used by fields getter
-  get_fields() {
-    return structuredClone(this.get_declared_fields());
+  getFields() {
+    return structuredClone(this.getDeclaredFields());
   }
 
-  get_validators() {
+  getValidators() {
     if (!self.meta || !self.meta.validators) return [];
 
     return self.meta.validators;
   }
 
-  get_initial() {
-    if (this.initial_data) {
-      if (typeof this.initial_data !== "object") return {};
+  getInitial() {
+    if (this.initialData) {
+      if (typeof this.initialData !== "object") return {};
 
       return Object.fromEntries(
         Object.keys(this.fields)
-          .map((field_name) => [field_name, this.fields[field_name]])
+          .map((fieldName) => [fieldName, this.fields[fieldName]])
           .filter(
             ([_, field]) =>
-              !field.get_value(this.initial_data) instanceof Empty && !field.read_only
+              !field.getValue(this.initialData) instanceof Empty && !field.readOnly
           )
       );
     }
 
     return Object.fromEntries(
       Object.keys(this.fields)
-        .map((field_name) => [
-          field_name,
-          this.fields[field_name].get_initial(),
+        .map((fieldName) => [
+          fieldName,
+          this.fields[fieldName].getInitial(),
         ])
-        .filter(([_, field]) => !field.read_only)
+        .filter(([_, field]) => !field.readOnly)
     );
   }
 
-  get_value(dictionary) {
-    return dictionary[self.field_name];
+  getValue(dictionary) {
+    return dictionary[self.fieldName];
   }
 
-  run_validation(data = new Empty()) {
-    let is_empty_value;
-    [is_empty_value, data] = this.validate_empty_values(data);
+  runValidation(data = new Empty()) {
+    let isEmptyValue;
+    [isEmptyValue, data] = this.validateEmptyValues(data);
 
-    if (is_empty_value) return data;
+    if (isEmptyValue) return data;
     let value;
 
     try {
-      value = this.to_internal_value(data);
-      this.run_validators(value); // Should throw errors if invalid
+      value = this.toInternalValue(data);
+      this.runValidators(value); // Should throw errors if invalid
       value = this.validate(value);
     } catch (e) {
       if (e instanceof ValidationError)
-        throw new ValidationError({ non_field_errors: e.message });
+        throw new ValidationError({ nonFieldErrors: e.message });
       else throw e;
     }
     if (value === null) {
@@ -114,10 +113,10 @@ module.exports = class Controller extends BaseController {
     return value;
   }
 
-  read_only_defaults() {
+  readOnlyDefaults() {
     let fields = Object.values(this.fields).filter(
       (field) =>
-        field.read_only &&
+        field.readOnly &&
         field.default !== Empty &&
         field.source != "*" &&
         !field.source.includes(".")
@@ -126,7 +125,7 @@ module.exports = class Controller extends BaseController {
     let defaults = {};
     for (let field of fields) {
       try {
-        let defaultValue = field.get_default();
+        let defaultValue = field.getDefault();
         defaults[field.source] = defaultValue;
       } catch (e) {
         if (e instanceof SkipField) continue;
@@ -135,40 +134,40 @@ module.exports = class Controller extends BaseController {
     }
   }
 
-  run_validators(data) {
+  runValidators(data) {
     // DRF run through list of custom validators that are present on this class
     // I think this is unlikely to be used much for the controller but is likely to be used
     // Extensively for Field
-    let to_validate;
+    let toValidate;
     if (typeof data === "object") {
-      to_validate = this.read_only_defaults();
-      to_validate = { ...to_validate, ...data };
+      toValidate = this.readOnlyDefaults();
+      toValidate = { ...toValidate, ...data };
     } else {
-      to_validate = data;
+      toValidate = data;
     }
-    super.run_validators(to_validate);
+    super.runValidators(toValidate);
   }
 
-  to_internal_value(data) {
+  toInternalValue(data) {
     if (typeof data !== "object")
       throw new ValidationError("Data must be an object, not null");
 
     let ret = {};
     let errors = {};
-    let fields = this.writeable_fields;
+    let fields = this.writeableFields;
 
     for (let field of fields) {
-      let validate_method = this["validate_" + field.field_name] || null;
-      let primitive_value = field.get_value(data);
+      let validateMethod = this["validate_" + field.fieldName] || null;
+      let primitiveValue = field.getValue(data);
       try {
-        let validated_value = field.run_validation(primitive_value);
-        if (validate_method) {
-          validated_value = validate_method(validated_value);
+        let validatedValue = field.runValidation(primitiveValue);
+        if (validateMethod) {
+          validatedValue = validateMethod(validatedValue);
         }
-        ret[field.field_name] = validated_value;
+        ret[field.fieldName] = validatedValue;
       } catch (e) {
         if (e instanceof SkipField) continue;
-        if (e instanceof ValidationError) errors[field.field_name] = e.message;
+        if (e instanceof ValidationError) errors[field.fieldName] = e.message;
         else throw e;
       }
     }
@@ -177,34 +176,34 @@ module.exports = class Controller extends BaseController {
     return ret;
   }
 
-  _to_representation(instance, fields) {
+  _toRepresentation(instance, fields) {
     let ret = {};
 
     for (let field of fields) {
       let attribute;
       try {
-        attribute = field.get_attribute(instance);
+        attribute = field.getAttribute(instance);
       } catch (e) {
         if (e instanceof SkipField) continue;
         else throw e;
       }
 
-      // DRF check for none on pk_only_fields
-      if (attribute === null) ret[field.field_name] = null;
-      else ret[field.field_name] = field.to_representation(attribute);
+      // DRF check for none on pkOnlyFields
+      if (attribute === null) ret[field.fieldName] = null;
+      else ret[field.fieldName] = field.toRepresentation(attribute);
     }
     return ret;
   }
 
-  to_representation(data) {
+  toRepresentation(data) {
     let ret = this.many ? [] : {};
-    let fields = this.readable_fields;
+    let fields = this.readableFields;
     // DRF should use a proper ListController but this is fine for now
 
     if (this.many) {
       for (let instance of data)
-        ret.push(this._to_representation(instance, fields));
-    } else ret = this._to_representation(data, fields);
+        ret.push(this._toRepresentation(instance, fields));
+    } else ret = this._toRepresentation(data, fields);
 
     return ret;
   }

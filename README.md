@@ -17,8 +17,10 @@ but I can evidence that these sections of these projects were implemented by me.
 
 ## TODO
 
-1. Relations
-2. Finally..., endpoints for the standard API
+1. Refactor
+  - Use JavaScript style and naming convention
+2. Relations
+3. Finally..., endpoints for the standard API
 
 ### Maybe TODO (probably not for this proectqj)
     

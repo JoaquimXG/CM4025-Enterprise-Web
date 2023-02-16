@@ -1,7 +1,7 @@
 const Field = require("./Field");
 
 module.exports = class BooleanField extends Field {
-  static default_error_messages = {
+  static defaultErrorMessages = {
     invalid: "Must be a valid boolean.",
   };
   initial = false;
@@ -44,26 +44,26 @@ module.exports = class BooleanField extends Field {
   ]);
 
   constructor(options = {}) {
-    options.error_messages = {
-      ...BooleanField.default_error_messages,
-      ...options.error_messages,
+    options.errorMessages = {
+      ...BooleanField.defaultErrorMessages,
+      ...options.errorMessages,
     };
     super(options);
   }
 
   NULL_VALUES = new Set(["null", "Null", "NULL", "", null]);
 
-  to_internal_value(data) {
+  toInternalValue(data) {
     if (this.TRUE_VALUES.has(data)) return true;
     if (this.FALSE_VALUES.has(data)) return false;
-    if (this.NULL_VALUES.has(data) && this.allow_null) return null;
+    if (this.NULL_VALUES.has(data) && this.allowNull) return null;
     this.fail("invalid");
   }
 
-  to_representation(value) {
+  toRepresentation(value) {
     if (this.TRUE_VALUES.has(value)) return true;
     if (this.FALSE_VALUES.has(value)) return false;
-    if (this.NULL_VALUES.has(value) && this.allow_null) return null;
+    if (this.NULL_VALUES.has(value) && this.allowNull) return null;
     return !!value;
   }
 };

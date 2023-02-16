@@ -4,5 +4,5 @@ const { IntegerController } = require("../controllers");
 
 module.exports = class IntegerViewSet extends ModelViewSet {
   model = sequelize.models.IntegerModel;
-  controller_class = IntegerController;
+  controllerClass = IntegerController;
 };

@@ -4,5 +4,5 @@ const { AllFieldsController } = require("../../../controllers/fields");
 
 module.exports = class AllFieldsViewSet extends ModelViewSet {
   model = sequelize.models.ReadOnlyDefaultModel;
-  controller_class = AllFieldsController;
+  controllerClass = AllFieldsController;
 };

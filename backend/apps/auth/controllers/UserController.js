@@ -8,8 +8,8 @@ const { passwordStrength } = require("check-password-strength");
 module.exports = class UserController extends ModelController {
   password = new DeclaredField(CharField, {
     required: true,
-    write_only: true,
-    max_length: 255,
+    writeOnly: true,
+    maxLength: 255,
   });
 
   meta = {
@@ -17,7 +17,7 @@ module.exports = class UserController extends ModelController {
     exclude: ["hash"],
   };
 
-  validate_password(value) {
+  validatePassword(value) {
     if (value.length < 8)
       throw new ValidationError("Password must be at least 8 characters long");
 
@@ -28,17 +28,17 @@ module.exports = class UserController extends ModelController {
     return value;
   }
 
-  async create(validated_data) {
-    validated_data.hash = await bcrypt.hash(validated_data.password, 10);
-    delete validated_data.password;
+  async create(validatedData) {
+    validatedData.hash = await bcrypt.hash(validatedData.password, 10);
+    delete validatedData.password;
     //TODO send verification email
-    return super.create(validated_data);
+    return super.create(validatedData);
   }
 
-  async update(instance, validated_data) {
-    if (validated_data.password) {
+  async update(instance, validatedData) {
+    if (validatedData.password) {
       throw new ValidationError("Password cannot be updated");
     }
-    return super.update(instance, validated_data);
+    return super.update(instance, validatedData);
   }
 };

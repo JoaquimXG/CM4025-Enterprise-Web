@@ -4,5 +4,5 @@ const { DateTimeController } = require("../controllers");
 
 module.exports = class DateTimeViewSet extends ModelViewSet {
   model = sequelize.models.DateTimeModel;
-  controller_class = DateTimeController;
+  controllerClass = DateTimeController;
 };

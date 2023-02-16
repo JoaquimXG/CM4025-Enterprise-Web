@@ -4,5 +4,5 @@ const { BooleanController } = require("../controllers");
 
 module.exports = class BooleanViewSet extends ModelViewSet {
   model = sequelize.models.BooleanModel;
-  controller_class = BooleanController;
+  controllerClass = BooleanController;
 };

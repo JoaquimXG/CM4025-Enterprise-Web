@@ -5,6 +5,6 @@ module.exports = class PartialReadOnlyController extends ModelController {
   meta = {
     model: sequelize.models.ReadOnlyDefaultModel,
     exclude: ["createdAt", "updatedAt"],
-    read_only_fields: ["notNullableDefault"],
+    readOnlyFields: ["notNullableDefault"],
   };
 };

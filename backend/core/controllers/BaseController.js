@@ -10,18 +10,18 @@ module.exports = class BaseController extends Field {
   constructor({ instance = null, data = new Empty(), options = {} } = {}) {
     super(options);
     this.instance = instance;
-    this.initial_data = data !== new Empty() ? data : null;
+    this.initialData = data !== new Empty() ? data : null;
     this.partial = options.partial || false;
     this._context = options.context || {};
     this.many = options.many || false;
   }
 
-  to_internal_value(data) {
-    throw new Error("to_internal_value() must be implemented.");
+  toInternalValue(data) {
+    throw new Error("toInternalValue() must be implemented.");
   }
 
-  to_representation(instance) {
-    throw new Error("to_representation() must be implemented.");
+  toRepresentation(instance) {
+    throw new Error("toRepresentation() must be implemented.");
   }
 
   async update(instance) {
@@ -32,9 +32,9 @@ module.exports = class BaseController extends Field {
     throw new Error("create() must be implemented.");
   }
 
-  async save(additional_data) {
+  async save(additionalData) {
     if (this.validated === undefined)
-      throw new Error("is_valid() must be called before save()");
+      throw new Error("isValid() must be called before save()");
 
     if (this.errors !== null)
       throw new Error("Can't call save() on a controller with invalid data");
@@ -42,35 +42,35 @@ module.exports = class BaseController extends Field {
     if (this._data !== null) {
       throw new Error("Cannot save after accessing data");
     }
-    this.validated_data = { ...this.validated_data, ...additional_data };
+    this.validatedData = { ...this.validatedData, ...additionalData };
 
     if (this.instance !== null) {
-      this.instance = await this.update(this.instance, this.validated_data);
+      this.instance = await this.update(this.instance, this.validatedData);
       if (!this.instance) throw new Error("update() must return an instance");
       return this.instance;
     } else {
-      this.instance = await this.create(this.validated_data);
+      this.instance = await this.create(this.validatedData);
       if (!this.instance) throw new Error("create() must return an instance");
       return this.instance;
     }
   }
 
-  is_valid(raiseError) {
-    if (this.initial_data === null) {
+  isValid(raiseError) {
+    if (this.initialData === null) {
       throw new Error(
-        "Data must be passed to controller before calling is_valid"
+        "Data must be passed to controller before calling isValid"
       );
     }
 
-    if (this._validated_data === undefined) {
+    if (this._validatedData === undefined) {
       try {
-        this._validated_data = this.run_validation(this.initial_data);
+        this._validatedData = this.runValidation(this.initialData);
         this._errors = null;
       } catch (e) {
         if (!(e instanceof ValidationError)) {
           throw e;
         }
-        this._validated_data = {};
+        this._validatedData = {};
         this.validated = false;
         this._errors = [{ message: e.message }];
         throw e;
@@ -91,11 +91,11 @@ module.exports = class BaseController extends Field {
 
     if (this._data === null) {
       if (this.instance && this._errors === undefined) {
-        this._data = this.to_representation(this.instance);
+        this._data = this.toRepresentation(this.instance);
       } else if (this._errors === undefined) {
-        this._data = this.to_representation(this.validated_data);
+        this._data = this.toRepresentation(this.validatedData);
       } else {
-        this._data = this.get_initial();
+        this._data = this.getInitial();
       }
     }
 
@@ -109,10 +109,10 @@ module.exports = class BaseController extends Field {
     return this._errors;
   }
 
-  get validated_data() {
-    if (!this._validated_data) {
-      throw new Error("Must call is_valid before accessing validated_data");
+  get validatedData() {
+    if (!this._validatedData) {
+      throw new Error("Must call isValid before accessing validatedData");
     }
-    return this._validated_data;
+    return this._validatedData;
   }
 };

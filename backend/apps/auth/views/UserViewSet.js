@@ -8,13 +8,13 @@ module.exports = class UserViewSet extends ModelViewSet {
   permissions = [new IsAuthenticated()];
 
   model = sequelize.models.User;
-  controller_class = UserController;
+  controllerClass = UserController;
 
-  async get_object_middleware(req, res, next) {
+  async getObjectMiddleware(req, res, next) {
     try {
-      req.instance = await this.get_object(
+      req.instance = await this.getObject(
         req.user.id,
-        this.lookup_field === "id"
+        this.lookupField === "id"
       );
       if (!req.instance) return new NotFoundError().send(res);
       return next();
