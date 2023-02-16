@@ -1,5 +1,5 @@
 const base = require("./base");
-const jest = require("./jest");
+const jest_settings = require("./jest"); // Can't name jest as when running with jest, jest is reserved...
 
 /**
  * Settings files can be arbitrarily constructed as javascript files with whatever

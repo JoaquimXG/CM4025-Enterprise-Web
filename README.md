@@ -1,8 +1,9 @@
 # CM4025 Placeholder
 
-## Influences
+## Influences/Inspiration
 
 ### DRF - Django Rest Framework
+
 Codebase is written in JavaScript but the concepts for code structure and organisation of models/routes/etc. are all heavily inspired by
 Django Rest Framework which is written in Python. Many of the class names are identical to Django Rest Framework and the implemenatations are similar.
 I hope that this is suitable as the only reason this has been done is because DRF is excellent but unfortunately not available in JavaScript. Realistically this is much
@@ -15,23 +16,22 @@ Small sections of the codebase, particularly around the middleware for PassportJ
 but I can evidence that these sections of these projects were implemented by me.
 
 ## TODO
-2. Create other user API endpoints
-   - Password reset
-   - /user/me?
-   - Any others??
-3. Relations
-4. View based permissions
-  - E.g., for /user/:id/ endpoints, this should probably be for `admins` only, if there are any
-  - I don't need roles or anything complex, just standard CRUD permissions for each model
-    - view
-    - create
-    - update
-    - delete
 
-5. Relative imports???
-6. CSRFTOKEN??? Should ask whether they are likely to care about this in class
+1. Relations
+2. Finally..., endpoints for the standard API
 
-## DONE
+### Maybe TODO (probably not for this proectqj)
+    
+1. Password reset/recovery
+2. MFA
+3. Complex permissions
+  - The outline for this is done, see IsAdmin and IsAuthenticated implementations
+  - Further work can be done on more complex permissions but they are likley not required here.
+    - read, write, update, delete permissions
+4. Relative imports???
+5. CSRFTOKEN??? Should ask whether they are likely to care about this in class
+
+### DONE
 1. Create consistent interface for standar CRUD endpoints
    - I want a similar system to how Django DRF handles standard CRUD with ViewSets supported by Serializers
 2. Create User model with sequelize and integrate with passportjs
@@ -39,15 +39,19 @@ but I can evidence that these sections of these projects were implemented by me.
 4. Create ChoiceField
 5. Create DateTime fields and validators
 6. Integrate User model with passportjs
+7. /user/me endpoint
+8. View based permissions
 
 ### Tags
+
+Search the codebase for the following tags
 
 TODO - Things that need to be done
 DRF - Things that could be taken from Django Rest Framework, likely look at DRF implementation for details
 
 ### Issues
 
-#### Other
+### Other
 1. Error formatting
   - Errors should be formatted properly through the validation chain
 
@@ -72,11 +76,9 @@ DRF - Things that could be taken from Django Rest Framework, likely look at DRF 
 - ViewRouter/BaseRouter
   - Takes a ViewSet and generates the routes for the endpoints
 
-## Errors
+## Application Model
 
-- Need to extend from Error to allow throwing custom errors through express middleware
-
-## Models
+This is not complex, no ERD is required.
 
 - User
 - Project
