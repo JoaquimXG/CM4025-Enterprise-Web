@@ -1,6 +1,6 @@
-const { BaseRouter } = require("../../../core/routers");
 const { Router } = require("express");
 const {
+  AdminUserViewSet,
   UserViewSet,
   LoginView,
   IsAdminView,
@@ -10,13 +10,17 @@ const {
 
 const authRouter = Router();
 
-//TODO override /user/:id/ for /user/me/ to show the currently loggeded in user's details
-authRouter.get("/user/me", (req,res) => res.send("test"))
-let userRouter = new BaseRouter("/user", new UserViewSet());
-authRouter.use("/", userRouter.router);
-authRouter.use("/login", new LoginView().as_router());
-authRouter.use("/isadmin", new IsAdminView().as_router());
-authRouter.use("/isauthenticated", new IsAuthenticatedView().as_router());
-authRouter.use("/logout", new LogoutView().as_router());
+authRouter.use(
+  "/user/me",
+  new UserViewSet().asRouter({
+    get: { handler: "retrieve", route: "/" },
+    patch: { handler: "update", route: "/" },
+  })
+);
+// authRouter.use("/user/", new AdminUserViewSet().asRouter());
+authRouter.use("/login", new LoginView().asRouter());
+authRouter.use("/isadmin", new IsAdminView().asRouter());
+authRouter.use("/isauthenticated", new IsAuthenticatedView().asRouter());
+authRouter.use("/logout", new LogoutView().asRouter());
 
 module.exports = authRouter;
