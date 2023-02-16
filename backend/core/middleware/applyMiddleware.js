@@ -21,9 +21,10 @@ module.exports = (app) => {
     resave: true,
     saveUninitialized: true,
     cookie: { maxAge: false },
-    store: new SessionStore({
-      db: sequelize,
-    }),
+    store: settings.USE_SESSION_STORE ? new SessionStore({db: sequelize}): null,
+    // store: new SessionStore({
+    //   db: sequelize,
+    // }),
   };
 
   app.use(session(sessionArgs));

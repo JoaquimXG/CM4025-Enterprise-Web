@@ -9,9 +9,9 @@
     "migrate": "LOG_CONSOLE=true CONSOLE_LOG_LEVEL=debug SEQUELIZE_MIGRATE=true node backend/core/db/sequelize.js",
     "test-connect-db": "node backend/core/db/testConnection.js",
     "testing": "node test.js",
-    "test": "LOG_CONSOLE=true CONSOLE_LOG_LEVEL=warn jest",
-    "test-info": "LOG_CONSOLE=true CONSOLE_LOG_LEVEL=info jest",
-    "test-debug": "LOG_CONSOLE=true CONSOLE_LOG_LEVEL=debug jest"
+    "test": "SETTINGS_ENV=jest CONSOLE_LOG_LEVEL=warn jest",
+    "test-info": "SETTINGS_ENV=jest CONSOLE_LOG_LEVEL=info jest",
+    "test-debug": "SETTINGS_ENV=jest CONSOLE_LOG_LEVEL=debug jest"
   },
   "repository": "https://github.com/JoaquimXG/CM4025-Enterprise-Web",
   "author": "Joaquim Gomez",
@@ -40,6 +40,7 @@
     "winston": "^3.8.2"
   },
   "devDependencies": {
+    "express-print-routes": "^1.0.0",
     "jest": "^29.4.2",
     "jest-html-reporter": "^3.7.0",
     "nodemon": "^2.0.20",
