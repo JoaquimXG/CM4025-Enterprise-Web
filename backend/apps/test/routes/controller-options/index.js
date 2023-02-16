@@ -1,20 +1,16 @@
-const { BaseRouter } = require("../../../../core/routers");
 const { Router } = require("express");
 
-let fieldsRouter = Router();
 const {
   AllFieldsViewSet,
   PartialFieldsViewSet,
   NoFieldsViewSet,
 } = require("../../views/controller-options/fields");
 
-let allRouter = new BaseRouter("/all", new AllFieldsViewSet());
-let partialRouter = new BaseRouter("/partial", new PartialFieldsViewSet());
-let noRouter = new BaseRouter("/no", new NoFieldsViewSet());
+let fieldsRouter = Router();
 
-fieldsRouter.use("/", allRouter.router);
-fieldsRouter.use("/", partialRouter.router);
-fieldsRouter.use("/", noRouter.router);
+fieldsRouter.use("/all", new AllFieldsViewSet().asRouter());
+fieldsRouter.use("/partial", new PartialFieldsViewSet().asRouter());
+fieldsRouter.use("/no", new NoFieldsViewSet().asRouter());
 
 const {
   ExcludeAllViewSet,
@@ -23,16 +19,10 @@ const {
 } = require("../../views/controller-options/exclude");
 
 let excludeRouter = Router();
-let excludeAllRouter = new BaseRouter("/all", new ExcludeAllViewSet());
-let partialExcludeRouter = new BaseRouter(
-  "/partial",
-  new PartialExcludeViewSet()
-);
-let notExcludeRouter = new BaseRouter("/no", new NotExcludeViewSet());
 
-excludeRouter.use("/", excludeAllRouter.router);
-excludeRouter.use("/", partialExcludeRouter.router);
-excludeRouter.use("/", notExcludeRouter.router);
+excludeRouter.use("/all", new ExcludeAllViewSet().asRouter());
+excludeRouter.use("/partial", new PartialExcludeViewSet().asRouter());
+excludeRouter.use("/no", new NotExcludeViewSet().asRouter());
 
 const {
   AllReadOnlyViewSet,
@@ -41,16 +31,10 @@ const {
 } = require("../../views/controller-options/read_only");
 
 let readOnlyRouter = Router();
-let allReadOnlyRouter = new BaseRouter("/all", new AllReadOnlyViewSet());
-let partialReadOnlyRouter = new BaseRouter(
-  "/partial",
-  new PartialReadOnlyViewSet()
-);
-let notReadOnlyRouter = new BaseRouter("/no", new NotReadOnlyViewSet());
 
-readOnlyRouter.use("/", allReadOnlyRouter.router);
-readOnlyRouter.use("/", partialReadOnlyRouter.router);
-readOnlyRouter.use("/", notReadOnlyRouter.router);
+readOnlyRouter.use("/all", new AllReadOnlyViewSet().asRouter());
+readOnlyRouter.use("/partial", new PartialReadOnlyViewSet().asRouter());
+readOnlyRouter.use("/no", new NotReadOnlyViewSet().asRouter());
 
 let router = Router();
 router.use("/fields", fieldsRouter);
