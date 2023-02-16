@@ -5,7 +5,10 @@ const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const compression = require("compression");
 const session = require("express-session");
+const SessionStore = require("express-session-sequelize")(session.Store);
 const logger = require("./logger");
+const sequelize = require("../db/sequelize");
+const passport = require("../../apps/auth/middleware/passport");
 
 //Sets up all of the middleware required for our app.
 //It is useful to keep this in a separate file to keep app.js tidy and
@@ -18,9 +21,15 @@ module.exports = (app) => {
     resave: true,
     saveUninitialized: true,
     cookie: { maxAge: false },
+    store: new SessionStore({
+      db: sequelize,
+    }),
   };
 
   app.use(session(sessionArgs));
+
+  app.use(passport.initialize());
+  app.use(passport.session());
 
   //HTTP body parse for handling post requests
   app.use(

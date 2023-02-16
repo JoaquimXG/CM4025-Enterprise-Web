@@ -8,6 +8,9 @@ module.exports = class ApiError extends Error {
   }
 
   toJson() {
+    if (this.message === undefined) {
+      return null;
+    }
     return {
       message: this.message,
     };
