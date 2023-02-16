@@ -1,3 +1,4 @@
+const ApiView = require("./ApiView");
 const {
   OkResponse,
   NoContentResponse,
@@ -7,7 +8,7 @@ const { NotFoundError } = require("../responses/errors");
 
 // DRF split non-model functions out into a separate class, ApiView, and have ModelApiView extend it
 // DRF some of this functionality should be concentrated in the controller and fields
-module.exports = class ModelApiView {
+module.exports = class ModelApiView extends ApiView {
   lookup_field = "id";
   model = null;
   controller_class = null;
@@ -21,7 +22,7 @@ module.exports = class ModelApiView {
 
   get_controller_context_middleware(req, _, next) {
     req.controller_context = this.get_controller_context(req);
-    next();
+    return next();
   }
 
   async create_object(controller) {
@@ -31,9 +32,9 @@ module.exports = class ModelApiView {
   async create_object_middleware(req, _, next) {
     try {
       req.instance = await this.create_object(req.controller);
-      next();
+      return next();
     } catch (e) {
-      next(e);
+      return next(e);
     }
   }
 
@@ -47,9 +48,9 @@ module.exports = class ModelApiView {
   async update_object_middleware(req, _, next) {
     try {
       await this.update_object(req.controller);
-      next();
+      return next();
     } catch (e) {
-      next(e);
+      return next(e);
     }
   }
 
@@ -62,7 +63,7 @@ module.exports = class ModelApiView {
       });
       if (req.controller.is_valid(true)) next();
     } catch (e) {
-      next(e);
+      return next(e);
     }
   }
 
@@ -73,9 +74,9 @@ module.exports = class ModelApiView {
   async list_objects_middleware(req, _, next) {
     try {
       req.instances = await this.list_objects();
-      next();
+      return next();
     } catch (e) {
-      next(e);
+      return next(e);
     }
   }
 
@@ -88,7 +89,7 @@ module.exports = class ModelApiView {
       await this.perform_destroy(req.instance);
       return new NoContentResponse().send(res);
     } catch (e) {
-      next(e);
+      return next(e);
     }
   }
 
@@ -102,7 +103,7 @@ module.exports = class ModelApiView {
         return new CreatedResponse(data).sendJson(res);
       else return new OkResponse(data).sendJson(res);
     } catch (e) {
-      next(e);
+      return next(e);
     }
   }
 
@@ -113,9 +114,9 @@ module.exports = class ModelApiView {
         this.lookup_field === "id"
       );
       if (!req.instance) return new NotFoundError().send(res);
-      next();
+      return next();
     } catch (e) {
-      next(e);
+      return next(e);
     }
   }
 

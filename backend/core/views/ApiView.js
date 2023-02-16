@@ -1,3 +1,4 @@
+const { ForbiddenError } = require("../responses/errors");
 const Router = require("express").Router;
 
 module.exports = class ApiView {
@@ -12,32 +13,67 @@ module.exports = class ApiView {
    * Instance attribute names can also be any arbitraty name, and then when calling as_router, a
    * mapping of HTTP methods to attribute names must be provided.
    */
-  as_router(methodMap) {
+  asRouter(methodMap) {
     /**
      * methodMap in format
      * {
-     *  get: "method_name/list_of_methods",
-     *  post: "method_name/list_of_methods",
-     *  ...
+     *  get: {handler: <method_name>, route: <route>},
+     *  // OR can be a list of routes for each method, e.g.,
+     *  post: [
+     *    {handler: <method_name>, route: <route>},
+     *    {handler: <method_name>, route: <route>},
+     *  ]
+     *
      * }
      */
     let router = Router();
 
-    // Try to bind all standard methods
-    for (let method of ["get", "post", "put", "delete", "patch"]) {
-      if (this[method]) {
-        router[method]("/", this[method]);
-      }
-      if (methodMap && methodMap[method]) delete methodMap[method];
-    }
+    const defaultMethodMap = {
+      get: { handler: "get", route: "/" },
+      post: { handler: "post", route: "/" },
+      put: { handler: "put", route: "/" },
+      delete: { handler: "delete", route: "/" },
+      patch: { handler: "patch", route: "/" },
+      put: { handler: "put", route: "/" },
+    };
+
+    methodMap =
+      methodMap === undefined
+        ? defaultMethodMap
+        : { ...defaultMethodMap, ...methodMap };
 
     for (const method in methodMap) {
-      if (!this.hasOwnProperty(methodMap[method]))
-        throw new Error(
-          `Method ${methodMap[method]} does not exist on ${this.constructor.name}`
-        );
-      router[method](this[methodMap[method]]);
+      if (!Array.isArray(methodMap[method]))
+        methodMap[method] = [methodMap[method]];
+      for (let { handler, route } of methodMap[method]) {
+        route = route === undefined ? "/" : route;
+        if (!this.hasOwnProperty(handler)) continue;
+        router[method](route, this.insertMiddleware(this[handler]));
+      }
     }
     return router;
+  }
+
+  preRouteMiddleware = [this.checkPermissions.bind(this)];
+  postRouteMiddleware = [];
+
+  insertMiddleware(routeHandlers) {
+    if (!Array.isArray(routeHandlers)) routeHandlers = [routeHandlers];
+
+    routeHandlers = [
+      ...this.preRouteMiddleware,
+      ...routeHandlers,
+      ...this.postRouteMiddleware,
+    ];
+
+    return routeHandlers;
+  }
+
+  checkPermissions(req, res, next) {
+    if (!this.permissions) return next();
+    for (let permission of this.permissions) {
+      if (!permission.hasPermission(req)) return new ForbiddenError().send(res);
+      return next();
+    }
   }
 };
