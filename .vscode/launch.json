@@ -30,7 +30,7 @@
       "cwd": "${workspaceFolder}",
       "envFile": "${workspaceFolder}/.env",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "testing"],
+      "runtimeArgs": ["run", "test"],
     },
     {
       "name": "NPM Run connection test",

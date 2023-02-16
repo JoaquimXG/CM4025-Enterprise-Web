@@ -4,6 +4,7 @@ const express = require("express");
 const apiRouter = require("./apiRouter");
 const { applyMiddleware, errorHandler } = require("./core/middleware");
 const { testConnection } = require("./core/db");
+const settings = require("./core/settings");
 
 testConnection();
 
@@ -20,5 +21,11 @@ app.get("/", (_, res) => {
 });
 
 app.use(errorHandler);
+
+// Save all express routes to a file for debugging
+if (settings.DEBUG_ROUTES) {
+  var filepath = path.join(__dirname, "routes.txt");
+  require("express-print-routes")(app, filepath);
+}
 
 module.exports = app;
