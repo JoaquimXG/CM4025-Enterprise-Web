@@ -54,14 +54,14 @@ module.exports = class ModelApiView extends ApiView {
     }
   }
 
-  serializerMiddleware(req, _, next) {
+  async serializerMiddleware(req, _, next) {
     try {
       req.controller = this.getController({
         instance: req.instance || null,
         data: req.body,
         partial: req.controllerContext.partial,
       });
-      if (req.controller.isValid(true)) next();
+      if (await req.controller.isValid(true)) next();
     } catch (e) {
       return next(e);
     }

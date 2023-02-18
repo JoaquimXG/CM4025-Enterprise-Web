@@ -10,7 +10,7 @@ module.exports = class Controller extends BaseController {
   meta = {};
 
   _fields = null;
-  
+
   constructor(options = {}) {
     options.errorMessages = {
       ...Controller.defaultErrorMessages,
@@ -57,9 +57,9 @@ module.exports = class Controller extends BaseController {
   }
 
   getValidators() {
-    if (!self.meta || !self.meta.validators) return [];
+    if (!this.meta || !this.meta.validators) return [];
 
-    return self.meta.validators;
+    return this.meta.validators;
   }
 
   getInitial() {
@@ -71,34 +71,32 @@ module.exports = class Controller extends BaseController {
           .map((fieldName) => [fieldName, this.fields[fieldName]])
           .filter(
             ([_, field]) =>
-              !field.getValue(this.initialData) instanceof Empty && !field.readOnly
+              !field.getValue(this.initialData) instanceof Empty &&
+              !field.readOnly
           )
       );
     }
 
     return Object.fromEntries(
       Object.keys(this.fields)
-        .map((fieldName) => [
-          fieldName,
-          this.fields[fieldName].getInitial(),
-        ])
+        .map((fieldName) => [fieldName, this.fields[fieldName].getInitial()])
         .filter(([_, field]) => !field.readOnly)
     );
   }
 
   getValue(dictionary) {
-    return dictionary[self.fieldName];
+    return dictionary[this.fieldName];
   }
 
-  runValidation(data = new Empty()) {
+  async runValidation(data = new Empty()) {
     let isEmptyValue;
     [isEmptyValue, data] = this.validateEmptyValues(data);
 
     if (isEmptyValue) return data;
     let value;
 
+    value = await this.toInternalValue(data);
     try {
-      value = this.toInternalValue(data);
       this.runValidators(value); // Should throw errors if invalid
       value = this.validate(value);
     } catch (e) {
@@ -148,7 +146,7 @@ module.exports = class Controller extends BaseController {
     super.runValidators(toValidate);
   }
 
-  toInternalValue(data) {
+  async toInternalValue(data) {
     if (typeof data !== "object")
       throw new ValidationError("Data must be an object, not null");
 
@@ -160,11 +158,14 @@ module.exports = class Controller extends BaseController {
       let validateMethod = this["validate_" + field.fieldName] || null;
       let primitiveValue = field.getValue(data);
       try {
-        let validatedValue = field.runValidation(primitiveValue);
+        let validatedValue = await field.runValidation(primitiveValue);
         if (validateMethod) {
           validatedValue = validateMethod(validatedValue);
         }
-        ret[field.fieldName] = validatedValue;
+        let writeFieldName = field.identifier
+          ? field.identifier
+          : field.fieldName;
+        ret[writeFieldName] = validatedValue;
       } catch (e) {
         if (e instanceof SkipField) continue;
         if (e instanceof ValidationError) errors[field.fieldName] = e.message;
@@ -188,7 +189,8 @@ module.exports = class Controller extends BaseController {
         else throw e;
       }
 
-      if (attribute === null || attribute === undefined) ret[field.fieldName] = null;
+      if (attribute === null || attribute === undefined)
+        ret[field.fieldName] = null;
       else ret[field.fieldName] = await field.toRepresentation(attribute);
     }
     return ret;

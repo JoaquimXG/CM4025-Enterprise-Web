@@ -6,6 +6,6 @@ const { QuoteController } = require("../controllers");
 module.exports = class QuoteViewSet extends ModelViewSet {
   permissions = [new IsAuthenticated()];
 
-  model = sequelize.models.Project;
+  model = sequelize.models.Quote;
   controllerClass = QuoteController;
 };

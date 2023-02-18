@@ -1,3 +1,4 @@
+const { MethodNotAllowedError } = require("../responses/errors");
 const ModelApiView = require("./ModelApiView");
 
 module.exports = class ModelViewSet extends ModelApiView {
@@ -35,6 +36,8 @@ module.exports = class ModelViewSet extends ModelApiView {
     this.getObjectMiddleware.bind(this),
     this.destroyObjectMiddleware.bind(this),
   ];
+
+  notAllowed = (_, res, __) => new MethodNotAllowedError().send(res);
 
   asRouter(actionMap) {
     let methodMap = {

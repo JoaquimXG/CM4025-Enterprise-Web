@@ -22,22 +22,23 @@ module.exports = class PrimaryKeyRelatedField extends RelatedField {
     return true;
   }
 
-  toInternalValue(data) {
+  async toInternalValue(data) {
+    //TODO need to handle multi-relations
     if (this.pkField) {
       data = this.pkField.toInternalValue(data);
     }
-    try {
-      if (typeof data === "boolean") throw new TypeError();
-      return this.model.findOne({ where: { id: data } });
-    } catch (e) {
-      throw ValidationError(e);
-    }
+    if (typeof data === "boolean") throw new TypeError();
+    let instance = await this.targetModel.findOne({
+      where: { [this.targetIdentifier]: data },
+    });
+    if (instance === null) this.fail("doesNotExist", data);
+    return instance[this.targetIdentifier];
   }
 
   _toRepresentation(value) {
     if (this.pkField)
-      return this.pkField.toRepresentation(value[this.targetKey]);
-    return value[this.targetKey];
+      return this.pkField.toRepresentation(value[this.targetIdentifier]);
+    return value[this.targetIdentifier];
   }
 
   toRepresentation(value) {
@@ -45,8 +46,7 @@ module.exports = class PrimaryKeyRelatedField extends RelatedField {
     let ret = this.many ? [] : {};
 
     if (this.many) {
-      for (let instance of value)
-        ret.push(this._toRepresentation(instance));
+      for (let instance of value) ret.push(this._toRepresentation(instance));
     } else ret = this._toRepresentation(value);
 
     return ret;

@@ -58,7 +58,6 @@ module.exports = class ModelController extends Controller {
     let model = this.meta.model;
     /**
      * TODO(RELATIONS)
-     * 1. Raise errors on nested writes before attempting to create instance
      * 2. Pop many-to-many relationships from data before create ready to be added after instance is created later
      * 3. Manually create many-to-many relationships saved in step 2 after instance is created
      */
@@ -75,7 +74,6 @@ module.exports = class ModelController extends Controller {
   async update(instance, validatedData) {
     /**
      * TODO(RELATIONS)
-     * 1. Raise errors on nested writes before attempting to update instance
      * 2. Handle many to many relationship updates (ID only)
      */
     try {
@@ -257,7 +255,6 @@ module.exports = class ModelController extends Controller {
       ? modelInfo.relations
       : modelInfo.forwardRelations;
 
-    // TODO(RELATIONS) Need to categorise relations by forward and reverse
     return new Set([
       modelInfo.pk.fieldName,
       ...filteredFields,
@@ -364,20 +361,21 @@ module.exports = class ModelController extends Controller {
       isSingleAssociation,
       target: targetModel,
       source: model,
-      targetKey,
-      identifierField,
+      identifier,
+      targetIdentifier,
       options: { allowNull, defaultValue },
     } = relationInfo;
 
     options.many = !isSingleAssociation;
     options.allowNull = allowNull;
     if (defaultValue || options.allowNull) options.required = false;
-    options.targetKey = targetKey;
+    options.targetIdentifier = targetIdentifier;
     options.targetModel = targetModel;
+    options.identifier = identifier;
     options.model = model;
 
     //TODO(LOW) this is not used
-    options.modelField = model.rawAttributes[identifierField];
+    options.modelField = model.rawAttributes[identifier];
 
     return options;
   }

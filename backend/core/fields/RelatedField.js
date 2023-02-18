@@ -3,11 +3,12 @@ const Field = require("./Field");
 module.exports = class RelatedField extends Field {
   model = null;
 
-  constructor({ model, targetModel, targetKey, many, ...options } = {}) {
+  constructor({ model, identifier, targetModel, targetIdentifier, many, ...options } = {}) {
     super(options);
     this.model = model;
     this.targetModel = targetModel;
-    this.targetKey = this.targetKey ? targetKey : "id";
+    this.targetIdentifier = this.targetIdentifier ? targetIdentifier : "id";
+    this.identifier = identifier;
     this.many = many ? many : false;
 
     if (this.model === null && options.readOnly === false)
@@ -37,7 +38,7 @@ module.exports = class RelatedField extends Field {
       // Pull just ID instead of the whole object, appending "Id" to the end of the attribute name
       // Because Sequelize adds "Id" to the end of foreign keys by default
       const value = attributeInstance[this.sourceAttrs.slice(-1)[0] + "Id"];
-      return { [this.targetKey]: value };
+      return { [this.targetIdentifier]: value };
     }
 
     return super.getAttribute(instance); // This will use the default implementation

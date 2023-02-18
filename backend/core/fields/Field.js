@@ -63,7 +63,7 @@ module.exports = class Field {
     this.default = options.default;
     this.source = options.source;
     this.initial =
-      options.initial === new Empty() ? self.initial : options.initial;
+      options.initial === new Empty() ? this.initial : options.initial;
     this.label = options.label;
     this.helpText = options.helpText;
     this.style = options.style === null ? {} : options.style;
@@ -168,11 +168,11 @@ module.exports = class Field {
     return [false, data];
   }
 
-  runValidation(data = new Empty()) {
+  async runValidation(data = new Empty()) {
     let isEmptyValue;
     [isEmptyValue, data] = this.validateEmptyValues(data);
     if (isEmptyValue) return data;
-    let value = this.toInternalValue(data);
+    let value = await this.toInternalValue(data);
     this.runValidators(value);
     return value;
   }
@@ -212,7 +212,7 @@ module.exports = class Field {
     }
   }
 
-  toInternalValue(data) {
+  async toInternalValue(data) {
     // DRF extend error message should include class name and desdription
     // See DRF implementation
     throw new Error("Not Implemented");

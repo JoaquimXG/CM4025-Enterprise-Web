@@ -9,10 +9,9 @@ module.exports = async (sequelize) => {
   await Project.hasMany(Quote);
   await Quote.belongsTo(Project);
 
-  // TODO getting some issues with deadlock
   if (settings.SEQUELIZE_MIGRATE) {
-    // User.sync({ alter: true });
-    Project.sync({ alter: true });
+    User.sync({ alter: true });
+    // Project.sync({ alter: true});
     // Quote.sync({ alter: true });
   }
 };

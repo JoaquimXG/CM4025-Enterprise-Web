@@ -55,7 +55,7 @@ module.exports = class BaseController extends Field {
     }
   }
 
-  isValid(raiseError) {
+  async isValid(raiseError) {
     if (this.initialData === null) {
       throw new Error(
         "Data must be passed to controller before calling isValid"
@@ -64,7 +64,7 @@ module.exports = class BaseController extends Field {
 
     if (this._validatedData === undefined) {
       try {
-        this._validatedData = this.runValidation(this.initialData);
+        this._validatedData = await this.runValidation(this.initialData);
         this._errors = null;
       } catch (e) {
         if (!(e instanceof ValidationError)) {
@@ -85,21 +85,23 @@ module.exports = class BaseController extends Field {
   }
 
   get data() {
-    if (!this.validated) {
-      throw new Error("Must validate before getting data");
-    }
-
-    if (this._data === null) {
-      if (this.instance && this._errors === undefined) {
-        this._data = this.toRepresentation(this.instance);
-      } else if (this._errors === undefined) {
-        this._data = this.toRepresentation(this.validatedData);
-      } else {
-        this._data = this.getInitial();
+    return async () =>  { //This is a hack to allow async await in getters
+      if (!this.validated) {
+        throw new Error("Must validate before getting data");
       }
-    }
 
-    return this._data;
+      if (this._data === null) {
+        if (this.instance && this._errors === undefined) {
+          this._data = await this.toRepresentation(this.instance);
+        } else if (this._errors === undefined) {
+          this._data = await this.toRepresentation(this.validatedData);
+        } else {
+          this._data = this.getInitial();
+        }
+      }
+
+      return this._data;
+    }
   }
 
   get errors() {
