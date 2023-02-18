@@ -37,6 +37,9 @@ let modelDefinitions = [
   require("../../apps/quoteBuilder/models/Worker.js"),
   require("../../apps/quoteBuilder/models/Project.js"),
   require("../../apps/quoteBuilder/models/Quote.js"),
+  require("../../apps/quoteBuilder/models/Task.js"),
+  require("../../apps/quoteBuilder/models/TimeEntry.js"),
+  require("../../apps/quoteBuilder/models/StaticCost.js"),
 ];
 
 if (settings.INIT_TESTS) {
@@ -52,14 +55,15 @@ if (settings.INIT_TESTS) {
   ]);
 }
 
-for (const definition of modelDefinitions) {
-  model = definition(sequelize);
-  // if (settings.SEQUELIZE_MIGRATE) {
-  //   model.sync({ alter: true }); // TODO use real migrations
-  // }
-}
-const relations = require("./setupRelations");
-relations(sequelize);
-
+(async () => {
+  for (const definition of modelDefinitions) {
+    model = definition(sequelize);
+    if (settings.SEQUELIZE_MIGRATE) {
+      await model.sync({ alter: true }); // TODO use real migrations
+    }
+  }
+  const relations = require("./setupRelations");
+  relations(sequelize);
+})();
 
 module.exports = sequelize;

@@ -17,8 +17,12 @@ but I can evidence that these sections of these projects were implemented by me.
 
 ## TODO
 
-2. Finally..., endpoints for the standard API
-3. Eager loading for related queries, should be handled at the view level
+1. Finally..., endpoints for the standard API
+  - Needs some testing (not automated)
+2. Object level permission
+   - Restrict users to only view their own objects unless admin
+3. Create preconfigured pay grades for workers
+4. Create calculation with fudge factor
 
 ### Maybe TODO (probably not for this project)
     
@@ -28,8 +32,9 @@ but I can evidence that these sections of these projects were implemented by me.
   - The outline for this is done, see IsAdmin and IsAuthenticated implementations
   - Further work can be done on more complex permissions but they are likley not required here.
     - read, write, update, delete permissions
-4. Relative imports???
-5. CSRFTOKEN??? Should ask whether they are likely to care about this in class
+4. Eager loading for related queries, should be handled at the view level
+5. Relative imports???
+6. CSRFTOKEN??? Should ask whether they are likely to care about this in class
 
 ### DONE
 1. Create consistent interface for standar CRUD endpoints
@@ -82,19 +87,45 @@ DRF - Things that could be taken from Django Rest Framework, likely look at DRF 
 This is not complex, no ERD is required.
 
 - User
+  - Relations
+    - Has many Projects
+  - Fields
+    - Name
+    - email
 - Project
-  - belongs to a User
+  - Relations
+    - Belongs to a User
+    - Has many Quotes
+  - Fields
+    - Name
 - Quote
-  - belongs to a Project
+  - Relations
+    - Belongs to a Project
+    - Has many Tasks
+    - Has many StaticCosts
+  - Fields
+    - Name
 - Task
-  - belongs to a Quote
+  - Relations
+    - Belongs to a Quote
+    - Has many TimeEntries
+  - Fields
+    - Name
 - TimeEntry
-  - belongs to a Task
-  - has a Worker
+  - Relations
+    - Belongs to a Task
+    - Has a Worker
+  - Fields
+    - Seconds
 - Worker
-  - Are these static, or can the user create new workers?
-    - Perhaps there are some that are statically defined, but they can create new ones
-  - has a rate
-    - Hourly
-    - Daily
-  - has a title
+  - Relations
+    - Belongs to many TimeEntries
+  - Fields
+    - Rate
+    - Job Title
+- StaticCost
+  - Relations
+    - Belongs to a Quote
+  - Fields
+    - Name
+    - Cost
