@@ -46,8 +46,7 @@ module.exports = class Field {
     // If required is not set, should be true if no default and not read only
     if (options.required === undefined)
       this.required = options.default instanceof Empty && !options.readOnly;
-    else
-      this.required = options.required;
+    else this.required = options.required;
 
     // Some options combinations are invalid
     if (options.readOnly && options.writeOnly)
@@ -90,14 +89,12 @@ module.exports = class Field {
 
     if (this.source === null) this.source = fieldName;
 
-    // TODO(RELATIONS) this will need to be passed to sequelize to load database objects
     if (this.source === "*") this.sourceAttrs = [];
     else this.sourceAttrs = this.source.split(".");
   }
 
   get validators() {
-    if (this._validators === undefined)
-      this._validators = this.getValidators();
+    if (this._validators === undefined) this._validators = this.getValidators();
     return this._validators;
   }
 
@@ -119,24 +116,21 @@ module.exports = class Field {
     return data[this.fieldName];
   }
 
-  _getAttribute(instance, sourceAttrs) {
-    for (let attr of sourceAttrs) {
-      if (typeof instance === "object") instance = instance[attr];
-      // TODO(RELATIONS) need to review this,
-      // it is likely that an instance will be from sequelize
-      // so need to think about what the standard method of
-      // getting attributes from sequelize is
-      else instance.get(attr);
-      //TODO some other error handling is going to be required here
-    }
-    return instance;
+  async _getAttribute(instance, attr) {
+    // Field is not a field but a relation and we want to return the object itself
+    if (instance["get" + attr] instanceof Function)
+      return await instance["get" + attr]();
+    else return instance[attr];
   }
 
-  getAttribute(instance) {
+  async getAttribute(instance) {
     try {
-      return this._getAttribute(instance, this.sourceAttrs);
+      for (let attr of this.sourceAttrs)
+        instance = await this._getAttribute(instance, attr);
+      return instance;
     } catch (e) {
-      // TODO what errors are here
+      throw e;
+      // TODO(IMPORTANT) what errors are here
       // Probably a object missing attribute error
       // Worth reviewing DRF implementation when testing
     }
@@ -167,9 +161,8 @@ module.exports = class Field {
 
     if (data === null) {
       if (!this.allowNull) this.fail("null");
-      // DRF review
       if (this.source === "*") return [false, data];
-      throw new SkipField();
+      return [true, data];
     }
 
     return [false, data];

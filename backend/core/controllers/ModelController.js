@@ -8,6 +8,7 @@ const {
   ChoiceField,
   DateTimeField,
   DeclaredField,
+  PrimaryKeyRelatedField,
 } = require("../fields");
 const { convertSequelizeValidationError } = require("../db/utils");
 const Controller = require("./Controller");
@@ -47,7 +48,10 @@ module.exports = class ModelController extends Controller {
   //   exclude: [], // list of field names, or ALL_FIELDS
   //   readOnlyFields: [], // list of field names, or ALL_FIELDS
   //   extraOptions: {}, // dictionary of field names to keyword options for field
+  //   depth: 0, // depth of nested fields to include
   // };
+
+  controllerRelatedField = PrimaryKeyRelatedField;
 
   async create(validatedData) {
     let model = this.meta.model;
@@ -85,11 +89,17 @@ module.exports = class ModelController extends Controller {
 
   getFieldInfo(model) {
     let fields = model.rawAttributes;
+    fields = Object.fromEntries(
+      Object.entries(fields).filter(([key, value]) => {
+        return value.references === undefined;
+      })
+    );
+
     let pkFieldName = model.primaryKeyField;
     let pkField = fields[pkFieldName];
     let relations = model.associations;
 
-    return { pk: pkField, fields, relations};
+    return { pk: pkField, fields, relations };
   }
 
   getDeclaredFields() {
@@ -105,9 +115,10 @@ module.exports = class ModelController extends Controller {
   getFields() {
     let declaredFields = this.getDeclaredFields();
     let model = this.meta.model;
-    // TODO(RELATIONS) depth for relations, I think I won't use depth here and instead will focus on using nested controllers
-    // Depth has some weird consequences for writes that I don't want to deal with
-    let depth = 1;
+    let depth = this.meta.depth ? this.meta.depth : 0;
+
+    if (depth < 0 || depth > 10)
+      throw new TypeError(`Depth must be between 0 and 10. Got ${depth}.`);
 
     let info = this.getFieldInfo(model);
     let fieldNames = this.getFieldNames(declaredFields, info);
@@ -133,10 +144,7 @@ module.exports = class ModelController extends Controller {
       );
 
       // Include extra field options from meta
-      fieldOptions = this.includeExtraOptions(
-        fieldOptions,
-        extraFieldOptions
-      );
+      fieldOptions = this.includeExtraOptions(fieldOptions, extraFieldOptions);
 
       fields[fieldName] = new fieldClass(fieldOptions);
     }
@@ -220,11 +228,13 @@ module.exports = class ModelController extends Controller {
     let fieldsWithoutDeletedAt = Object.keys(modelInfo.fields).filter(
       (field) => field !== "deletedAt"
     );
+
+    // TODO(RELATIONS) Need to categorise relations by forward and reverse
     return new Set([
       modelInfo.pk.fieldName,
       ...fieldsWithoutDeletedAt,
       ...Object.keys(declaredFields),
-      // TOOD(RELATIONS) forward relations
+      ...Object.keys(modelInfo.relations),
     ]);
   }
 
@@ -283,12 +293,70 @@ module.exports = class ModelController extends Controller {
     return extraOptions;
   }
 
-  buildField(fieldName, info, model, nestedDepth = 1) {
+  buildField(fieldName, info, model, nestedDepth) {
     if (fieldName in info.fields) {
       let modelField = info.fields[fieldName];
       return this.buildStandardField(fieldName, modelField);
+    } else if (fieldName in info.relations) {
+      let relationInfo = info.relations[fieldName];
+      if (nestedDepth > 0)
+        return this.buildNestedField(fieldName, relationInfo, nestedDepth);
+      else return this.buildRelationalField(relationInfo);
     }
     throw new Error("Have not implemented other types of field yet");
+  }
+
+  buildRelationalField(relationInfo) {
+    let fieldClass = this.controllerRelatedField;
+    let fieldOptions = this.getRelationOptions(relationInfo);
+
+    return [fieldClass, fieldOptions];
+  }
+
+  buildNestedField(fieldName, relationInfo, nestedDepth) {
+    class NestedField extends ModelController {
+      meta = {
+        model: relationInfo.target,
+        fields: "__all__",
+        depth: nestedDepth - 1,
+      };
+    }
+
+    let fieldOptions = this.getNestedOptions(relationInfo);
+
+    return [NestedField, fieldOptions];
+  }
+
+  getRelationOptions(relationInfo) {
+    let options = {};
+    let {
+      isSingleAssociation,
+      target: targetModel,
+      source: model,
+      targetKey,
+      identifierField,
+      options: { allowNull, defaultValue },
+    } = relationInfo;
+
+    options.many = !isSingleAssociation;
+    options.allowNull = allowNull;
+    if (defaultValue || options.allowNull) options.required = false;
+    options.targetKey = targetKey;
+    options.targetModel = targetModel;
+    options.model = model;
+
+    //TODO(LOW) this is not used
+    options.modelField = model.rawAttributes[identifierField];
+
+    return options;
+  }
+
+  getNestedOptions(relationInfo) {
+    let options = {
+      readOnly: true,
+    };
+    options.many = !relationInfo.isSingleAssociation;
+    return options;
   }
 
   buildStandardField(fieldName, modelField) {
@@ -303,15 +371,9 @@ module.exports = class ModelController extends Controller {
     let fieldClass = fieldMapping[fieldType];
 
     if (!fieldClass)
-      throw new Error(
-        `No field class found for field type ${modelField.type}`
-      );
+      throw new Error(`No field class found for field type ${modelField.type}`);
 
-    let fieldOptions = this.getFieldOptions(
-      fieldName,
-      modelField,
-      fieldClass
-    );
+    let fieldOptions = this.getFieldOptions(fieldName, modelField, fieldClass);
 
     if (modelField.choices) {
       fieldClass = ChoiceField;

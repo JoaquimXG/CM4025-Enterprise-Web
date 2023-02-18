@@ -41,8 +41,9 @@ const createUpdateTests = (f, status) => {
 
   it("nullable: null -> should return object", async () => {
     let test = { ...base, nullable: null };
+    let expected = {...defaultTest, nullable: null}
     const response = await f().send(test);
-    expect(response.body).toEqual(expect.objectContaining(defaultTest));
+    expect(response.body).toEqual(expect.objectContaining(expected));
   });
 
   it("notNullable: null -> should return 400", () => {
@@ -58,7 +59,8 @@ const createUpdateTests = (f, status) => {
   it("nullableDefault: null -> should return object", async () => {
     let test = { ...base, nullableDefault: null };
     const response = await f().send(test);
-    expect(response.body).toEqual(expect.objectContaining(defaultTest));
+    let expected = {...defaultTest, nullableDefault: null}
+    expect(response.body).toEqual(expect.objectContaining(expected));
   });
 
   it("notNullableDefault: null -> should return 400", () => {

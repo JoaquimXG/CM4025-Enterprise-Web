@@ -59,7 +59,7 @@ module.exports = class ModelApiView extends ApiView {
       req.controller = this.getController({
         instance: req.instance || null,
         data: req.body,
-        options: { partial: req.controllerContext.partial },
+        partial: req.controllerContext.partial,
       });
       if (req.controller.isValid(true)) next();
     } catch (e) {
@@ -93,12 +93,12 @@ module.exports = class ModelApiView extends ApiView {
     }
   }
 
-  deserializeMiddleware(req, res, next) {
+  async deserializeMiddleware(req, res, next) {
     try {
       let many = req.instances ? true : false;
       let data = req.instance ? req.instance : req.instances;
-      let controller = this.getController({ options: { many } });
-      data = controller.toRepresentation(data);
+      let controller = this.getController({ many });
+      data = await controller.toRepresentation(data);
       if (req.controllerContext.create)
         return new CreatedResponse(data).sendJson(res);
       else return new OkResponse(data).sendJson(res);

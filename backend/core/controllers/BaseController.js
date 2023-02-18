@@ -7,7 +7,7 @@ module.exports = class BaseController extends Field {
   validated = undefined;
   initial = {};
 
-  constructor({ instance = null, data = new Empty(), options = {} } = {}) {
+  constructor({ instance = null, data = new Empty(), ...options } = {}) {
     super(options);
     this.instance = instance;
     this.initialData = data !== new Empty() ? data : null;

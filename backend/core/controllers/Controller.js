@@ -176,34 +176,33 @@ module.exports = class Controller extends BaseController {
     return ret;
   }
 
-  _toRepresentation(instance, fields) {
+  async _toRepresentation(instance, fields) {
     let ret = {};
 
     for (let field of fields) {
       let attribute;
       try {
-        attribute = field.getAttribute(instance);
+        attribute = await field.getAttribute(instance);
       } catch (e) {
         if (e instanceof SkipField) continue;
         else throw e;
       }
 
-      // DRF check for none on pkOnlyFields
-      if (attribute === null) ret[field.fieldName] = null;
-      else ret[field.fieldName] = field.toRepresentation(attribute);
+      if (attribute === null || attribute === undefined) ret[field.fieldName] = null;
+      else ret[field.fieldName] = await field.toRepresentation(attribute);
     }
     return ret;
   }
 
-  toRepresentation(data) {
+  async toRepresentation(data) {
     let ret = this.many ? [] : {};
     let fields = this.readableFields;
     // DRF should use a proper ListController but this is fine for now
 
     if (this.many) {
       for (let instance of data)
-        ret.push(this._toRepresentation(instance, fields));
-    } else ret = this._toRepresentation(data, fields);
+        ret.push(await this._toRepresentation(instance, fields));
+    } else ret = await this._toRepresentation(data, fields);
 
     return ret;
   }
