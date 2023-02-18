@@ -15,6 +15,7 @@ module.exports = class UserController extends ModelController {
   meta = {
     model: sequelize.models.User,
     exclude: ["hash"],
+    depth:1
   };
 
   validatePassword(value) {

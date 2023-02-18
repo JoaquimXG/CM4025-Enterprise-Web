@@ -49,6 +49,7 @@ module.exports = class ModelController extends Controller {
   //   readOnlyFields: [], // list of field names, or ALL_FIELDS
   //   extraOptions: {}, // dictionary of field names to keyword options for field
   //   depth: 0, // depth of nested fields to include
+  //   includeReverseRelations: false, // Display reverse relations
   // };
 
   controllerRelatedField = PrimaryKeyRelatedField;
@@ -91,15 +92,35 @@ module.exports = class ModelController extends Controller {
     let fields = model.rawAttributes;
     fields = Object.fromEntries(
       Object.entries(fields).filter(([key, value]) => {
-        return value.references === undefined;
+        return value.references === undefined && (value.customFieldOptions || {}).hidden !== true;
       })
     );
 
     let pkFieldName = model.primaryKeyField;
     let pkField = fields[pkFieldName];
+
+    const FORWARD_RELATIONS = ["BelongsTo", "BelongsToMany"]; //TODO test BelongsToMany
+    const REVERSE_RELATIONS = ["HasOne", "HasMany"];
+    let relationEntries = Object.entries(model.associations);
+    let forwardRelations = Object.fromEntries(
+      relationEntries.filter(([_, value]) =>
+        FORWARD_RELATIONS.includes(value.associationType)
+      )
+    );
+    let reverseRelations = Object.fromEntries(
+      relationEntries.filter(([_, value]) =>
+        REVERSE_RELATIONS.includes(value.associationType)
+      )
+    );
     let relations = model.associations;
 
-    return { pk: pkField, fields, relations };
+    return {
+      pk: pkField,
+      fields,
+      relations,
+      forwardRelations,
+      reverseRelations,
+    };
   }
 
   getDeclaredFields() {
@@ -225,16 +246,23 @@ module.exports = class ModelController extends Controller {
   }
 
   getDefaultFieldNames(declaredFields, modelInfo) {
-    let fieldsWithoutDeletedAt = Object.keys(modelInfo.fields).filter(
+    let filteredFields = Object.keys(modelInfo.fields).filter(
       (field) => field !== "deletedAt"
     );
+    let includeReverseRelations = this.meta.includeReverseRelations
+      ? this.meta.includeReverseRelations
+      : false;
+
+    let relations = includeReverseRelations
+      ? modelInfo.relations
+      : modelInfo.forwardRelations;
 
     // TODO(RELATIONS) Need to categorise relations by forward and reverse
     return new Set([
       modelInfo.pk.fieldName,
-      ...fieldsWithoutDeletedAt,
+      ...filteredFields,
       ...Object.keys(declaredFields),
-      ...Object.keys(modelInfo.relations),
+      ...Object.keys(relations),
     ]);
   }
 
@@ -297,11 +325,14 @@ module.exports = class ModelController extends Controller {
     if (fieldName in info.fields) {
       let modelField = info.fields[fieldName];
       return this.buildStandardField(fieldName, modelField);
-    } else if (fieldName in info.relations) {
+    } else if (fieldName in info.forwardRelations) {
       let relationInfo = info.relations[fieldName];
       if (nestedDepth > 0)
         return this.buildNestedField(fieldName, relationInfo, nestedDepth);
       else return this.buildRelationalField(relationInfo);
+    } else if (fieldName in info.reverseRelations) {
+      let relationInfo = info.relations[fieldName];
+      return this.buildRelationalField(relationInfo);
     }
     throw new Error("Have not implemented other types of field yet");
   }

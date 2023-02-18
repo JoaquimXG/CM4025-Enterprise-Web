@@ -23,6 +23,7 @@ const User = {
     allowNull: false,
     customFieldOptions: {
       controllerType: "CharField",
+      hidden: true,
     },
   },
   firstName: {
@@ -54,7 +55,7 @@ const User = {
     customFieldOptions: {
       controllerType: "IntegerField",
       choices: UserStatusChoice.values,
-    }
+    },
   },
 };
 

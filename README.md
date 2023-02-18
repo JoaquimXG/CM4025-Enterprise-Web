@@ -21,7 +21,7 @@ but I can evidence that these sections of these projects were implemented by me.
   - Eager loading for related queries, should be handled at the view level
 2. Finally..., endpoints for the standard API
 
-### Maybe TODO (probably not for this proectqj)
+### Maybe TODO (probably not for this project)
     
 1. Password reset/recovery
 2. MFA
