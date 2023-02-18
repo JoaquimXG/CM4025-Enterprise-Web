@@ -11,7 +11,6 @@ const Quote = {
   },
   name: {
     type: DataTypes.STRING,
-    unique: true,
     customFieldOptions: {
       controllerType: "CharField",
       maxLength: 255,

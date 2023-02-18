@@ -54,9 +54,9 @@ if (settings.INIT_TESTS) {
 
 for (const definition of modelDefinitions) {
   model = definition(sequelize);
-  if (settings.SEQUELIZE_MIGRATE) {
-    model.sync({ alter: true }); // TODO use real migrations
-  }
+  // if (settings.SEQUELIZE_MIGRATE) {
+  //   model.sync({ alter: true }); // TODO use real migrations
+  // }
 }
 const relations = require("./setupRelations");
 relations(sequelize);

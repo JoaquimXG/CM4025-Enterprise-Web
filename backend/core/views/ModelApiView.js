@@ -68,7 +68,7 @@ module.exports = class ModelApiView extends ApiView {
   }
 
   async listObjects() {
-    return await this.model.findAll();
+    return await this.model.findAll(); // TODO should optimise related queries here, e.g., to avoid n+1 queries
   }
 
   async listObjectsMiddleware(req, _, next) {
