@@ -1,5 +1,6 @@
 const AdminUserViewSet = require("./AdminUserViewSet");
 const UserViewSet = require("./UserViewSet");
+const RegisterView = require("./RegisterView");
 const LoginView = require("./LoginView")
 const IsAdminView = require("./IsAdminView")
 const IsAuthenticatedView = require("./IsAuthenticatedView")
@@ -12,4 +13,5 @@ module.exports = {
   IsAdminView,
   IsAuthenticatedView,
   LogoutView,
+  RegisterView,
 }

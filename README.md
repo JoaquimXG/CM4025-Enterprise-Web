@@ -17,9 +17,8 @@ but I can evidence that these sections of these projects were implemented by me.
 
 ## TODO
 
-1. Relations
-  - Eager loading for related queries, should be handled at the view level
 2. Finally..., endpoints for the standard API
+3. Eager loading for related queries, should be handled at the view level
 
 ### Maybe TODO (probably not for this project)
     
@@ -42,6 +41,7 @@ but I can evidence that these sections of these projects were implemented by me.
 6. Integrate User model with passportjs
 7. /user/me endpoint
 8. View based permissions
+9. Relations
 
 ### Tags
 

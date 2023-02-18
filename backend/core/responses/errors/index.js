@@ -5,6 +5,7 @@ const ValidationError = require("./ValidationError");
 const NotFoundError = require("./NotFoundError");
 const ForbiddenError = require("./ForbiddenError");
 const UnauthorizedError = require("./UnauthorizedError");
+const MethodNotAllowedError = require("./MethodNotAllowedError");
 
 
 module.exports = {
@@ -15,4 +16,5 @@ module.exports = {
   NotFoundError,
   ForbiddenError,
   UnauthorizedError,
+  MethodNotAllowedError,
 };
