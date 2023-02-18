@@ -10,9 +10,9 @@ module.exports = class LogoutView extends ApiView {
      */
     if (req.user)
       req.logout((err) => {
-        if (err) next(err);
+        if (err) return next(err);
         return new NoContentResponse().send(res);
       });
-    return new NoContentResponse().send(res);
+    else return new NoContentResponse().send(res);
   }
 };

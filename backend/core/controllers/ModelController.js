@@ -87,9 +87,9 @@ module.exports = class ModelController extends Controller {
     let fields = model.rawAttributes;
     let pkFieldName = model.primaryKeyField;
     let pkField = fields[pkFieldName];
-    // TODO(RELATIONS) Get relationship fields
+    let relations = model.associations;
 
-    return { pk: pkField, fields: fields };
+    return { pk: pkField, fields, relations};
   }
 
   getDeclaredFields() {

@@ -58,8 +58,8 @@ for (const definition of modelDefinitions) {
     model.sync({ alter: true }); // TODO use real migrations
   }
 }
-
 const relations = require("./setupRelations");
 relations(sequelize);
+
 
 module.exports = sequelize;

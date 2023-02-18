@@ -3,7 +3,10 @@ const settings = require("./core/settings");
 
 let apiRouter = Router();
 
-let routers = [["/auth/", require("./apps/auth/routes")]];
+let routers = [
+  ["/auth/", require("./apps/auth/routes")],
+  ["/quote_builder/", require("./apps/quoteBuilder/routes")],
+];
 
 if (settings.INIT_TESTS) {
   routers = routers.concat([["/test/", require("./apps/test/routes")]]);

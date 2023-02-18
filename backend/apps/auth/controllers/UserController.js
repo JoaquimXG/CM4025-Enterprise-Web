@@ -31,7 +31,7 @@ module.exports = class UserController extends ModelController {
   async create(validatedData) {
     validatedData.hash = await bcrypt.hash(validatedData.password, 10);
     delete validatedData.password;
-    //TODO send verification email
+    //TODO(IMPORTANT) send verification email
     return super.create(validatedData);
   }
 

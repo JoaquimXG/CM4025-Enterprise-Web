@@ -17,7 +17,7 @@ authRouter.use(
     patch: { handler: "update", route: "/" },
   })
 );
-// authRouter.use("/user/", new AdminUserViewSet().asRouter());
+authRouter.use("/user/", new AdminUserViewSet().asRouter());
 authRouter.use("/login", new LoginView().asRouter());
 authRouter.use("/isadmin", new IsAdminView().asRouter());
 authRouter.use("/isauthenticated", new IsAuthenticatedView().asRouter());

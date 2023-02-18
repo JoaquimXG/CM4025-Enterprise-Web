@@ -18,6 +18,8 @@ but I can evidence that these sections of these projects were implemented by me.
 ## TODO
 
 1. Relations
+  - Eager loading for related queries, should be handled at the view level
+  - allowNull false
 2. Finally..., endpoints for the standard API
 
 ### Maybe TODO (probably not for this proectqj)
