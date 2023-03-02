@@ -63,7 +63,10 @@ if (settings.INIT_TESTS) {
     }
   }
   const relations = require("./setupRelations");
-  relations(sequelize);
+  await relations(sequelize);
+  if (settings.SEQUELIZE_MIGRATE) {
+    sequelize.close()
+  }
 })();
 
 module.exports = sequelize;

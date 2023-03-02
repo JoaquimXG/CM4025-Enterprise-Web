@@ -7,7 +7,7 @@ fixtures:
   - model: Worker
     data:
       title: Standard
-      rate: 25
+      rate: 50
   - model: Worker
     data:
       title: Junior
