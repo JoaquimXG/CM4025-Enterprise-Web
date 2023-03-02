@@ -8,7 +8,7 @@ module.exports = async (sequelize) => {
   await Project.belongsTo(User);
 
   await Project.hasMany(Quote);
-  await Quote.belongsTo(Project);
+  await Quote.belongsTo(Project, { allowNull: false });
 
   await Quote.hasMany(Task);
   await Task.belongsTo(Quote);

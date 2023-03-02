@@ -57,7 +57,7 @@ module.exports = class ModelController extends Controller {
   async create(validatedData) {
     let model = this.meta.model;
     /**
-     * TODO(RELATIONS)
+     * TODO(RELATIONS) Note there aren't any many to many relations in this app so I did not need to handle this case
      * 2. Pop many-to-many relationships from data before create ready to be added after instance is created later
      * 3. Manually create many-to-many relationships saved in step 2 after instance is created
      */

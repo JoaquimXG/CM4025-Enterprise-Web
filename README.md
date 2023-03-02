@@ -23,6 +23,7 @@ but I can evidence that these sections of these projects were implemented by me.
    - Restrict users to only view their own objects unless admin
 3. Create preconfigured pay grades for workers
 4. Create calculation with fudge factor
+5. IMPORTANT NEED TO DOCUMENT THAT NODE VERSION 18 IS REQUIRED BECAUSE OF STRUCTUREDCLONE
 
 ### Maybe TODO (probably not for this project)
     

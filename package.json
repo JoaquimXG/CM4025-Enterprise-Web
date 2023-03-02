@@ -12,7 +12,8 @@
     "test": "SETTINGS_ENV=jest CONSOLE_LOG_LEVEL=warn jest",
     "test-info": "SETTINGS_ENV=jest CONSOLE_LOG_LEVEL=info jest",
     "test-debug": "SETTINGS_ENV=jest CONSOLE_LOG_LEVEL=debug jest",
-    "createSuperUser": "node backend/core/commands/createSuperUser.js"
+    "createSuperUser": "node backend/core/commands/createSuperUser.js",
+    "erd": "node backend/core/db/erd.js"
   },
   "repository": "https://github.com/JoaquimXG/CM4025-Enterprise-Web",
   "author": "Joaquim Gomez",
@@ -47,6 +48,7 @@
     "nodemon": "^2.0.20",
     "readline-sync": "^1.4.10",
     "sequelize-cli": "^6.6.0",
+    "sequelize-erd": "^1.3.1",
     "supertest": "^6.3.3"
   }
 }

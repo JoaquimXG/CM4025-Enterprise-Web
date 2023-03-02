@@ -6,14 +6,14 @@ const { User } = require("../../../core/db/sequelize").models;
 //Serialises user object in preparation for storing in the sessions database
 passport.serializeUser(function (user, done) {
   done(null, {
-    _id: user.id,
+    id: user.id,
     email: user.email,
   });
 });
 
 //Returns user object untouched without database query
 passport.deserializeUser(async function (user, done) {
-  let fullUser = await User.findByPk(user._id);
+  let fullUser = await User.findByPk(user.id);
   done(null, fullUser);
 });
 

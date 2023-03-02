@@ -1,5 +1,7 @@
 const ApiView = require("../../../core/views/ApiView");
 const passport = require("passport");
+const { NoContentResponse } = require("../../../core/responses/");
+const { UnauthorizedError } = require("../../../core/responses/errors/");
 
 module.exports = class LoginView extends ApiView {
   post = this.authenticate;
@@ -8,11 +10,11 @@ module.exports = class LoginView extends ApiView {
     passport.authenticate("local", (err, user) => {
       if (err) return next(err);
 
-      if (!user) return res.status(401).send("Login Failed");
+      if (!user) return new UnauthorizedError().send(res);
 
       req.login(user, (err) => {
         if (err) return next(err);
-        return res.status(200).send("Login Successful");
+        return new NoContentResponse().send(res);
       });
     })(req, res, next);
   }

@@ -11,12 +11,13 @@ module.exports = class Controller extends BaseController {
 
   _fields = null;
 
-  constructor(options = {}) {
+  constructor({user, ...options} = {}) {
     options.errorMessages = {
       ...Controller.defaultErrorMessages,
       ...options.errorMessages,
     };
     super(options);
+    this.user = user;
   }
 
   get fields() {
