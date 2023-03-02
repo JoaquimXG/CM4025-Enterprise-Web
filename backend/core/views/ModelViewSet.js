@@ -1,5 +1,6 @@
 const { MethodNotAllowedError } = require("../responses/errors");
 const ModelApiView = require("./ModelApiView");
+const _ = require("lodash");
 
 module.exports = class ModelViewSet extends ModelApiView {
   create = [
