@@ -17,13 +17,12 @@ but I can evidence that these sections of these projects were implemented by me.
 
 ## TODO
 
-1. Finally..., endpoints for the standard API
-  - Needs some testing (not automated)
-2. Object level permission
+1. Object level permission
    - Restrict users to only view their own objects unless admin
-3. Create preconfigured pay grades for workers
-4. Create calculation with fudge factor
-5. IMPORTANT NEED TO DOCUMENT THAT NODE VERSION 18 IS REQUIRED BECAUSE OF STRUCTUREDCLONE
+2. Create calculation with fudge factor
+  - Calculate totals (DONE)
+  - Fudge factor (TODO)
+3. IMPORTANT NEED TO DOCUMENT THAT NODE VERSION 18 IS REQUIRED BECAUSE OF STRUCTUREDCLONE
 
 ### Maybe TODO (probably not for this project)
     
@@ -48,6 +47,7 @@ but I can evidence that these sections of these projects were implemented by me.
 7. /user/me endpoint
 8. View based permissions
 9. Relations
+10. Fixtures for predefined workers
 
 ### Tags
 

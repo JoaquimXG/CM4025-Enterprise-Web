@@ -30,6 +30,11 @@ module.exports = class TotalService {
       total += await this.getTaskTotal(task);
     }
 
+    let staticCosts = await quote.getStaticCosts();
+    for (let staticCost of staticCosts) {
+      total += staticCost.cost;
+    }
+
     return total;
   }
 
