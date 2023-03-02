@@ -17,7 +17,7 @@ module.exports = class ModelApiView extends ApiView {
     return {
       partial: req.method === "PATCH",
       create: req.method === "POST",
-      user: req.user
+      req: req,
     };
   }
 
@@ -61,7 +61,7 @@ module.exports = class ModelApiView extends ApiView {
         instance: req.instance || null,
         data: req.body,
         partial: req.controllerContext.partial,
-        user: req.user,
+        context: req.controllerContext,
       });
       if (await req.controller.isValid(true)) next();
     } catch (e) {

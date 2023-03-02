@@ -3,18 +3,25 @@ const Field = require("./Field");
 module.exports = class RelatedField extends Field {
   model = null;
 
-  constructor({ model, identifier, targetModel, targetIdentifier, many, ...options } = {}) {
+  constructor({
+    model,
+    identifier,
+    targetModel,
+    targetIdentifier,
+    many,
+    ...options
+  } = {}) {
     super(options);
     this.model = model;
     this.targetModel = targetModel;
     this.targetIdentifier = this.targetIdentifier ? targetIdentifier : "id";
-    this.identifier = identifier;
+    this.identifier = identifier ? identifier : targetModel.name + "Id";
     this.many = many ? many : false;
 
     if (this.model === null && options.readOnly === false)
       throw new Error("Model must be specified");
 
-    if (this.model !== null && options.readOnly === true)
+    if (this.model !== undefined && options.readOnly === true)
       throw new Error("Model cannot be specified when read only");
   }
 

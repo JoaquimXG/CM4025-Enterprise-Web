@@ -1,4 +1,3 @@
-const { ValidationError } = require("../responses/errors");
 const RelatedField = require("./RelatedField");
 
 module.exports = class PrimaryKeyRelatedField extends RelatedField {
@@ -31,8 +30,13 @@ module.exports = class PrimaryKeyRelatedField extends RelatedField {
     let instance = await this.targetModel.findOne({
       where: { [this.targetIdentifier]: data },
     });
+    instance = await this.scopeInstance(instance);
     if (instance === null) this.fail("doesNotExist", data);
     return instance[this.targetIdentifier];
+  }
+
+  async scopeInstance(instance) {
+    return instance;
   }
 
   _toRepresentation(value) {

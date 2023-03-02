@@ -60,5 +60,11 @@ const User = {
 };
 
 module.exports = (sequelize) => {
-  return sequelize.define("User", User, { paranoid: true });
+  const user = sequelize.define("User", User, { paranoid: true });
+
+  user.prototype.getUser = (instance) => {
+    return instance
+  }
+
+  return user;
 };

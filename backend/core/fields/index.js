@@ -9,6 +9,7 @@ const ChoiceField = require("./ChoiceField");
 const DateTimeField = require("./DateTimeField");
 const DeclaredField = require("./DeclaredField");
 const PrimaryKeyRelatedField = require("./PrimaryKeyRelatedField");
+const UserRestrictedPrimaryKeyRelatedField = require("./UserRestrictedPrimaryKeyRelatedField");
 
 module.exports = {
   SkipField,
@@ -22,4 +23,5 @@ module.exports = {
   DateTimeField,
   DeclaredField,
   PrimaryKeyRelatedField,
+  UserRestrictedPrimaryKeyRelatedField
 };

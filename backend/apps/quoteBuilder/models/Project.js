@@ -19,5 +19,10 @@ const Project = {
 };
 
 module.exports = (sequelize) => {
-  return sequelize.define("Project", Project, { paranoid: true });
+  const project = sequelize.define("Project", Project, { paranoid: true });
+
+  project.prototype.getUser = (instance) => {
+    return instance.getUser().id;
+  };
+  return project;
 };
