@@ -13,7 +13,8 @@
     "test-info": "SETTINGS_ENV=jest CONSOLE_LOG_LEVEL=info jest",
     "test-debug": "SETTINGS_ENV=jest CONSOLE_LOG_LEVEL=debug jest",
     "createSuperUser": "node backend/core/commands/createSuperUser.js",
-    "erd": "node backend/core/db/erd.js"
+    "erd": "node backend/core/db/erd.js",
+    "init-fixtures": "node backend/core/commands/initFixtures.js"
   },
   "repository": "https://github.com/JoaquimXG/CM4025-Enterprise-Web",
   "author": "Joaquim Gomez",
@@ -38,6 +39,7 @@
     "passport": "^0.6.0",
     "passport-local": "^1.0.0",
     "sequelize": "^6.28.0",
+    "sequelize-fixtures": "^1.2.0",
     "validator": "^13.9.0",
     "winston": "^3.8.2"
   },

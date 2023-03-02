@@ -5,10 +5,12 @@ const Worker = {
     type: DataTypes.INTEGER,
     autoIncrement: true,
     primaryKey: true,
+    customFieldOptions: {
+      controllerType: "IntegerField",
+    },
   },
   rate: {
     // This is hourly rate
-    // type: DataTypes.DECIMAL(10, 2), //TODO implement DecimalField
     type: DataTypes.INTEGER, //TODO implement DecimalField
     allowNull: false,
     customFieldOptions: {
@@ -18,6 +20,10 @@ const Worker = {
   title: {
     type: DataTypes.STRING,
     allowNull: false,
+    customFieldOptions: {
+      controllerType: "CharField",
+      maxLength: 255,
+    },
   },
 };
 

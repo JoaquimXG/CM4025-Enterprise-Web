@@ -1,6 +1,9 @@
 # Route debug output
 backend/routes.txt
 
+# ERD
+erd.svg
+
 # Logs
 logs
 *.log
