@@ -6,22 +6,25 @@ const {
   IsAdminView,
   IsAuthenticatedView,
   LogoutView,
-  RegisterView
+  RegisterView,
 } = require("../views");
 
 const authRouter = Router();
 
 authRouter.use(
   "/user/me",
-  new UserViewSet().asRouter({
-    get: { handler: "retrieve", route: "/" },
-    patch: { handler: "update", route: "/" },
-  })
+  new UserViewSet().asRouter(
+    {
+      get: { handler: "retrieve", route: "/" },
+      patch: { handler: "update", route: "/" },
+    },
+    true
+  )
 );
 authRouter.use("/user/", new AdminUserViewSet().asRouter());
 authRouter.use(
   "/register",
-  new RegisterView().asRouter({ post: { handler: "create", route: "/" } })
+  new RegisterView().asRouter({ post: { handler: "create", route: "/" } }, true)
 );
 authRouter.use("/login", new LoginView().asRouter());
 authRouter.use("/isadmin", new IsAdminView().asRouter());

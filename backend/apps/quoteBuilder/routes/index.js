@@ -10,8 +10,18 @@ const {
 
 const quoteBuilderRouter = Router();
 
-quoteBuilderRouter.use("/project", new ProjectViewSet().asRouter());
-quoteBuilderRouter.use("/quote", new QuoteViewSet().asRouter());
+quoteBuilderRouter.use(
+  "/project",
+  new ProjectViewSet().asRouter({
+    get: { handler: "total", route: "/:id/total/" },
+  })
+);
+quoteBuilderRouter.use(
+  "/quote",
+  new QuoteViewSet().asRouter({
+    get: { handler: "total", route: "/:id/total/" },
+  })
+);
 quoteBuilderRouter.use("/static_cost", new StaticCostViewSet().asRouter());
 quoteBuilderRouter.use("/task", new TaskViewSet().asRouter());
 quoteBuilderRouter.use("/time_entry", new TimeEntryViewSet().asRouter());

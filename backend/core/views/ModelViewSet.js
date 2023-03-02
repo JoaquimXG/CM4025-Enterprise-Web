@@ -39,8 +39,27 @@ module.exports = class ModelViewSet extends ModelApiView {
 
   notAllowed = (_, res, __) => new MethodNotAllowedError().send(res);
 
-  asRouter(actionMap) {
-    let methodMap = {
+  mergeActionMap(actionMap, baseActionMap) {
+    const subObjectToArrays = (obj) => {
+      return _.mapValues(obj, (value) => {
+        if (_.isPlainObject(value)) {
+          return [value];
+        }
+        return value;
+      });
+    };
+    actionMap = subObjectToArrays(actionMap);
+    baseActionMap = subObjectToArrays(baseActionMap);
+
+    return _.mergeWith(baseActionMap, actionMap, (objValue, srcValue) => {
+      if (_.isArray(objValue)) {
+        return objValue.concat(srcValue);
+      }
+    });
+  }
+
+  asRouter(actionMap = {}, override = false) {
+    let baseActionMap = {
       get: [
         { handler: "list", route: "/" },
         { handler: "retrieve", route: "/:id/" },
@@ -48,9 +67,13 @@ module.exports = class ModelViewSet extends ModelApiView {
       post: { handler: "create", route: "/" },
       patch: { handler: "update", route: "/:id/" },
       delete: { handler: "destroy", route: "/:id/" },
-      ...actionMap,
     };
 
-    return super.asRouter(methodMap);
+    // Merge actionMap with baseActionMap if not overriding base actions
+    if (!override){
+      actionMap = this.mergeActionMap(actionMap, baseActionMap);
+    }
+
+    return super.asRouter(actionMap);
   }
 };
