@@ -1,7 +1,6 @@
 const ModelController = require("../../../core/controllers/ModelController");
 const {
   DeclaredField,
-  // PrimaryKeyRelatedField,
   UserRestrictedPrimaryKeyRelatedField,
 } = require("../../../core/fields");
 const sequelize = require("../../../core/db/sequelize");

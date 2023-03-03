@@ -7,8 +7,9 @@ module.exports = class UserRestrictedPrimaryKeyRelatedField extends (
     super(options);
   }
 
-  scopeInstance(instance) {
-    if (this.context.req.user.id !== instance.getUser(instance).id) return null;
+  async scopeInstance(instance) {
+    let user = await instance.getUserRelation(instance);
+    if (this.context.req.user.id !== user.id) return null;
     return instance;
   }
 };

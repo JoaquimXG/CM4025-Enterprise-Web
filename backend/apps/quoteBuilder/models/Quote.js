@@ -21,8 +21,10 @@ const Quote = {
 module.exports = (sequelize) => {
   const quote = sequelize.define("Quote", Quote, { paranoid: true });
 
-  quote.prototype.getUser = (instance) => {
-    return instance.getProject().getUser();
+  quote.prototype.getUserRelation = async (instance) => {
+    let project = await instance.getProject();
+    let user = await project.getUserRelation(project);
+    return user;
   };
 
   quote.getUserFilter = (req) => {
@@ -30,6 +32,7 @@ module.exports = (sequelize) => {
       include: {
         model: sequelize.models.Project,
         where: { UserId: req.user.id },
+        attributes: [],
         require: true,
       },
     };

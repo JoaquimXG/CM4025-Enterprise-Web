@@ -25,5 +25,24 @@ const StaticCost = {
 };
 
 module.exports = (sequelize) => {
-  return sequelize.define("StaticCost", StaticCost, { paranoid: true });
+  const cost = sequelize.define("StaticCost", StaticCost, { paranoid: true });
+
+  cost.prototype.getUserRelation = async (instance) => {
+    let quote = await instance.getQuote();
+    let user = await quote.getUserRelation(quote);
+    return user;
+  };
+
+  cost.getUserFilter = (req) => {
+    return {
+      include: {
+        model: sequelize.models.Quote,
+        required: true,
+        attributes: [],
+        ...sequelize.models.Quote.getUserFilter(req),
+      },
+    };
+  };
+
+  return cost;
 };

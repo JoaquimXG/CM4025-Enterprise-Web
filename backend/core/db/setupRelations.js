@@ -16,7 +16,6 @@ module.exports = async (sequelize) => {
   await Task.hasMany(TimeEntry);
   await TimeEntry.belongsTo(Task);
 
-  // TODO review this model decision, should it be a many to many?
   await Worker.hasMany(TimeEntry);
   await TimeEntry.belongsTo(Worker);
 

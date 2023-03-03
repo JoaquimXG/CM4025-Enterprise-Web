@@ -18,5 +18,26 @@ const TimeEntry = {
 };
 
 module.exports = (sequelize) => {
-  return sequelize.define("TimeEntry", TimeEntry, { paranoid: true });
+  const timeEntry = sequelize.define("TimeEntry", TimeEntry, {
+    paranoid: true,
+  });
+
+  timeEntry.prototype.getUserRelation = async (instance) => {
+    let quote = await instance.getQuote();
+    let user = await quote.getUserRelation(quote);
+    return user;
+  };
+
+  timeEntry.getUserFilter = (req) => {
+    return {
+      include: {
+        model: sequelize.models.Task,
+        attributes: [],
+        required: true,
+        ...sequelize.models.Task.getUserFilter(req),
+      },
+    };
+  };
+
+  return timeEntry;
 };

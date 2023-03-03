@@ -17,13 +17,7 @@ but I can evidence that these sections of these projects were implemented by me.
 
 ## TODO
 
-1. Object level permission
-   - Restrict users to only view their own objects unless admin
-     - In progress, need to implement a filter field on the prototype for all objects which
-will return the filter that can be used within a where object in findAll or similar
-   - Restrict users to only assign their own objects when writing a relation
-    - In progress, need to add getUser function to all models .prototype
-
+1. Tests for standard API
 2. Create calculation with fudge factor
   - Calculate totals (DONE)
   - Fudge factor (TODO)
@@ -32,18 +26,18 @@ will return the filter that can be used within a where object in findAll or simi
 ### Maybe TODO (probably not for this project)
     
 1. Password reset/recovery
-2. MFA
-3. Complex permissions
+2. Email verification
+3. MFA
+4. Complex permissions
   - The outline for this is done, see IsAdmin and IsAuthenticated implementations
   - Further work can be done on more complex permissions but they are likley not required here.
     - read, write, update, delete permissions
-4. Eager loading for related queries, should be handled at the view level
-5. Relative imports???
-6. CSRFTOKEN??? Should ask whether they are likely to care about this in class
+5. Eager loading for related queries, should be handled at the view level
+6. Relative imports???
+7. CSRFTOKEN??? Should ask whether they are likely to care about this in class
 
 ### DONE
 1. Create consistent interface for standar CRUD endpoints
-   - I want a similar system to how Django DRF handles standard CRUD with ViewSets supported by Serializers
 2. Create User model with sequelize and integrate with passportjs
 3. Create standard CRUD endpoints for user model, without proper validation
 4. Create ChoiceField
@@ -53,6 +47,9 @@ will return the filter that can be used within a where object in findAll or simi
 8. View based permissions
 9. Relations
 10. Fixtures for predefined workers
+11. User object level permissions
+  - Users can only view their own objects from views, using CurrentUserAccessPolicy
+  - UserS can only specify their own objects when creating or updating relations, using UserRestrictedPrimaryKeyRelatedField
 
 ### Tags
 

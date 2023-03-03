@@ -22,7 +22,7 @@ module.exports = class PrimaryKeyRelatedField extends RelatedField {
   }
 
   async toInternalValue(data) {
-    //TODO need to handle multi-relations
+    //TODO(RELATIONS) need to handle multi-relations
     if (this.pkField) {
       data = this.pkField.toInternalValue(data);
     }
@@ -30,7 +30,7 @@ module.exports = class PrimaryKeyRelatedField extends RelatedField {
     let instance = await this.targetModel.findOne({
       where: { [this.targetIdentifier]: data },
     });
-    instance = await this.scopeInstance(instance);
+    instance = instance ? await this.scopeInstance(instance) : null;
     if (instance === null) this.fail("doesNotExist", data);
     return instance[this.targetIdentifier];
   }

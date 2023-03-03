@@ -19,5 +19,24 @@ const Task = {
 };
 
 module.exports = (sequelize) => {
-  return sequelize.define("Task", Task, { paranoid: true });
+  const task = sequelize.define("Task", Task, { paranoid: true });
+
+  task.prototype.getUserRelation = async (instance) => {
+    let quote = await instance.getQuote();
+    let user = await quote.getUserRelation(quote);
+    return user;
+  };
+
+  task.getUserFilter = (req) => {
+    return {
+      include: {
+        model: sequelize.models.Quote,
+        required: true,
+        attributes: [],
+        ...sequelize.models.Quote.getUserFilter(req),
+      },
+    };
+  };
+
+  return task;
 };
