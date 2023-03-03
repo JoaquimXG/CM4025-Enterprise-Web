@@ -4,7 +4,7 @@ const { ModelViewSet } = require("../../../core/views");
 const { QuoteController } = require("../controllers");
 const { TotalService } = require("../services");
 const { OkResponse } = require("../../../core/responses");
-const log = require("../../../core/utils/winstonLogger");
+const log = require("../../../core/utils");
 const { CurrentUserAccessPolicyFilter } = require("../../../core/filters");
 
 module.exports = class QuoteViewSet extends ModelViewSet {

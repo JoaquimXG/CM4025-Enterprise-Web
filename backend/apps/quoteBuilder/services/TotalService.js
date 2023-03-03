@@ -1,4 +1,4 @@
-const log = require("../../../core/utils/winstonLogger");
+const log = require("../../../core/utils");
 
 module.exports = class TotalService {
   /**

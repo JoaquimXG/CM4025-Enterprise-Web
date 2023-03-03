@@ -6,15 +6,15 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "migrate": "LOG_CONSOLE=true CONSOLE_LOG_LEVEL=debug SEQUELIZE_MIGRATE=true node backend/core/db/sequelize.js",
-    "test-connect-db": "node backend/core/db/testConnection.js",
+    "migrate": "LOG_CONSOLE=true CONSOLE_LOG_LEVEL=debug SEQUELIZE_MIGRATE=true node core/db/sequelize.js",
+    "test-connect-db": "node core/db/testConnection.js",
     "testing": "node test.js",
     "test": "SETTINGS_ENV=jest CONSOLE_LOG_LEVEL=warn jest",
     "test-info": "SETTINGS_ENV=jest CONSOLE_LOG_LEVEL=info jest",
     "test-debug": "SETTINGS_ENV=jest CONSOLE_LOG_LEVEL=debug jest",
-    "createSuperUser": "node backend/core/commands/createSuperUser.js",
-    "erd": "node backend/core/db/erd.js",
-    "init-fixtures": "node backend/core/commands/initFixtures.js"
+    "createSuperUser": "node core/commands/createSuperUser.js",
+    "erd": "node core/db/erd.js",
+    "init-fixtures": "node core/commands/initFixtures.js"
   },
   "repository": "https://github.com/JoaquimXG/CM4025-Enterprise-Web",
   "author": "Joaquim Gomez",

@@ -1,7 +1,7 @@
 const sequelize_fixtures = require("sequelize-fixtures");
 const sequelize = require("../db/sequelize");
 const path = require("path");
-const log = require("../utils/winstonLogger");
+const log = require("../utils");
 
 console.log;
 

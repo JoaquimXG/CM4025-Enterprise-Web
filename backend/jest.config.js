@@ -12,7 +12,7 @@ const config = {
       },
     ],
   ],
-  setupFilesAfterEnv: ["./backend/test/suiteSetup.js"],
+  setupFilesAfterEnv: ["./test/suiteSetup.js"],
 };
 
 module.exports = config;
