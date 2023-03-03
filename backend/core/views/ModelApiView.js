@@ -5,13 +5,75 @@ const {
   CreatedResponse,
 } = require("../responses");
 const { NotFoundError } = require("../responses/errors");
+const { Op } = require("sequelize");
 
-// DRF split non-model functions out into a separate class, ApiView, and have ModelApiView extend it
-// DRF some of this functionality should be concentrated in the controller and fields
 module.exports = class ModelApiView extends ApiView {
   lookupField = "id";
   model = null;
   controllerClass = null;
+  // Filters
+  queryFilter = null;
+  accessPolicy = null;
+  filters = null;
+
+  getQueryFilter(req) {
+    // Probably wont' be used for this project
+    if (!this.queryFilter) {
+      return null;
+    }
+    return this.queryFilter.getFilter(req);
+  }
+
+  getAccessPolicyFilter(req) {
+    if (!this.accessPolicy) {
+      return null;
+    }
+    return new this.accessPolicy(this.model).getFilter(req);
+  }
+
+  getFilter(req) {
+    /**
+     * Collect all the filters for this view.
+     *
+     * where clause filters will be additively applied using Op.and.
+     * Other clauses, e.g., "include", "having", etc., will be merged
+     *
+     * Filters are collected from three sources, access policy filters, query filters
+     * and a filters property on the view.
+     *
+     * Access policy filters and query filters are generated via function taking the current request
+     * as parameter, allowing for request based filtering, e.g., filtering by current user, or
+     * by query parameters.
+     *
+     * The filters property is a static filter object, which is applied to all requests.
+     */
+    let filters = [
+      this.getAccessPolicyFilter(req),
+      this.getQueryFilter(req),
+      this.filters ? this.filters : null,
+    ];
+
+    //Remove all null values from filters
+    filters = filters.filter((f) => f !== null);
+    // If no values remain return empty filter object
+    if (filters.length === 0) return {};
+
+    // Otherwise, combine all filters into a single filter object
+    let filter = {};
+    for (let f of filters) {
+      for (let key in f) {
+        if (key === "where") {
+          if (!("where" in filter)) filter["where"] = { [Op.and]: [] };
+          filter["where"][Op.and].push(f["where"]);
+        } else {
+          if (!(key in filter)) filter[key] = [];
+          filter[key].push(f[key]);
+        }
+      }
+    }
+
+    return filter;
+  }
 
   getControllerContext(req) {
     return {
@@ -69,13 +131,14 @@ module.exports = class ModelApiView extends ApiView {
     }
   }
 
-  async listObjects() {
-    return await this.model.findAll(); // TODO should optimise related queries here, e.g., to avoid n+1 queries
+  async listObjects(req) {
+    let filter = this.getFilter(req);
+    return await this.model.findAll(filter);
   }
 
   async listObjectsMiddleware(req, _, next) {
     try {
-      req.instances = await this.listObjects();
+      req.instances = await this.listObjects(req);
       return next();
     } catch (e) {
       return next(e);

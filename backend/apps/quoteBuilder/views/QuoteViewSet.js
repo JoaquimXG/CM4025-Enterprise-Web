@@ -5,9 +5,11 @@ const { QuoteController } = require("../controllers");
 const { TotalService } = require("../services");
 const { OkResponse } = require("../../../core/responses");
 const log = require("../../../core/utils/winstonLogger");
+const { CurrentUserAccessPolicyFilter } = require("../../../core/filters");
 
 module.exports = class QuoteViewSet extends ModelViewSet {
   permissions = [new IsAuthenticated()];
+  accessPolicy = CurrentUserAccessPolicyFilter;
 
   model = sequelize.models.Quote;
   controllerClass = QuoteController;

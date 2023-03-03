@@ -19,10 +19,15 @@ but I can evidence that these sections of these projects were implemented by me.
 
 1. Object level permission
    - Restrict users to only view their own objects unless admin
+     - In progress, need to implement a filter field on the prototype for all objects which
+will return the filter that can be used within a where object in findAll or similar
+   - Restrict users to only assign their own objects when writing a relation
+    - In progress, need to add getUser function to all models .prototype
+
 2. Create calculation with fudge factor
   - Calculate totals (DONE)
   - Fudge factor (TODO)
-3. IMPORTANT NEED TO DOCUMENT THAT NODE VERSION 18 IS REQUIRED BECAUSE OF STRUCTUREDCLONE
+1. IMPORTANT NEED TO DOCUMENT THAT NODE VERSION 18 IS REQUIRED BECAUSE OF STRUCTUREDCLONE
 
 ### Maybe TODO (probably not for this project)
     

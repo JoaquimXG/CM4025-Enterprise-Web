@@ -63,8 +63,16 @@ module.exports = (sequelize) => {
   const user = sequelize.define("User", User, { paranoid: true });
 
   user.prototype.getUser = (instance) => {
-    return instance
-  }
+    return instance;
+  };
+
+  quote.getUserFilter = (req) => {
+    return {
+      where: {
+        id: req.user.id,
+      },
+    };
+  };
 
   return user;
 };

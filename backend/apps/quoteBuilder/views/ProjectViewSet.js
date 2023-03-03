@@ -4,9 +4,11 @@ const { ModelViewSet } = require("../../../core/views");
 const { ProjectController } = require("../controllers");
 const { TotalService } = require("../services");
 const { OkResponse } = require("../../../core/responses");
+const { CurrentUserAccessPolicyFilter } = require("../../../core/filters");
 
 module.exports = class ProjectViewSet extends ModelViewSet {
   permissions = [new IsAuthenticated()];
+  accessPolicy = CurrentUserAccessPolicyFilter;
 
   model = sequelize.models.Project;
   controllerClass = ProjectController;
