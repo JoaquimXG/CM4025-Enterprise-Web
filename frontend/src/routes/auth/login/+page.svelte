@@ -1,4 +1,5 @@
 <script>
+	import settings from '$lib/settings/';
 	import FloatingCenteredLayout from '$lib/layout/FloatingCenteredLayout.svelte';
 	import {
 		Row,
@@ -10,9 +11,21 @@
 		PasswordInput
 	} from 'carbon-components-svelte';
 	import { ArrowRight } from 'carbon-icons-svelte';
-	
-	import LoginService from '$lib/services/LoginService.js';
-	LoginService
+
+	import AuthService from '$lib/services/AuthService.js';
+	import { onMount } from 'svelte';
+	let email = '';
+	let password = '';
+	let saveEmail = false;
+
+	onMount(async () => {
+		// Redirect user if already logged in
+		if (await AuthService.isAuthenticated()) AuthService.redirectAuthedUser();
+
+		// Get email from local storage, if set
+		let localEmail = localStorage.getItem(settings.emailLocalStoreKey);
+		if (localEmail) email = localEmail;
+	});
 </script>
 
 <FloatingCenteredLayout>
@@ -23,22 +36,29 @@
 		</Column>
 	</Row>
 	<Row class="row-form">
-		<FluidForm class="fill">
-			<TextInput class="input-email" labelText="Email" placeholder="Enter email..." required />
+		<FluidForm on:submit={(e) => AuthService.login(e, { email, password, saveEmail })} class="fill">
+			<TextInput
+				class="input-email"
+				labelText="Email"
+				placeholder="Enter email..."
+				required
+				bind:value={email}
+			/>
 			<PasswordInput
 				required
 				type="password"
 				labelText="Password"
 				placeholder="Enter password..."
+				bind:value={password}
 			/>
-			<Row class="form__checkbox">
-				<Column sm={2}>
-					<Checkbox labelText="Remember email?" />
+			<Row>
+				<Column class="form__checkbox" sm={2}>
+					<Checkbox bind:checked={saveEmail} labelText="Remember email?" />
 				</Column>
 			</Row>
 			<Row>
 				<Column sm={{ offset: 2, span: 2 }}>
-					<Button class="button-confirm fill" icon={ArrowRight}>Register</Button>
+					<Button type="submit" class="button-confirm fill" icon={ArrowRight}>Login</Button>
 				</Column>
 			</Row>
 		</FluidForm>
@@ -61,7 +81,7 @@
 
 	:global(.form__checkbox) {
 		padding-top: 'spacing-03';
-		padding-left: 'spacing-03';
+		margin-left: 'spacing-04';
 	}
 
 	:global(.fill) {

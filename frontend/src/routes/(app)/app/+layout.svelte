@@ -2,8 +2,6 @@
 	import 'carbon-components-svelte/css/g100.css';
 	import { Content, Grid } from 'carbon-components-svelte';
 	import UIShell from '$lib/layout/UIShell.svelte';
-
-	export const prerender = true;
 </script>
 
 <UIShell />
