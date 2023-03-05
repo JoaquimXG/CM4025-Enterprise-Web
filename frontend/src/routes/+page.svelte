@@ -2,6 +2,7 @@
 	import { Content, Grid, Row, Column, Button } from 'carbon-components-svelte';
 </script>
 
+<!-- Inspired by the tutorial app for Carbon Design -->
 <Content style="padding: 0">
 	<Grid padding={true} class="landing-page-grid">
 		<Row class="landing-page-background landing-page__banner">
