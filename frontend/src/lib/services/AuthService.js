@@ -60,7 +60,7 @@ export default {
 			return response.ok;
 		} catch (error) {
 			window.location.href = '/auth/login/';
-			console.log(error); // TODO what is the error case here?
+			console.log(error); // TODO(LOW) what is the error case here?
 		}
 	},
 
