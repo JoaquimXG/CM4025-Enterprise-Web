@@ -33,18 +33,18 @@ export default {
 	},
 
 	post: async (path, data, json = true) => {
-		_write(path, data, 'POST', json);
+		return _write(path, data, 'POST', json);
 	},
 
 	patch: async (path, data, json = true) => {
-		_write(path, data, 'PATCH', json);
+		return _write(path, data, 'PATCH', json);
 	},
 
 	delete: async (path, json = true) => {
-		_write(path, null, 'DELETE', json);
+		return _write(path, null, 'DELETE', json);
 	},
 
 	put: async (path, data, json = true) => {
-		_write(path, data, 'PUT', json);
+		return _write(path, data, 'PUT', json);
 	}
 };

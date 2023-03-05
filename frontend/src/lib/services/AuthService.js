@@ -33,18 +33,10 @@ export default {
 
 	login: async (e, { email, password, saveEmail }) => {
 		e.preventDefault();
-		if (saveEmail) {
-			localStorage.setItem(settings.emailLocalStoreKey, email);
-		}
+		if (saveEmail) localStorage.setItem(settings.emailLocalStoreKey, email);
+
 		try {
-			let response = await fetch(`${settings.host}/api/auth/login/`, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({ email, password }),
-				credentials: 'include'
-			});
+			let response = await FetchService.post('/api/auth/login/', { email, password }, false);
 			if (response.ok) redirectAuthedUser();
 			return response.ok;
 		} catch (error) {
@@ -55,7 +47,7 @@ export default {
 	logout: async (e) => {
 		e.preventDefault();
 		try {
-			let response = await FetchService.post('/api/auth/logout/');
+			let response = await FetchService.post('/api/auth/logout/', undefined, false);
 			window.location.href = '/auth/login/';
 			return response.ok;
 		} catch (error) {
