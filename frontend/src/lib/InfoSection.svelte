@@ -13,6 +13,6 @@
 
 <style>
   h3 {
-    font: "heading-01";
+    font: "productive-heading-01";
   }
 </style>

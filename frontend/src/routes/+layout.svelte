@@ -1,17 +1,8 @@
 <script>
-  import "carbon-components-svelte/css/white.css";
-  import { Content, Grid } from "carbon-components-svelte";
-  // import TutorialHeader from "$lib/TutorialHeader.svelte";
-  import UIShell from "$lib/UIShell.svelte";
+	import UiShellHeader from '$lib/UIShellHeader.svelte';
+	import 'carbon-components-svelte/css/g100.css';
 </script>
 
-<!-- <TutorialHeader /> -->
+<UiShellHeader />
 
-<UIShell/>
-
-<Content style="padding: 0">
-  <Grid fullWidth>
-    <slot />
-  </Grid>
-</Content>
-
+<slot />
