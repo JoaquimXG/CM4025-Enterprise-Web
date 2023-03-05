@@ -2,27 +2,27 @@
 	import {
 		SideNav,
 		SideNavItems,
-		SideNavMenu,
-		SideNavMenuItem,
 		SideNavLink,
 		SideNavDivider
 	} from 'carbon-components-svelte';
-	import { Settings } from 'carbon-icons-svelte';
+	import {
+		Document,
+		Hourglass,
+		Roadmap,
+		Task,
+		TwoPersonLift
+	} from 'carbon-icons-svelte';
 
 	export let isSideNavOpen = true;
 </script>
 
 <SideNav bind:isOpen={isSideNavOpen} rail>
 	<SideNavItems>
-		<SideNavLink icon={Settings} text="Link 1" />
-		<SideNavLink text="Link 2" />
-		<SideNavLink text="Link 3" />
-		<SideNavMenu text="Menu">
-			<SideNavMenuItem href="/" text="Link 1" />
-			<SideNavMenuItem href="/" text="Link 2" />
-			<SideNavMenuItem href="/" text="Link 3" />
-		</SideNavMenu>
+		<SideNavLink href="/app/projects" icon={Roadmap} text="Projects" />
+		<SideNavLink href="/app/quotes/" icon={Document} text="Quotes" />
+		<SideNavLink href="/app/tasks/" icon={Task} text="Tasks" />
+		<SideNavLink href="/app/time-entries" icon={Hourglass} text="Time Entries" />
 		<SideNavDivider />
-		<SideNavLink text="Link 4" />
+		<SideNavLink href="/app/workers" icon={TwoPersonLift} text="Workers" />
 	</SideNavItems>
 </SideNav>
