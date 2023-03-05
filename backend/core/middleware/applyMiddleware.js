@@ -18,10 +18,16 @@ module.exports = (app) => {
   //Express-Sessions for session data
   var secret = settings.SESSION_SECRET;
   var sessionArgs = {
+    // TODO(IMPORTANT): this was only for testing needs to be reviewed
+    cookie: {
+      secure: false,
+      maxAge: false
+    },
+    // cookie: { maxAge: false },
+    // TODO END
     secret: secret,
     resave: true,
     saveUninitialized: true,
-    cookie: { maxAge: false },
     store: settings.USE_SESSION_STORE
       ? new SessionStore({ db: sequelize })
       : null,
@@ -43,6 +49,7 @@ module.exports = (app) => {
   app.use(
     cors({
       origin: settings.CORS_ORIGIN,
+      credentials: true,
     })
   );
   //Cookie parser

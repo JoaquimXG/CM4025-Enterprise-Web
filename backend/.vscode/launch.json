@@ -23,6 +23,7 @@
       "envFile": "${workspaceFolder}/.env",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev"],
+      "outputCapture": "std"
     },
     {
       "name": "NPM Run testing",
