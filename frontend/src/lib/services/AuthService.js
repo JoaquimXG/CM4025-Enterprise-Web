@@ -15,7 +15,7 @@ export default {
 
 	isAuthenticated: async () => {
 		try {
-			let response = await FetchService.get('/api/auth/isauthenticated');
+			let response = await FetchService.get('/api/auth/isauthenticated', false);
 			return response.ok;
 		} catch {
 			return false;
@@ -24,7 +24,7 @@ export default {
 
 	isAdmin: async () => {
 		try {
-			let response = await FetchService.get('/api/auth/isadmin');
+			let response = await FetchService.get('/api/auth/isadmin', false);
 			return response.ok;
 		} catch {
 			return false;
