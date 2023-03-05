@@ -21,7 +21,7 @@ but I can evidence that these sections of these projects were implemented by me.
 2. Create calculation with fudge factor
   - Calculate totals (DONE)
   - Fudge factor (TODO)
-1. IMPORTANT NEED TO DOCUMENT THAT NODE VERSION 18 IS REQUIRED BECAUSE OF STRUCTUREDCLONE
+3. IMPORTANT NEED TO DOCUMENT THAT NODE VERSION 18 IS REQUIRED BECAUSE OF STRUCTUREDCLONE
 
 ### Maybe TODO (probably not for this project)
     
