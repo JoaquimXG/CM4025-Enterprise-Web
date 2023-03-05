@@ -2,6 +2,7 @@ const settings = require("../settings");
 const path = require("path");
 const express = require("express");
 const bodyParser = require("body-parser");
+const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const compression = require("compression");
 const session = require("express-session");
@@ -39,6 +40,11 @@ module.exports = (app) => {
   );
   //HTTP body parser for json post requests
   app.use(bodyParser.json());
+  app.use(
+    cors({
+      origin: settings.CORS_ORIGIN,
+    })
+  );
   //Cookie parser
   app.use(cookieParser());
   //Public folder for images, css and js files

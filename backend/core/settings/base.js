@@ -13,6 +13,7 @@ module.exports = {
   PROTOCOL: protocol,
   PORT: port,
   HOST: process.env.HOST ? process.env.HOST : "localhost",
+  CORS_ORIGIN: process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN : "*",
 
   // MYSQL
   MYSQL_USER: process.env.MYSQL_USER,
