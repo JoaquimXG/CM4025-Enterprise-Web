@@ -18,6 +18,11 @@
 	let password = '';
 	let saveEmail = false;
 
+	const performLogin = async (e) => {
+		let success = await AuthService.login(e, { email, password, saveEmail });
+		if (!success) console.log('Login failed'); // TODO show detail to user
+	};
+
 	onMount(async () => {
 		// Redirect user if already logged in
 		if (await AuthService.isAuthenticated()) AuthService.redirectAuthedUser();
@@ -36,7 +41,7 @@
 		</Column>
 	</Row>
 	<Row class="row-form">
-		<FluidForm on:submit={(e) => AuthService.login(e, { email, password, saveEmail })} class="fill">
+		<FluidForm on:submit={performLogin} class="fill">
 			<TextInput
 				class="input-email"
 				labelText="Email"

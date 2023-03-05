@@ -1,15 +1,21 @@
 import settings from '../settings';
+import FetchService from './FetchService';
 
 const redirectAuthedUser = () => {
 	window.location.href = '/app';
 };
 
+const redirectNotAuthedUser = () => {
+	window.location.href = '/auth/login';
+};
+
 export default {
 	redirectAuthedUser,
+	redirectNotAuthedUser,
 
 	isAuthenticated: async () => {
 		try {
-			let response = await fetch(`${settings.host}/api/auth/isauthenticated`, { method: 'GET' });
+			let response = await FetchService.get('/api/auth/isauthenticated');
 			return response.ok;
 		} catch {
 			return false;
@@ -18,45 +24,44 @@ export default {
 
 	isAdmin: async () => {
 		try {
-			let response = await fetch(`${settings.host}/api/auth/isadmin`, { method: 'GET' });
+			let response = await FetchService.get('/api/auth/isadmin');
 			return response.ok;
 		} catch {
 			return false;
 		}
 	},
 
-	login: (e, { email, password, saveEmail }) => {
+	login: async (e, { email, password, saveEmail }) => {
 		e.preventDefault();
 		if (saveEmail) {
 			localStorage.setItem(settings.emailLocalStoreKey, email);
 		}
-		fetch(`${settings.host}/api/auth/login/`, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({ email, password })
-		})
-			.then((response) => {
-				if (response.ok) {
-					redirectAuthedUser();
-				}
-			})
-			.catch((error) => {
-				console.log(error);
+		try {
+			let response = await fetch(`${settings.host}/api/auth/login/`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ email, password }),
+				credentials: 'include'
 			});
+			if (response.ok) redirectAuthedUser();
+			return response.ok;
+		} catch (error) {
+			console.log(error);
+		}
 	},
 
-	logout: (e) => {
+	logout: async (e) => {
 		e.preventDefault();
-		fetch(`${settings.host}/api/auth/logout/`, { method: 'POST' })
-			.then(() => {
-				window.location.href = '/auth/login/';
-			})
-			.catch((error) => {
-				console.log(error); // TODO what is the error case here?
-				window.location.href = '/auth/login/';
-			});
+		try {
+			let response = await FetchService.post('/api/auth/logout/');
+			window.location.href = '/auth/login/';
+			return response.ok;
+		} catch (error) {
+			window.location.href = '/auth/login/';
+			console.log(error); // TODO what is the error case here?
+		}
 	},
 
 	register: (e, { email, password, password2, firstName, lastName }) => {

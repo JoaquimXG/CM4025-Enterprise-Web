@@ -9,6 +9,19 @@
 		PasswordInput
 	} from 'carbon-components-svelte';
 	import { ArrowRight } from 'carbon-icons-svelte';
+
+	import AuthService from '$lib/services/AuthService.js';
+	import { onMount } from 'svelte';
+	let email = '';
+	let password = '';
+	let password2 = '';
+	let firstName = '';
+	let lastName = '';
+
+	onMount(async () => {
+		// Redirect user if already logged in
+		if (await AuthService.isAuthenticated()) AuthService.redirectAuthedUser();
+	});
 </script>
 
 <FloatingCenteredLayout>
@@ -19,23 +32,45 @@
 		</Column>
 	</Row>
 	<Row class="row-form">
-		<FluidForm class="fill">
+		<FluidForm
+			on:submit={(e) =>
+				AuthService.register(e, {
+					email,
+					password,
+					password2,
+					firstName,
+					lastName
+				})}
+			class="fill"
+		>
 			<Column class="form__sub-header">
-			<p class="form__detail-header">Profile Details</p>
+				<p class="form__detail-header">Profile Details</p>
 			</Column>
-			<TextInput labelText="First Name" placeholder="Enter first name..." required />
-			<TextInput labelText="Last Name" placeholder="Enter last name..." required />
+			<TextInput
+				bind:value={firstName}
+				labelText="First Name"
+				placeholder="Enter first name..."
+				required
+			/>
+			<TextInput
+				bind:value={lastName}
+				labelText="Last Name"
+				placeholder="Enter last name..."
+				required
+			/>
 			<Column class="form__sub-header form__splitter">
-			<p class="form__detail-header">Login Details</p>
+				<p class="form__detail-header">Login Details</p>
 			</Column>
-			<TextInput labelText="Email" placeholder="Enter email..." required />
+			<TextInput bind:value={email} labelText="Email" placeholder="Enter email..." required />
 			<PasswordInput
+				bind:value={password}
 				required
 				type="password"
 				labelText="Password"
 				placeholder="Enter password..."
 			/>
 			<PasswordInput
+				bind:value={password2}
 				required
 				type="password"
 				labelText="Confirm Password"
@@ -43,7 +78,7 @@
 			/>
 			<Row>
 				<Column sm={{ offset: 2, span: 2 }}>
-					<Button class="button-confirm fill" icon={ArrowRight}>Register</Button>
+					<Button type="submit" class="button-confirm fill" icon={ArrowRight}>Register</Button>
 				</Column>
 			</Row>
 		</FluidForm>
@@ -58,28 +93,28 @@
 	:global(.row-header) {
 		padding-top: 'spacing-07';
 		padding-bottom: 'spacing-07';
-		border-bottom: 1px solid "ui-04";
+		border-bottom: 1px solid 'ui-04';
 	}
 
 	:global(.form__checkbox) {
 		padding-top: 'spacing-03';
 		padding-left: 'spacing-03';
 	}
-	
+
 	:global(.form__sub-header) {
 		padding-bottom: 'spacing-05';
 		padding-top: 'spacing-05';
 	}
-	
+
 	:global(.form__detail-header) {
-		font: "productive-heading-02";
+		font: 'productive-heading-02';
 	}
-	
+
 	:global(.form__splitter) {
 		padding-top: 'spacing-05';
 	}
-	
-	:global(.button-confirm){
+
+	:global(.button-confirm) {
 		padding-bottom: 'spacing-05';
 		padding-top: 'spacing-05';
 	}
