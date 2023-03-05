@@ -64,21 +64,20 @@ export default {
 		}
 	},
 
-	register: (e, { email, password, password2, firstName, lastName }) => {
+	register: async (e, { email, password, password2, firstName, lastName }) => {
 		e.preventDefault();
-		fetch(`${settings.host}/api/auth/register/`, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({ email, password, password2, firstName, lastName })
-		})
-			.then((response) => {
-				console.log(response);
-				window.location.href = '/auth/login/';
-			})
-			.catch((error) => {
-				console.log(error);
+		try {
+			let response = await FetchService.post('/api/auth/register/', {
+				email,
+				password,
+				password2,
+				firstName,
+				lastName
 			});
+			if (response.ok) window.location.href = '/app/';
+			return response.ok;
+		} catch (error) {
+			console.log(error);
+		}
 	}
 };

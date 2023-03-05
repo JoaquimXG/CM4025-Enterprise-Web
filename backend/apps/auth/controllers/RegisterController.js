@@ -15,7 +15,7 @@ module.exports = class RegisterController extends ModelController {
 
   meta = {
     model: sequelize.models.User,
-    exclude: ["isAdmin", "status"]
+    exclude: ["isAdmin", "status"],
   };
 
   validatePassword(value) {
@@ -32,10 +32,11 @@ module.exports = class RegisterController extends ModelController {
   async create(validatedData) {
     validatedData.hash = await bcrypt.hash(validatedData.password, 10);
     delete validatedData.password;
-    validatedData.status = UserStatusChoice.ACTIVE
+    validatedData.status = UserStatusChoice.ACTIVE;
     validatedData.isAdmin = false;
     let instance = await super.create(validatedData);
+
     //TODO(IMPORTANT) send verification email
-    return instance
+    return instance;
   }
 };

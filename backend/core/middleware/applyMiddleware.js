@@ -18,13 +18,10 @@ module.exports = (app) => {
   //Express-Sessions for session data
   var secret = settings.SESSION_SECRET;
   var sessionArgs = {
-    // TODO(IMPORTANT): this was only for testing needs to be reviewed
     cookie: {
-      secure: false,
-      maxAge: false
+      secure: settings.HTTPS,
+      maxAge: 60 * 60 * 1000,
     },
-    // cookie: { maxAge: false },
-    // TODO END
     secret: secret,
     resave: true,
     saveUninitialized: true,

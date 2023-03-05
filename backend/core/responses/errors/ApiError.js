@@ -1,3 +1,5 @@
+const { log } = require("../../utils/");
+
 module.exports = class ApiError extends Error {
   constructor(code, message) {
     let _message = message;
@@ -17,10 +19,12 @@ module.exports = class ApiError extends Error {
   }
 
   send(res) {
+    log.debug("STATUS: " + this.code + " MESSAGE: " + this.message);
     res.status(this.code).send(this.toJson());
   }
 
   sendJson(res) {
+    log.debug("STATUS: " + this.code + " MESSAGE: " + this.message);
     res.status(this.code).json(this.message);
   }
 
