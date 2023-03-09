@@ -7,44 +7,50 @@ const withDataConfig = {
 	}
 };
 
-const _write = async (path, data, method, json) => {
-	let response = null;
-	if (data === undefined)
-		response = await fetch(`${settings.host}${path}`, { method: method, credentials: 'include' });
-	else {
-		response = await fetch(`${settings.host}${path}`, {
+const _write = async (path, data, method) => {
+	let options = {};
+	if (data === undefined) options = { method: method, credentials: 'include' };
+	else
+		options = {
 			...withDataConfig,
 			method: method,
 			body: JSON.stringify(data)
-		});
+		};
+
+	try {
+		let response = await fetch(`${settings.host}${path}`, options);
+		return response;
+	} catch (error) {
+		return { ok: false, _fetchError: true, error: error };
 	}
-	if (json) return await response.json();
-	else return response;
 };
 
 export default {
-	get: async (path, json = true) => {
-		let response = await fetch(`${settings.host}${path}`, {
-			method: 'GET',
-			credentials: 'include'
-		});
-		if (json) return await response.json();
-		else return response;
+	get: async (path) => {
+		try {
+			let response = await fetch(`${settings.host}${path}`, {
+				method: 'GET',
+				credentials: 'include'
+			});
+			return response;
+		} catch (error) {
+			return { ok: false, _fetchError: true, error: error };
+		}
 	},
 
-	post: async (path, data, json = true) => {
-		return _write(path, data, 'POST', json);
+	post: async (path, data) => {
+		return await _write(path, data, 'POST');
 	},
 
-	patch: async (path, data, json = true) => {
-		return _write(path, data, 'PATCH', json);
+	patch: async (path, data) => {
+		return await _write(path, data, 'PATCH');
 	},
 
-	delete: async (path, json = true) => {
-		return _write(path, null, 'DELETE', json);
+	delete: async (path) => {
+		return await _write(path, undefined, 'DELETE');
 	},
 
-	put: async (path, data, json = true) => {
-		return _write(path, data, 'PUT', json);
+	put: async (path, data) => {
+		return await _write(path, data, 'PUT');
 	}
 };

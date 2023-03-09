@@ -21,7 +21,17 @@ but I can evidence that these sections of these projects were implemented by me.
 2. Create calculation with fudge factor
   - Calculate totals (DONE)
   - Fudge factor (TODO)
-3. IMPORTANT NEED TO DOCUMENT THAT NODE VERSION 18 IS REQUIRED BECAUSE OF STRUCTUREDCLONE
+    - I think what we will do is take every numerical value in the formula
+      - And multiply it by a factor and add a bias prior to beginning the calculation
+      - Bias could be ~10% of the total numerical value
+      - Factor could be ~25% of the total numerical value
+      - Would need to run some analysis to gather whether the expected outcomes are close enough.
+      - I think these values could be chosen once every few hours
+1. Special admin permissions
+   1. Calculate cost without fudge factor
+   2. View rates for workers
+   3. Manage workers
+2. IMPORTANT NEED TO DOCUMENT THAT NODE VERSION 18 IS REQUIRED BECAUSE OF STRUCTUREDCLONE
 
 ### Maybe TODO (probably not for this project)
     

@@ -14,7 +14,6 @@ Built with SvelteKit as development framework and IBM Carbon Design as design sy
     - retrieve
   - Update
   - Delete
-3. Toast notifications
 4. Delete self
 5. Differences for admins?
   - View all data?

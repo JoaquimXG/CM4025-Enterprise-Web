@@ -14,62 +14,42 @@ export default {
 	redirectNotAuthedUser,
 
 	isAuthenticated: async () => {
-		try {
-			let response = await FetchService.get('/api/auth/isauthenticated', false);
-			return response.ok;
-		} catch {
-			return false;
-		}
+		let response = await FetchService.get('/api/auth/isauthenticated');
+		return response.ok;
 	},
 
 	isAdmin: async () => {
-		try {
-			let response = await FetchService.get('/api/auth/isadmin', false);
-			return response.ok;
-		} catch {
-			return false;
-		}
+		let response = await FetchService.get('/api/auth/isadmin');
+		return response.ok;
 	},
 
 	login: async (e, { email, password, saveEmail }) => {
 		e.preventDefault();
 		if (saveEmail) localStorage.setItem(settings.emailLocalStoreKey, email);
 
-		try {
-			let response = await FetchService.post('/api/auth/login/', { email, password }, false);
-			if (response.ok) redirectAuthedUser();
-			return response.ok;
-		} catch (error) {
-			console.log(error);
-		}
+		let response = await FetchService.post('/api/auth/login/', { email, password });
+		if (response.ok) redirectAuthedUser(); // Probably best to leave this to the caller
+		return response.ok;
 	},
 
 	logout: async (e) => {
+		// Logout user, redirect if successful. If not, return false, and allow caller to handle
 		e.preventDefault();
-		try {
-			let response = await FetchService.post('/api/auth/logout/', undefined, false);
-			window.location.href = '/auth/login/';
-			return response.ok;
-		} catch (error) {
-			window.location.href = '/auth/login/';
-			console.log(error); // TODO(LOW) what is the error case here?
-		}
+		let response = await FetchService.post('/api/auth/logout/', undefined);
+		if (response.ok) window.location.href = '/auth/login/';
+		return response.ok;
 	},
 
 	register: async (e, { email, password, password2, firstName, lastName }) => {
 		e.preventDefault();
-		try {
-			let response = await FetchService.post('/api/auth/register/', {
-				email,
-				password,
-				password2,
-				firstName,
-				lastName
-			});
-			if (response.ok) window.location.href = '/app/';
-			return response.ok;
-		} catch (error) {
-			console.log(error);
-		}
+		let response = await FetchService.post('/api/auth/register/', {
+			email,
+			password,
+			password2,
+			firstName,
+			lastName
+		});
+		if (response.ok) window.location.href = '/app/';
+		return response.ok;
 	}
 };

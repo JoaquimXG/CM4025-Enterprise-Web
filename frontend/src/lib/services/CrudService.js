@@ -4,43 +4,23 @@ export default function getCrudService(resourcePath) {
 	let path = `/api${resourcePath}`;
 	return {
 		list: async () => {
-			try {
-				return FetchService.get(path);
-			} catch (error) {
-				console.log(error);
-			}
+			return await FetchService.get(path);
 		},
 
 		retrieve: async (id) => {
-			try {
-				return FetchService.get(`${path}/${id}`);
-			} catch (error) {
-				console.log(error);
-			}
+			return await FetchService.get(`${path}/${id}`);
 		},
 
 		create: async (data) => {
-			try {
-				return FetchService.post(path, data);
-			} catch (error) {
-				console.log(error);
-			}
+			return await FetchService.post(path, data);
 		},
 
 		update: async (id, data) => {
-			try {
-				return FetchService.patch(`${path}/${id}`, data);
-			} catch (error) {
-				console.log(error);
-			}
+			return await FetchService.patch(`${path}/${id}`, data);
 		},
 
 		delete: async (id) => {
-			try {
-				return FetchService.delete(`${path}/${id}`);
-			} catch (error) {
-				console.log(error);
-			}
+			return await FetchService.delete(`${path}/${id}`);
 		}
 	};
 }

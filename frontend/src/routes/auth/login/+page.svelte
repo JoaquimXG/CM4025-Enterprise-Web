@@ -23,6 +23,7 @@
 		kind: 'error',
 		title: 'Error',
 		subtitle: 'Login Failed',
+		caption: 'Please try again',
 		show: false,
 		timeout: 3000
 	};
