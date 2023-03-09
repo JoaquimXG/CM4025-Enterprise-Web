@@ -32,8 +32,8 @@
 		flex-direction: column;
 		justify-content: center;
 	}
-  
-  :global(.centered-vertical__content) {
-    padding: 0 !important; /*Using important to override package default*/
-  }
+
+	:global(.centered-vertical__content) {
+		padding: 0 !important; /*Using important to override package default*/
+	}
 </style>

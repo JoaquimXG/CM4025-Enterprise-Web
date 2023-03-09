@@ -4,19 +4,17 @@
 	import {
 		Row,
 		Column,
-		Button,
 		FluidForm,
 		TextInput,
 		Checkbox,
-		PasswordInput,
-		InlineLoading,
-		ButtonSet
+		PasswordInput
 	} from 'carbon-components-svelte';
 	import { ArrowRight } from 'carbon-icons-svelte';
 
 	import AuthService from '$lib/services/AuthService.js';
 	import Toast from '$lib/components/notifications/Toast.svelte';
 	import { onMount } from 'svelte';
+	import StatefulButton from '$lib/components/StatefulButton.svelte';
 	let email = '';
 	let password = '';
 	let saveEmail = false;
@@ -29,16 +27,18 @@
 		timeout: 3000
 	};
 
+	let buttonStatus = 'dormant';
+
 	const performLogin = async (e) => {
-		state = 'active';
+		//Attempt to login and respond to user accordingly via button and toast
+		buttonStatus = 'active';
 		let success = await AuthService.login(e, { email, password, saveEmail });
-		if (success) {
-			state = 'finished';
-		} else {
+		if (success) buttonStatus = 'finished';
+		else {
 			toastConfig.show = true;
-			state = 'error';
+			buttonStatus = 'error';
 			setTimeout(() => {
-				state = 'dormant';
+				buttonStatus = 'dormant';
 			}, 1000);
 		}
 	};
@@ -51,15 +51,6 @@
 		let localEmail = localStorage.getItem(settings.emailLocalStoreKey);
 		if (localEmail) email = localEmail;
 	});
-
-	const stateDescriptionMap = {
-		active: 'Submitting...',
-		finished: 'Success',
-		inactive: 'Cancelling...',
-		error: 'Error'
-	};
-
-	let state = 'dormant'; // "dormant" | "active" | "finished" | "inactive"
 </script>
 
 <Toast {...toastConfig} />
@@ -98,15 +89,9 @@
 			</Row>
 			<Row class="row-button-confirm">
 				<Column sm={{ offset: 2, span: 2 }}>
-					{#if state !== 'dormant'}
-						<InlineLoading
-							class="button-confirm__loading"
-							status={state}
-							description={stateDescriptionMap[state]}
-						/>
-					{:else}
-						<Button type="submit" class="button-confirm" icon={ArrowRight}>Login</Button>
-					{/if}
+					<StatefulButton type="submit" status={buttonStatus} icon={ArrowRight}
+						>Login</StatefulButton
+					>
 				</Column>
 			</Row>
 		</FluidForm>
