@@ -5,11 +5,11 @@ module.exports = class EmailValidator extends ValidatorJsValidator {
   message = () => "Enter a valid email address.";
   validator = isEmail;
   args = [];
-   
-  constructor({message = null} = {}) {
+
+  constructor({ message = null } = {}) {
     super();
     if (message !== null) {
       this.message = message;
     }
   }
-}
+};

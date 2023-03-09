@@ -7,5 +7,5 @@
 	let isSideNavOpen = false;
 </script>
 
-<UIShellHeader bind:isSideNavOpen bind:isAuthenticated />
+<UIShellHeader bind:isSideNavOpen bind:isAuthenticated/>
 <UIShellNav bind:isSideNavOpen />

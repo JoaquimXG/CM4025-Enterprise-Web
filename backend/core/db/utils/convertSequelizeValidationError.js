@@ -2,7 +2,7 @@ const { ValidationError } = require('../../responses/errors');
 
 /**
  * Takes a sequelize validation error and returns a
- * local ValidationError with key attributes mapped
+ * local ValidationError (Response) with key attributes mapped
  */
 module.exports = (e) => {
   let message = {};

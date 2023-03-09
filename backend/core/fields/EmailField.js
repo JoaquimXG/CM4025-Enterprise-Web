@@ -16,4 +16,4 @@ module.exports = class EmailField extends CharField {
     let validator = new EmailValidator({ message });
     this.validators.push(validator);
   }
-}
+};

@@ -3,7 +3,8 @@
 		SideNav,
 		SideNavItems,
 		SideNavLink,
-		SideNavDivider
+		SideNavDivider,
+		Breakpoint,
 	} from 'carbon-components-svelte';
 	import {
 		Document,
