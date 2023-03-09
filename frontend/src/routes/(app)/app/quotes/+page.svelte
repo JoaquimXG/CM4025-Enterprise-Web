@@ -8,12 +8,12 @@
 	<Column>
 		<Breadcrumb noTrailingSlash aria-label="Page navigation">
 			<BreadcrumbItem href="/app">Dashboard</BreadcrumbItem>
-			<BreadcrumbItem href="/app/projects">Projects</BreadcrumbItem>
+			<BreadcrumbItem href="/app/quotes">Quotes</BreadcrumbItem>
 		</Breadcrumb>
 	</Column>
 </Row>
 
-<CrudTable resourcePath="/quote_builder/project" title="Projects"/>
+<CrudTable resourcePath="/quote_builder/quote" title="Quotes"/>
 
 <style>
 	:global(.row-header) {
