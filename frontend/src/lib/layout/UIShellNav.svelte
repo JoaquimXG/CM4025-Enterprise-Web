@@ -15,9 +15,12 @@
 	} from 'carbon-icons-svelte';
 
 	export let isSideNavOpen = true;
+	let size;
 </script>
 
-<SideNav bind:isOpen={isSideNavOpen} rail>
+<Breakpoint bind:size/>
+
+<SideNav bind:isOpen={isSideNavOpen} rail={size !== "sm" ? true : false}>
 	<SideNavItems>
 		<SideNavLink href="/app/projects" icon={Roadmap} text="Projects" />
 		<SideNavLink href="/app/quotes/" icon={Document} text="Quotes" />
