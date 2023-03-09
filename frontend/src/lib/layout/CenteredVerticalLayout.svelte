@@ -3,7 +3,7 @@
 </script>
 
 <div class="center">
-	<Content>
+	<Content class="centered-vertical__content">
 		<Grid>
 			<Row>
 				<slot />
@@ -32,4 +32,8 @@
 		flex-direction: column;
 		justify-content: center;
 	}
+  
+  :global(.centered-vertical__content) {
+    padding: 0 !important; /*Using important to override package default*/
+  }
 </style>
