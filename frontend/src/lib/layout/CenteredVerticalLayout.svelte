@@ -1,13 +1,15 @@
 <script>
-	import { Grid, Row } from 'carbon-components-svelte';
+	import { Grid, Row, Content } from 'carbon-components-svelte';
 </script>
 
 <div class="center">
-	<Grid>
-		<Row>
-			<slot />
-		</Row>
-	</Grid>
+	<Content>
+		<Grid>
+			<Row>
+				<slot />
+			</Row>
+		</Grid>
+	</Content>
 </div>
 
 <style>
