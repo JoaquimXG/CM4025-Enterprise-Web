@@ -10,7 +10,9 @@
 		fields: [
 			{
 				key: 'name',
-				title: 'Project name'
+				title: 'Project name',
+				type: 'text',
+				required: true
 			}
 		],
 		resourcePath

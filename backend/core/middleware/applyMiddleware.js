@@ -20,7 +20,7 @@ module.exports = (app) => {
   var sessionArgs = {
     cookie: {
       secure: settings.HTTPS,
-      maxAge: 60 * 60 * 1000,
+      maxAge: 1000 * 60 * 60 * 24 // 1 day in milliseconds = 86,400,
     },
     secret: secret,
     resave: true,

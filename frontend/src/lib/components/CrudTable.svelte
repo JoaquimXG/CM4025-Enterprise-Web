@@ -97,14 +97,14 @@
 	const startEdit = (row) => {
 		detailModalConfig.show = true;
 		detailModalConfig.mode = 'edit';
-		detailModalConfig.object = row;
+		detailModalConfig.instance = row;
 		detailModalConfig.buttonStatus = 'dormant';
 	};
 
 	const startCreate = () => {
 		detailModalConfig.show = true;
 		detailModalConfig.mode = 'create';
-		detailModalConfig.object = {};
+		detailModalConfig.instance = {};
 		detailModalConfig.buttonStatus = 'dormant';
 	};
 </script>

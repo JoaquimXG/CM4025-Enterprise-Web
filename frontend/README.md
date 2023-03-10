@@ -15,7 +15,10 @@ Built with SvelteKit as development framework and IBM Carbon Design as design sy
   - Update
   - Delete (DONE)
   - Reactivity, toasts, field errors, etc.
-- Generalise CRUD page
+  - Generalise CRUD page
+  - Links to related items
+
+
 1. Delete self
 2. Differences for admins?
   - View all data?

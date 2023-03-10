@@ -5,26 +5,26 @@
 	import BaseDetailModal from '$lib/components/detailModals/BaseDetailModal.svelte';
 	import getCrudService from '$lib/services/CrudService';
 
-	let resourcePath = '/quote_builder/quote';
+	let resourcePath = '/quote_builder/task';
 	let detailModalConfig = {
-		type: 'Quote',
+		type: 'Task',
 		identityField: 'name',
 		fields: [
 			{
 				key: 'name',
-				title: 'Quote Name',
+				title: 'Task Name',
 				type: 'text',
 				required: true
 			},
 			{
-				key: 'Project',
-				title: 'Project',
+				key: 'Quote',
+				title: 'Quote',
 				type: 'dropdown',
+				required: true,
 				items: {
-					service: getCrudService('/quote_builder/project'),
+					service: getCrudService('/quote_builder/quote'),
 					keyField: 'name'
-				},
-				required: true
+				}
 			}
 		],
 		resourcePath
@@ -35,9 +35,8 @@
 			value: 'Name'
 		},
 		{
-			key: 'Project',
-			value: 'Project',
-			// link: "/app/projects/{Project.id}" // TODO
+			key: 'Quote',
+			value: 'Quote',
 		},
 		{
 			key: 'cost',
@@ -56,12 +55,12 @@
 			<Column>
 				<Breadcrumb noTrailingSlash aria-label="Page navigation">
 					<BreadcrumbItem href="/app">Dashboard</BreadcrumbItem>
-					<BreadcrumbItem href="/app/quotes">Quotes</BreadcrumbItem>
+					<BreadcrumbItem href="/app/tasks">Tasks</BreadcrumbItem>
 				</Breadcrumb>
 			</Column>
 		</Row>
 
-		<CrudTable {resourcePath} headers={crudTableHeaders} title="Quotes" {detailModalConfig} DetailModal={BaseDetailModal} />
+		<CrudTable {resourcePath} headers={crudTableHeaders} title="Tasks" {detailModalConfig} DetailModal={BaseDetailModal} />
 	</Grid>
 </Content>
 
