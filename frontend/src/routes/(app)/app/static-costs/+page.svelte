@@ -28,7 +28,7 @@
 			},
 			{
 				key: 'cost',
-				title: 'Cost',
+				title: 'Cost (£)',
 				type: 'number',
 				required: true
 			}
@@ -46,7 +46,7 @@
 		},
 		{
 			key: 'cost',
-			value: 'Cost'
+			value: 'Cost (£)'
 		},
 		{
 			key: 'overflow',

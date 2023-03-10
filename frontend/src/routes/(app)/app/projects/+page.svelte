@@ -17,6 +17,20 @@
 		],
 		resourcePath
 	};
+	let crudTableHeaders = [
+		{
+			key: 'name',
+			value: 'Name'
+		},
+		{
+			key: 'cost',
+			value: 'Cost (£)'
+		},
+		{
+			key: 'overflow',
+			empty: true
+		}
+	];
 </script>
 
 <Content>
@@ -30,7 +44,7 @@
 			</Column>
 		</Row>
 
-		<CrudTable {resourcePath} title="Projects" {detailModalConfig} DetailModal={BaseDetailModal} />
+		<CrudTable {resourcePath} headers={crudTableHeaders} title="Projects" {detailModalConfig} DetailModal={BaseDetailModal} />
 	</Grid>
 </Content>
 

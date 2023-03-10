@@ -41,7 +41,7 @@
 		},
 		{
 			key: 'cost',
-			value: 'Cost'
+			value: 'Cost (£)'
 		},
 		{
 			key: 'overflow',

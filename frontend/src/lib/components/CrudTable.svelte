@@ -19,24 +19,7 @@
 	export let resourcePath = '';
 	export let title = '';
 	export let description = null;
-	export let headers = [
-		// {
-		// 	key: 'id',
-		// 	value: 'ID'
-		// },
-		{
-			key: 'name',
-			value: 'Name'
-		},
-		{
-			key: 'cost',
-			value: 'Cost'
-		},
-		{
-			key: 'overflow',
-			empty: true
-		}
-	];
+	export let headers;
 	export let pageSize = 5;
 	export let page = 1;
 	export let DetailModal = null;
