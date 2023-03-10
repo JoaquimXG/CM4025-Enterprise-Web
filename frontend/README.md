@@ -10,11 +10,16 @@ Built with SvelteKit as development framework and IBM Carbon Design as design sy
 2. Standard CRUD page
   - Create
   - Read
-    - list
-    - retrieve
+    - list (DONE)
+    - retrieve (Done)
   - Update
-  - Delete
-4. Delete self
-5. Differences for admins?
+  - Delete (DONE)
+  - Reactivity, toasts, field errors, etc.
+- Generalise CRUD page
+1. Delete self
+2. Differences for admins?
   - View all data?
   - User management? Yes probably required.
+
+## Maybe
+6. I would have liked to use the StatefulButton on modal but maybe not very easy

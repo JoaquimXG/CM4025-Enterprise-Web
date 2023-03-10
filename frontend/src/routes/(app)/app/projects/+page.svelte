@@ -1,25 +1,39 @@
 <script>
-	import { Row, Column, Breadcrumb, BreadcrumbItem } from 'carbon-components-svelte';
+	import { Grid, Content, Row, Column, Breadcrumb, BreadcrumbItem } from 'carbon-components-svelte';
 
 	import CrudTable from '$lib/components/CrudTable.svelte';
+	import BaseDetailModal from '$lib/components/detailModals/BaseDetailModal.svelte';
+	let resourcePath = '/quote_builder/project';
+	let detailModalConfig = {
+		type: 'Project',
+		identityField: 'name',
+		fields: [
+			{
+				key: 'name',
+				title: 'Project name'
+			}
+		],
+		resourcePath
+	};
 </script>
 
-<Row class="row-header">
-	<Column>
-		<Breadcrumb noTrailingSlash aria-label="Page navigation">
-			<BreadcrumbItem href="/app">Dashboard</BreadcrumbItem>
-			<BreadcrumbItem href="/app/projects">Projects</BreadcrumbItem>
-		</Breadcrumb>
-	</Column>
-</Row>
+<Content>
+	<Grid fullWidth style="padding: 0;">
+		<Row class="row-header">
+			<Column>
+				<Breadcrumb noTrailingSlash aria-label="Page navigation">
+					<BreadcrumbItem href="/app">Dashboard</BreadcrumbItem>
+					<BreadcrumbItem href="/app/projects">Projects</BreadcrumbItem>
+				</Breadcrumb>
+			</Column>
+		</Row>
 
-<CrudTable resourcePath="/quote_builder/project" title="Projects"/>
+		<CrudTable {resourcePath} title="Projects" {detailModalConfig} DetailModal={BaseDetailModal} />
+	</Grid>
+</Content>
 
 <style>
 	:global(.row-header) {
 		margin-bottom: 'spacing-03';
-	}
-	:global(.row-header__title) {
-		margin-top: 'spacing-03';
 	}
 </style>

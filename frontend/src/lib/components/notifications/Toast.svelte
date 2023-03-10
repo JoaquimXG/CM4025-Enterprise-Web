@@ -33,6 +33,6 @@
     position: fixed;
     top: 'spacing-10';
     right: 0;
-		z-index: 1000;
+		z-index: 10000;
   }
 </style>

@@ -17,8 +17,5 @@
 
 <UIShell bind:isAuthenticated/>
 
-<Content>
-	<Grid fullWidth style="padding: 0;">
-		<slot />
-	</Grid>
-</Content>
+
+<slot />

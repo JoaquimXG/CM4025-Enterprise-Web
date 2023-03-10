@@ -12,6 +12,9 @@
 		Pagination,
 		PaginationSkeleton
 	} from 'carbon-components-svelte';
+	import { onMount } from 'svelte';
+	import getCrudService from '$lib/services/CrudService';
+	import Toast from './notifications/Toast.svelte';
 
 	export let resourcePath = '';
 	export let title = '';
@@ -36,12 +39,11 @@
 	];
 	export let pageSize = 5;
 	export let page = 1;
+	export let DetailModal = null;
 
-	import { onMount } from 'svelte';
-	import getCrudService from '$lib/services/CrudService';
-	import Toast from './notifications/Toast.svelte';
 	const CrudService = getCrudService(resourcePath);
-	let objects = [];
+	let objects = undefined;
+	export let detailModalConfig = {};
 
 	let toastConfig = {
 		kind: 'error',
@@ -57,6 +59,7 @@
 		let result = await CrudService.list();
 		if (result.ok) objects = await result.json();
 		else {
+			objects = [];
 			toastConfig.subtitle = `Failed to load ${title.toLowerCase()}`;
 			toastConfig.caption = result._fetchError
 				? `Please try again: ${result.error}`
@@ -78,18 +81,53 @@
 			toastConfig.show = true;
 		}
 	};
+
+	const performUpdate = async (e) => {
+		if (objects === undefined) return;
+		let index = objects.find((o) => o.id === e.detail.id);
+		objects[index] = e.detail;
+		objects = objects;
+	};
+
+	const performCreate = async (e) => {
+		if (objects === undefined) objects = [e.detail];
+		else objects = [...objects, e.detail];
+	};
+
+	const startEdit = (row) => {
+		detailModalConfig.show = true;
+		detailModalConfig.mode = 'edit';
+		detailModalConfig.object = row;
+		detailModalConfig.buttonStatus = 'dormant';
+	};
+
+	const startCreate = () => {
+		detailModalConfig.show = true;
+		detailModalConfig.mode = 'create';
+		detailModalConfig.object = {};
+		detailModalConfig.buttonStatus = 'dormant';
+	};
 </script>
 
 <Toast {...toastConfig} />
 
-<!-- TODO(IMPORTANT) Breakpoints to remove columns on smaller screens -->
+{#if detailModalConfig.show}
+	<DetailModal
+		on:updated={performUpdate}
+		on:created={performCreate}
+		on:toast={(e) => (toastConfig = { ...toastConfig, ...e.detail })}
+		{...detailModalConfig}
+	/>
+{/if}
+
 <Row>
 	<Column>
-		{#if objects.length === 0}
+		{#if objects === undefined}
 			<DataTableSkeleton {headers} />
 			<PaginationSkeleton />
 		{:else}
 			<DataTable
+				class="crud-table"
 				{title}
 				description={description ? description : `View and edit ${title.toLowerCase()}`}
 				{headers}
@@ -101,14 +139,14 @@
 				<svelte:fragment slot="cell" let:cell let:row>
 					{#if cell.key === 'overflow'}
 						<OverflowMenu flipped>
-							<OverflowMenuItem text="Edit" />
+							<OverflowMenuItem text="Edit" on:click={() => startEdit(row)} />
 							<OverflowMenuItem danger text="Delete" on:click={() => performDelete(row)} />
 						</OverflowMenu>
 					{:else}{cell.value}{/if}
 				</svelte:fragment>
 				<Toolbar>
 					<ToolbarContent>
-						<Button>Create</Button>
+						<Button on:click={startCreate}>Create</Button>
 					</ToolbarContent>
 				</Toolbar>
 			</DataTable>
@@ -116,3 +154,12 @@
 		{/if}
 	</Column>
 </Row>
+
+
+<style>
+	/* Set width of the last column in CRUD table to 50px. This column is only used for the menu */
+	:global(.crud-table table tr > td:last-of-type) {
+		width: 50px;
+	}
+	
+</style>

@@ -21,7 +21,7 @@
 		description={statusDescriptionMap[status]}
 	/>
 {:else}
-	<Button {type} class="button-confirm" {icon}>Login</Button>
+	<Button {type} class="stateful-button-confirm" {icon}>Login</Button>
 {/if}
 
 
@@ -29,4 +29,9 @@
   :global(.stateful-loading-button) {
     min-height: 3rem !important; /*matches button height; important to override package default*/
   }
+
+	:global(.stateful-button-confirm) {
+		max-width: unset !important;
+		width: 100%;
+	}
 </style>

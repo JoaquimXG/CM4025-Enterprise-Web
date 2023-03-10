@@ -1,13 +1,12 @@
 <script>
-  import {
-    Row,
-    Column,
-    Breadcrumb,
-    BreadcrumbItem,
-  } from "carbon-components-svelte";
+	import { Content, Grid, Row, Column, Breadcrumb, BreadcrumbItem } from 'carbon-components-svelte';
 </script>
 
-<Breadcrumb noTrailingSlash aria-label="Page navigation">
-  <BreadcrumbItem href="/app">Dashboard</BreadcrumbItem>
-</Breadcrumb>
-<h1>TODO - Not sure what to put here???</h1>
+<Content>
+	<Grid fullWidth style="padding: 0;">
+		<Breadcrumb noTrailingSlash aria-label="Page navigation">
+			<BreadcrumbItem href="/app">Dashboard</BreadcrumbItem>
+		</Breadcrumb>
+		<h1>TODO - Not sure what to put here???</h1>
+	</Grid>
+</Content>
