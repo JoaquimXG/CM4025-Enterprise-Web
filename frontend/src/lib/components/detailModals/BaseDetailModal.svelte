@@ -130,7 +130,7 @@
 									titleText={field.title}
 									required={field.required ? true : false}
 									class="modal__dropdown-field modal__field"
-									items={asyncItems[field.key]}
+									items={asyncItems[field.key] || []}
 									invalid={field.invalid}
 									invalidText={field.invalidText}
 									bind:selectedId={$Instance[field.key]}
