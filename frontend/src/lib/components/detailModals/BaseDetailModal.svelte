@@ -1,6 +1,6 @@
 <script>
 	// TODO allow editing reverse relations?
-	import { Row, Column, TextInput, Modal, Form, Dropdown } from 'carbon-components-svelte';
+	import { Row, Column, TextInput, Modal, Form, Dropdown, NumberInput } from 'carbon-components-svelte';
 	import { ArrowRight } from 'carbon-icons-svelte';
 	import getCrudService from '$lib/services/CrudService';
 	import { createEventDispatcher } from 'svelte';
@@ -143,6 +143,21 @@
 									id={`field-${i}`}
 									class="modal__input-field modal__field"
 									labelText={field.title}
+									required={field.required ? true : false}
+									placeholder={`Enter ${field.title.toLocaleLowerCase()}...`}
+									invalid={field.invalid}
+									invalidText={field.invalidText}
+									bind:value={$Instance[field.key]}
+								/>
+							{:else if field.type === 'number'}
+								<NumberInput
+									defaultValue={0}
+									on:blur={() =>
+										ValidationService.validateField(field, $Instance[field.key], $Fields)}
+									on:input={() => ValidationService.clearInvalid(field, $Fields)}
+									id={`field-${i}`}
+									class="modal__input-field modal__field"
+									label={field.title}
 									required={field.required ? true : false}
 									placeholder={`Enter ${field.title.toLocaleLowerCase()}...`}
 									invalid={field.invalid}
