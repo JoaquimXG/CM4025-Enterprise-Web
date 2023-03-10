@@ -50,11 +50,28 @@ const fillEmptyDropdowns = (fields, object) => {
 	Instance.set(object);
 };
 
+const getBackendFieldErrors = (errorResponse, fields) => {
+	/**
+	 * The backend API will return field errors in a constant format.
+	 * Here we attempt to match field errors to form fields and displya localised error messages
+	 */
+	let fieldKeysToIndex = Object.fromEntries(fields.map((field, i) => [field.key, i]));
+	for (let key in errorResponse) {
+		if (key in fieldKeysToIndex) {
+			let field = fields[fieldKeysToIndex[key]];
+			field.invalid = true;
+			field.invalidText = errorResponse[key].map((e) => e.message).join(', ')
+		}
+	}
+	Fields.set(fields)
+};
+
 export default {
 	validateField,
 	validate,
 	fillEmptyDropdown,
 	fillEmptyDropdowns,
+	getBackendFieldErrors,
 	clearInvalid(field, fields, forceUpdate = true) {
 		if (!field.invalid) return;
 		field.invalid = false;

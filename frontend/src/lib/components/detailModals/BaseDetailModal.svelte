@@ -1,6 +1,14 @@
 <script>
 	// TODO allow editing reverse relations?
-	import { Row, Column, TextInput, Modal, Form, Dropdown, NumberInput } from 'carbon-components-svelte';
+	import {
+		Row,
+		Column,
+		TextInput,
+		Modal,
+		Form,
+		Dropdown,
+		NumberInput
+	} from 'carbon-components-svelte';
 	import { ArrowRight } from 'carbon-icons-svelte';
 	import getCrudService from '$lib/services/CrudService';
 	import { createEventDispatcher } from 'svelte';
@@ -35,9 +43,7 @@
 	});
 
 	const performCreate = async (object) => {
-		console.log("Performing Create")
 		if (!ValidationService.validate($Fields, object)) return;
-		console.log("Validated")
 		let result = await CrudService.create(object);
 		if (result.ok) {
 			dispatch('created', await result.json());
@@ -48,6 +54,14 @@
 				subtitle: `Failed to create ${type}`,
 				show: true
 			});
+			if (!result._fetchError) {
+				ValidationService.getBackendFieldErrors(await result.json(), fields);
+				dispatch('toast', {
+					kind: 'error',
+					title: `Failed to create ${type}`,
+					show: true
+				});
+			}
 		}
 	};
 
@@ -106,8 +120,8 @@
 	selectorPrimaryFocus="#field-0"
 	on:click:button--secondary={() => (show = false)}
 	on:open={() => {
-		Instance.set(instance)
-		ValidationService.fillEmptyDropdowns($Fields, $Instance)
+		Instance.set(instance);
+		ValidationService.fillEmptyDropdowns($Fields, $Instance);
 	}}
 	on:close={() => {
 		$Fields.forEach((field) => ValidationService.clearInvalid(field, $Fields));
