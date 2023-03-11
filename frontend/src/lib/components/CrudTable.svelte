@@ -42,8 +42,17 @@
 
 	onMount(async () => {
 		let result = await CrudService.list();
-		if (result.ok) objects = (await result.json()).map((o) => toRepresentation(o));
-		else {
+		if (result.ok) {
+			objects = (await result.json()).map((o) => toRepresentation(o));
+			// Check for id in query params
+			let urlParams = new URLSearchParams(window.location.search);
+			let id = urlParams.get('id');
+			if (id) {
+				id = parseInt(id);
+				let instance = objects.find((o) => o.id === id);
+				startEdit(instance);
+			}
+		} else {
 			objects = [];
 			toastConfig.subtitle = `Failed to load ${title.toLowerCase()}`;
 			toastConfig.caption = result._fetchError
@@ -103,39 +112,39 @@
 		{...detailModalConfig}
 	/>
 {/if}
-		{#if objects === undefined}
-			<DataTableSkeleton {headers} />
-			<PaginationSkeleton />
-		{:else}
-			<DataTable
-				class="crud-table"
-				{title}
-				description={description ? description : `View and edit ${title.toLowerCase()}`}
-				{headers}
-				rows={objects}
-				{pageSize}
-				{page}
-				sortable
-			>
-				<svelte:fragment slot="cell" let:cell let:row>
-					{#if cell.key === 'overflow'}
-						<OverflowMenu flipped>
-							<OverflowMenuItem text="Edit" on:click={() => startEdit(row)} />
-							<OverflowMenuItem danger text="Delete" on:click={() => performDelete(row)} />
-						</OverflowMenu>
-					{:else if typeof cell.value === 'object' && cell.value.type === 'link'}
-						<!-- If cell value is of type object, then we handle it differently. Currently we only handle links  -->
-						<Link href={cell.value.link}>{cell.value.value}</Link>
-					{:else}{cell.value}{/if}
-				</svelte:fragment>
-				<Toolbar>
-					<ToolbarContent>
-						<Button on:click={startCreate}>Create</Button>
-					</ToolbarContent>
-				</Toolbar>
-			</DataTable>
-			<Pagination bind:pageSize bind:page totalItems={objects.length} pageSizeInputDisabled />
-		{/if}
+{#if objects === undefined}
+	<DataTableSkeleton {headers} />
+	<PaginationSkeleton />
+{:else}
+	<DataTable
+		class="crud-table"
+		{title}
+		description={description ? description : `View and edit ${title.toLowerCase()}`}
+		{headers}
+		rows={objects}
+		{pageSize}
+		{page}
+		sortable
+	>
+		<svelte:fragment slot="cell" let:cell let:row>
+			{#if cell.key === 'overflow'}
+				<OverflowMenu flipped>
+					<OverflowMenuItem text="Edit" on:click={() => startEdit(row)} />
+					<OverflowMenuItem danger text="Delete" on:click={() => performDelete(row)} />
+				</OverflowMenu>
+			{:else if typeof cell.value === 'object' && cell.value.type === 'link'}
+				<!-- If cell value is of type object, then we handle it differently. Currently we only handle links  -->
+				<Link href={cell.value.link}>{cell.value.value}</Link>
+			{:else}{cell.value}{/if}
+		</svelte:fragment>
+		<Toolbar>
+			<ToolbarContent>
+				<Button on:click={startCreate}>Create</Button>
+			</ToolbarContent>
+		</Toolbar>
+	</DataTable>
+	<Pagination bind:pageSize bind:page totalItems={objects.length} pageSizeInputDisabled />
+{/if}
 
 <style>
 	/* Set width of the last column in CRUD table to 50px. This column is only used for the menu */
