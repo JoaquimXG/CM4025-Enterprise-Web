@@ -10,7 +10,8 @@
 		ToolbarContent,
 		Button,
 		Pagination,
-		PaginationSkeleton
+		PaginationSkeleton,
+		Link
 	} from 'carbon-components-svelte';
 	import { onMount } from 'svelte';
 	import getCrudService from '$lib/services/CrudService';
@@ -125,6 +126,9 @@
 							<OverflowMenuItem text="Edit" on:click={() => startEdit(row)} />
 							<OverflowMenuItem danger text="Delete" on:click={() => performDelete(row)} />
 						</OverflowMenu>
+					{:else if typeof cell.value === 'object' && cell.value.type === 'link'}
+						<!-- If cell value is of type object, then we handle it differently. Currently we only handle links  -->
+						<Link href={cell.value.link}>{cell.value.value}</Link>
 					{:else}{cell.value}{/if}
 				</svelte:fragment>
 				<Toolbar>

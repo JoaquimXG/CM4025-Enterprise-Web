@@ -7,6 +7,8 @@ const {
 const { NotFoundError } = require("../responses/errors");
 const { Op } = require("sequelize");
 
+const sequelize = require("../db/sequelize");
+
 module.exports = class ModelApiView extends ApiView {
   lookupField = "id";
   model = null;

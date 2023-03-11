@@ -13,7 +13,20 @@
 		return `${Math.floor(minutes / 60)}:${seconds > 9 ? seconds : '0' + seconds}`;
 	};
 	const toRepresentation = (instance) => {
-		return { ...instance, time: minutesFormatter(instance.minutes) };
+		return {
+			...instance,
+			time: minutesFormatter(instance.minutes),
+			workerLink: {
+				value: instance._workerTitle,
+				link: `/app/workers/?id=${instance.Worker}`,
+				type: 'link'
+			},
+			taskLink: {
+				value: instance._taskName,
+				link: `/app/tasks/?id=${instance.Task}`,
+				type: 'link'
+			}
+		};
 	};
 
 	const minutesToInternalValue = (time) => {
@@ -32,7 +45,10 @@
 		type: 'Time Entry',
 		identityField: 'name',
 		toRepresentation: (instance) => {
-			return { ...instance, minutes: minutesFormatter(instance.minutes) };
+			return {
+				...instance,
+				minutes: minutesFormatter(instance.minutes)
+			};
 		},
 		toInternalValue: (instance) => {
 			return { ...instance, minutes: minutesToInternalValue(instance.minutes) };
@@ -69,12 +85,13 @@
 	};
 	let crudTableHeaders = [
 		{
-			key: 'Worker',
+			key: 'workerLink',
 			value: 'Worker'
 		},
 		{
-			key: 'Task',
-			value: 'Task'
+			key: 'taskLink',
+			value: 'Task',
+			_link: true
 		},
 		{
 			key: 'time', // Formatted // TODO I think we should just use minutes instead

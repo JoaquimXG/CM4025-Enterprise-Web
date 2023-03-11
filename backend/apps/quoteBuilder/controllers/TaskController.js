@@ -2,6 +2,7 @@ const ModelController = require("../../../core/controllers/ModelController");
 const {
   DeclaredField,
   UserRestrictedPrimaryKeyRelatedField,
+  CharField,
 } = require("../../../core/fields");
 const { ValidationError } = require("../../../core/responses/errors");
 const sequelize = require("../../../core/db/sequelize");
@@ -12,6 +13,10 @@ module.exports = class TaskController extends ModelController {
     targetModel: sequelize.models.Quote,
     // Not required when updating but we will enforce required in create
     required: false,
+  });
+  _quoteName = new DeclaredField(CharField, {
+    source: "Quote.name",
+    readOnly: true,
   });
 
   meta = {
