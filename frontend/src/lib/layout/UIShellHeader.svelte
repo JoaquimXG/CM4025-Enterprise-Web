@@ -19,11 +19,13 @@
 	let isProfileOpen = false;
 	let isSwitcherOpen = false;
 	let email = '';
+	let isAuthenticated = false;
 
-	let { User, isAuthenticated, ready } = getContext(UserContext);
+	let { User, isAuthenticated: _isAuthenticated, ready } = getContext(UserContext);
 
 	onMount(async () => {
 		await ready;
+		isAuthenticated = _isAuthenticated();
 		if ($User) email = $User.email;
 	});
 </script>
@@ -33,7 +35,7 @@
 		<SkipToContent />
 	</svelte:fragment>
 	<HeaderUtilities>
-		{#if isAuthenticated()}
+		{#if isAuthenticated}
 			<HeaderAction
 				bind:isOpen={isProfileOpen}
 				icon={UserAvatarFilledAlt}

@@ -11,19 +11,21 @@
 		Modal
 	} from 'carbon-components-svelte';
 	import { ArrowRight, TrashCan } from 'carbon-icons-svelte';
-
 	import AuthService from '$lib/services/AuthService.js';
 	import getCrudService from '$lib/services/CrudService';
-	const UserService = getCrudService('/auth/user');
 	import UserContext from '$lib/contexts/UserContext.js';
-
 	import { getContext, onMount } from 'svelte';
 	import Toast from '$lib/components/notifications/Toast.svelte';
+
+	const { User, isAuthenticated, ready } = getContext(UserContext);
+	const UserService = getCrudService('/auth/user');
+
 	let email = '';
 	let firstName = '';
 	let lastName = '';
 	let size = '';
 	let confirmDelete = false;
+
 
 	let toastConfig = {
 		kind: 'error',
@@ -35,7 +37,6 @@
 		lowContrast: false
 	};
 
-	let { User, isAuthenticated, ready } = getContext(UserContext);
 
 	onMount(async () => {
 		await ready;

@@ -10,15 +10,18 @@
 		PasswordInput
 	} from 'carbon-components-svelte';
 	import { ArrowRight } from 'carbon-icons-svelte';
-
+	import UserContext from '$lib/contexts/UserContext';
 	import AuthService from '$lib/services/AuthService.js';
 	import Toast from '$lib/components/notifications/Toast.svelte';
-	import { onMount } from 'svelte';
+	import { onMount, getContext } from 'svelte';
 	import StatefulButton from '$lib/components/StatefulButton.svelte';
+
+	let { isAuthenticated, ready } = getContext(UserContext);
+
 	let email = '';
 	let password = '';
 	let saveEmail = false;
-
+	let buttonStatus = 'dormant';
 	let toastConfig = {
 		kind: 'error',
 		title: 'Error',
@@ -27,8 +30,6 @@
 		show: false,
 		timeout: 3000
 	};
-
-	let buttonStatus = 'dormant';
 
 	const performLogin = async (e) => {
 		//Attempt to login and respond to user accordingly via button and toast
@@ -44,9 +45,11 @@
 		}
 	};
 
+
 	onMount(async () => {
+		await ready;
 		// Redirect user if already logged in
-		if (await AuthService.isAuthenticated()) AuthService.redirectAuthedUser();
+		if (isAuthenticated()) AuthService.redirectAuthedUser();
 
 		// Get email from local storage, if set
 		let localEmail = localStorage.getItem(settings.emailLocalStoreKey);

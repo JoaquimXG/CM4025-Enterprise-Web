@@ -15,6 +15,7 @@ Built with SvelteKit as development framework and IBM Carbon Design as design sy
     - Should be read only for normal users and editable for admins
 3. Replace image on homepage
 4. Text on dashboard page
+5. Favicon
 
 ## Issues
 2. Issues with tabindex on modals

@@ -9,18 +9,22 @@
 		PasswordInput
 	} from 'carbon-components-svelte';
 	import { ArrowRight } from 'carbon-icons-svelte';
-
+	import UserContext from '$lib/contexts/UserContext';
 	import AuthService from '$lib/services/AuthService.js';
-	import { onMount } from 'svelte';
+	import { onMount, getContext } from 'svelte';
+
 	let email = '';
 	let password = '';
 	let password2 = '';
 	let firstName = '';
 	let lastName = '';
 
+	let { isAuthenticated, ready } = getContext(UserContext);
+
 	onMount(async () => {
+		await ready;
 		// Redirect user if already logged in
-		if (await AuthService.isAuthenticated()) AuthService.redirectAuthedUser();
+		if (isAuthenticated()) AuthService.redirectAuthedUser();
 	});
 </script>
 
