@@ -1,5 +1,4 @@
 <script>
-	import FloatingCenteredLayout from '$lib/layout/FloatingCenteredLayout.svelte';
 	import {
 		Grid,
 		Content,
@@ -8,8 +7,6 @@
 		Button,
 		FluidForm,
 		TextInput,
-		PasswordInput,
-		ButtonSet,
 		Breakpoint,
 		Modal
 	} from 'carbon-components-svelte';

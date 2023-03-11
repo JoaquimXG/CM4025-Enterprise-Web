@@ -1,5 +1,4 @@
 <script>
-	// TODO allow editing reverse relations?
 	import {
 		Row,
 		Column,
@@ -28,7 +27,7 @@
 	export let resourcePath;
 	export let toInternalValue = (instance) => instance;
 	export let toRepresentation = (instance) => instance;
-	// export let buttonStatus = 'dormant'; // TODO reactivity for button
+	// export let buttonStatus = 'dormant'; // TODO reactivity for button like login page?
 	const CrudService = getCrudService(resourcePath);
 	let asyncItems = {};
 
@@ -193,7 +192,6 @@
 						</Column>
 					</Row>
 				{/each}
-				<!-- // TODO sateteful button -->
 			</Form>
 		</Column>
 	</Row>

@@ -49,7 +49,6 @@
 		{
 			key: 'projectLink',
 			value: 'Project',
-			// link: "/app/projects/{Project.id}" // TODO
 		},
 		{
 			key: 'cost',

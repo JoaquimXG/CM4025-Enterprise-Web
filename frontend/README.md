@@ -7,17 +7,18 @@ Built with SvelteKit as development framework and IBM Carbon Design as design sy
 # TODO
 
 1. Allow password modification
-4. Delete self
-  - with confirmation
-1. Differences for admins?
+2. Differences for admins?
   - View all data?
   - User management? Yes probably required.
     - Only show user management link in nav if the user is admin
   - Worker management
     - Should be read only for normal users and editable for admins
+3. Replace image on homepage
+4. Text on dashboard page
 
 ## Issues
 1. Optimize calls to isauthenticated, can be in a store or maybe in context
+  - Fix profile page as well
 2. Issues with tabindex on modals
 
 ## Done
@@ -39,6 +40,8 @@ Built with SvelteKit as development framework and IBM Carbon Design as design sy
 7. Improve time input, should at least be number but is it possible to use the time input componenet without a timezone
 8. Links to related items
 9. Button in overflow for calculating cost fields
+10. Delete self
+  - with confirmation
 
 ## Maybe
 1. I would have liked to use the StatefulButton on modal but maybe not very easy
