@@ -4,6 +4,13 @@
 	import CrudTable from '$lib/components/CrudTable.svelte';
 	import BaseDetailModal from '$lib/components/detailModals/BaseDetailModal.svelte';
 	import getCrudService from '$lib/services/CrudService';
+	const secondsFormatter = (seconds) => {
+		if (seconds > 3600) return new Date(seconds * 1000).toISOString().substring(11, 19);
+		else return new Date(seconds * 1000).toISOString().substring(14, 19);
+	};
+	const formatter = (instance) => {
+		return { ...instance, _seconds: secondsFormatter(instance.seconds) };
+	};
 
 	let resourcePath = '/quote_builder/time_entry';
 	let detailModalConfig = {
@@ -35,7 +42,7 @@
 				title: 'Time',
 				type: 'text',
 				required: true
-			},
+			}
 		],
 		resourcePath
 	};
@@ -49,7 +56,7 @@
 			value: 'Task'
 		},
 		{
-			key: 'seconds',
+			key: '_seconds', // Formatted
 			value: 'Time'
 		},
 		{
@@ -76,6 +83,7 @@
 			title="Time Entries"
 			{detailModalConfig}
 			DetailModal={BaseDetailModal}
+			{formatter}
 		/>
 	</Grid>
 </Content>

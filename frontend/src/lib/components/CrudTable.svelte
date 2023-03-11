@@ -23,6 +23,7 @@
 	export let pageSize = 5;
 	export let page = 1;
 	export let DetailModal = null;
+	export let formatter = (o) => o;
 
 	const CrudService = getCrudService(resourcePath);
 	let objects = undefined;
@@ -40,7 +41,7 @@
 
 	onMount(async () => {
 		let result = await CrudService.list();
-		if (result.ok) objects = await result.json();
+		if (result.ok) objects = (await result.json()).map((o) => formatter(o));
 		else {
 			objects = [];
 			toastConfig.subtitle = `Failed to load ${title.toLowerCase()}`;
@@ -68,13 +69,13 @@
 	const performUpdate = async (e) => {
 		if (objects === undefined) return;
 		let index = objects.find((o) => o.id === e.detail.id);
-		objects[index] = e.detail;
+		objects[index] = formatter(e.detail);
 		objects = objects;
 	};
 
 	const performCreate = async (e) => {
 		if (objects === undefined) objects = [e.detail];
-		else objects = [...objects, e.detail];
+		else objects = [...objects, formatter(e.detail)];
 	};
 
 	const startEdit = (row) => {
