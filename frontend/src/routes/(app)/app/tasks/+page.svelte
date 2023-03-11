@@ -5,6 +5,17 @@
 	import BaseDetailModal from '$lib/components/detailModals/BaseDetailModal.svelte';
 	import getCrudService from '$lib/services/CrudService';
 
+	const toRepresentation = (instance) => {
+		return {
+			...instance,
+			quoteLink: {
+				value: instance._quoteName,
+				link: `/app/quotes/?id=${instance.Quote}`,
+				type: 'link'
+			}
+		};
+	};
+
 	let resourcePath = '/quote_builder/task';
 	let detailModalConfig = {
 		type: 'Task',
@@ -35,8 +46,8 @@
 			value: 'Name'
 		},
 		{
-			key: 'Quote',
-			value: 'Quote',
+			key: 'quoteLink',
+			value: 'Quote'
 		},
 		{
 			key: 'cost',
@@ -60,7 +71,14 @@
 			</Column>
 		</Row>
 
-		<CrudTable {resourcePath} headers={crudTableHeaders} title="Tasks" {detailModalConfig} DetailModal={BaseDetailModal} />
+		<CrudTable
+			{resourcePath}
+			headers={crudTableHeaders}
+			title="Tasks"
+			{detailModalConfig}
+			DetailModal={BaseDetailModal}
+			{toRepresentation}
+		/>
 	</Grid>
 </Content>
 
