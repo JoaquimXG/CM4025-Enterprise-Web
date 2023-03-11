@@ -12,7 +12,8 @@
 				value: instance._quoteName,
 				link: `/app/quotes/?id=${instance.Quote}`,
 				type: 'link'
-			}
+			},
+			cost: "--"
 		};
 	};
 
@@ -58,6 +59,9 @@
 			empty: true
 		}
 	];
+	let overflowConfig = {
+		getCost: true
+	};
 </script>
 
 <Content>
@@ -76,6 +80,7 @@
 			headers={crudTableHeaders}
 			title="Tasks"
 			{detailModalConfig}
+			{overflowConfig}
 			DetailModal={BaseDetailModal}
 			{toRepresentation}
 		/>

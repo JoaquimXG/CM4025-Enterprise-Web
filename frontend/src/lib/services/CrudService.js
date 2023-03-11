@@ -21,6 +21,11 @@ export default function getCrudService(resourcePath) {
 
 		delete: async (id) => {
 			return await FetchService.delete(`${path}/${id}`);
+		},
+		
+		// Only for a couple of objects
+		total: async (id) => {
+			return await FetchService.get(`${path}/${id}/total/`);
 		}
 	};
 }

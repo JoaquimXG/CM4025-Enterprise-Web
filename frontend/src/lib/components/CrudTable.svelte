@@ -24,7 +24,9 @@
 	export let pageSize = 5;
 	export let page = 1;
 	export let DetailModal = null;
+	export let overflowConfig = {};
 	export let toRepresentation = (o) => o; // By default, just return the object, don't mutate for representation
+	export let adminOrReadOnly = false; // TODO
 
 	const CrudService = getCrudService(resourcePath);
 	let objects = undefined;
@@ -86,6 +88,23 @@
 		if (objects === undefined) objects = [e.detail];
 		else objects = [...objects, toRepresentation(e.detail)];
 	};
+	
+	const performGetCost = async (row) => {
+		let response = await CrudService.total(row.id);
+		if (response.ok) {
+			let index = objects.findIndex((o) => o.id === row.id);
+			let cost = (await response.json()).total;
+			// Round to 2 decimal places
+			objects[index].cost = Math.round(cost * 100) / 100;
+			objects = objects
+		} else {
+			toastConfig.subtitle = `Failed to get cost`;
+			toastConfig.caption = response._fetchError
+				? `Please try again: ${response.error}`
+				: `${response.status}: ${response.statusText}`;
+			toastConfig.show = true;
+		}
+	}
 
 	const startEdit = (row) => {
 		detailModalConfig.show = true;
@@ -130,6 +149,9 @@
 			{#if cell.key === 'overflow'}
 				<OverflowMenu flipped>
 					<OverflowMenuItem text="Edit" on:click={() => startEdit(row)} />
+					{#if overflowConfig && overflowConfig.getCost}
+						<OverflowMenuItem text="Get cost" on:click={() => performGetCost(row)} />
+					{/if}	
 					<OverflowMenuItem danger text="Delete" on:click={() => performDelete(row)} />
 				</OverflowMenu>
 			{:else if typeof cell.value === 'object' && cell.value.type === 'link'}

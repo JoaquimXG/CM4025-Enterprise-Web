@@ -12,10 +12,10 @@
 				value: instance._projectName,
 				link: `/app/projects/?id=${instance.Project}`,
 				type: 'link'
-			}
+			},
+			cost: "--"
 		};
 	};
-
 
 	let resourcePath = '/quote_builder/quote';
 	let detailModalConfig = {
@@ -60,6 +60,9 @@
 			empty: true
 		}
 	];
+	let overflowConfig = {
+		getCost: true
+	};
 </script>
 
 <Content>
@@ -73,7 +76,15 @@
 			</Column>
 		</Row>
 
-		<CrudTable {resourcePath} headers={crudTableHeaders} title="Quotes" {detailModalConfig} DetailModal={BaseDetailModal} {toRepresentation}/>
+		<CrudTable
+			{resourcePath}
+			headers={crudTableHeaders}
+			title="Quotes"
+			{detailModalConfig}
+			{overflowConfig}
+			DetailModal={BaseDetailModal}
+			{toRepresentation}
+		/>
 	</Grid>
 </Content>
 

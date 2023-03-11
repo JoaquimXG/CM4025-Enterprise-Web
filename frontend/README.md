@@ -7,11 +7,9 @@ Built with SvelteKit as development framework and IBM Carbon Design as design sy
 # TODO
 
 1. Allow password modification
-2. Links to related items
-3. Button in overflow for calculating cost fields
 4. Delete self
   - with confirmation
-5. Differences for admins?
+1. Differences for admins?
   - View all data?
   - User management? Yes probably required.
     - Only show user management link in nav if the user is admin
@@ -19,8 +17,8 @@ Built with SvelteKit as development framework and IBM Carbon Design as design sy
     - Should be read only for normal users and editable for admins
 
 ## Issues
-1. Number field is errored by default
-2. Optimize calls to isauthenticated, can be in a store or maybe in context
+1. Optimize calls to isauthenticated, can be in a store or maybe in context
+2. Issues with tabindex on modals
 
 ## Done
 1. Login
@@ -39,6 +37,8 @@ Built with SvelteKit as development framework and IBM Carbon Design as design sy
 6. Formatting for fields
   - E.g., £ sign for cost fields, and seconds should be in local time format hh:mm:ss
 7. Improve time input, should at least be number but is it possible to use the time input componenet without a timezone
+8. Links to related items
+9. Button in overflow for calculating cost fields
 
 ## Maybe
 1. I would have liked to use the StatefulButton on modal but maybe not very easy

@@ -8,7 +8,7 @@ module.exports = class TotalService {
    */
   static async getTimeEntryTotal(timeEntry) {
     let worker = await timeEntry.getWorker();
-    return (timeEntry.seconds / 60 / 60) * worker.rate;
+    return (timeEntry.minutes / 60) * worker.rate;
   }
 
   static async getTaskTotal(task) {

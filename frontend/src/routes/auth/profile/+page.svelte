@@ -39,7 +39,7 @@
 
 <Grid>
 	<Content>
-		<Row class="row-header">
+		<Row class="profile__row-header">
 			<Column>
 				<h1>Update Profile</h1>
 			</Column>
@@ -86,7 +86,7 @@
 </Grid>
 
 <style>
-	:global(.row-header) {
+	:global(.profile__row-header) {
 		padding-top: 'spacing-07';
 		padding-bottom: 'spacing-07';
 		border-bottom: 1px solid 'ui-04';

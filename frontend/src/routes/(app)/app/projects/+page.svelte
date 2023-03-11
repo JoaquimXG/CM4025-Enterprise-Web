@@ -3,6 +3,13 @@
 
 	import CrudTable from '$lib/components/CrudTable.svelte';
 	import BaseDetailModal from '$lib/components/detailModals/BaseDetailModal.svelte';
+	const toRepresentation = (instance) => {
+		return {
+			...instance,
+			cost: '--'
+		};
+	};
+
 	let resourcePath = '/quote_builder/project';
 	let detailModalConfig = {
 		type: 'Project',
@@ -31,6 +38,9 @@
 			empty: true
 		}
 	];
+	let overflowConfig = {
+		getCost: true
+	};
 </script>
 
 <Content>
@@ -44,7 +54,15 @@
 			</Column>
 		</Row>
 
-		<CrudTable {resourcePath} headers={crudTableHeaders} title="Projects" {detailModalConfig} DetailModal={BaseDetailModal} />
+		<CrudTable
+			{resourcePath}
+			headers={crudTableHeaders}
+			title="Projects"
+			{detailModalConfig}
+			{overflowConfig}
+			{toRepresentation}
+			DetailModal={BaseDetailModal}
+		/>
 	</Grid>
 </Content>
 
