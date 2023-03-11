@@ -23,7 +23,7 @@
 	export let pageSize = 5;
 	export let page = 1;
 	export let DetailModal = null;
-	export let formatter = (o) => o;
+	export let toRepresentation = (o) => o; // By default, just return the object, don't mutate for representation
 
 	const CrudService = getCrudService(resourcePath);
 	let objects = undefined;
@@ -41,7 +41,7 @@
 
 	onMount(async () => {
 		let result = await CrudService.list();
-		if (result.ok) objects = (await result.json()).map((o) => formatter(o));
+		if (result.ok) objects = (await result.json()).map((o) => toRepresentation(o));
 		else {
 			objects = [];
 			toastConfig.subtitle = `Failed to load ${title.toLowerCase()}`;
@@ -58,7 +58,6 @@
 			objects = objects.filter((o) => o.id !== row.id);
 		} else {
 			toastConfig.subtitle = `Failed to delete object`;
-			console.log(result.error);
 			toastConfig.caption = result._fetchError
 				? `Please try again: ${result.error}`
 				: `${result.status}: ${result.statusText}`;
@@ -68,14 +67,14 @@
 
 	const performUpdate = async (e) => {
 		if (objects === undefined) return;
-		let index = objects.find((o) => o.id === e.detail.id);
-		objects[index] = formatter(e.detail);
+		let index = objects.findIndex((o) => o.id === e.detail.id);
+		objects[index] = toRepresentation(e.detail);
 		objects = objects;
 	};
 
 	const performCreate = async (e) => {
 		if (objects === undefined) objects = [e.detail];
-		else objects = [...objects, formatter(e.detail)];
+		else objects = [...objects, toRepresentation(e.detail)];
 	};
 
 	const startEdit = (row) => {
@@ -139,11 +138,9 @@
 	</Column>
 </Row>
 
-
 <style>
 	/* Set width of the last column in CRUD table to 50px. This column is only used for the menu */
 	:global(.crud-table table tr > td:last-of-type) {
 		width: 50px;
 	}
-	
 </style>

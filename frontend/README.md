@@ -8,13 +8,10 @@ Built with SvelteKit as development framework and IBM Carbon Design as design sy
 
 1. Allow password modification
 2. Links to related items
-3. Formatting for fields
-  - E.g., £ sign for cost fields, and seconds should be in local time format hh:mm:ss
-4. Improve time input, should at least be number but is it possible to use the time input componenet without a timezone
-1. Button in overflow for calculating cost fields
-2. Delete self
+3. Button in overflow for calculating cost fields
+4. Delete self
   - with confirmation
-1. Differences for admins?
+5. Differences for admins?
   - View all data?
   - User management? Yes probably required.
     - Only show user management link in nav if the user is admin
@@ -39,6 +36,9 @@ Built with SvelteKit as development framework and IBM Carbon Design as design sy
    - Delete
   - Simple reactivity
     - Error messages, toasts, field erorrs etc.
+6. Formatting for fields
+  - E.g., £ sign for cost fields, and seconds should be in local time format hh:mm:ss
+7. Improve time input, should at least be number but is it possible to use the time input componenet without a timezone
 
 ## Maybe
 1. I would have liked to use the StatefulButton on modal but maybe not very easy

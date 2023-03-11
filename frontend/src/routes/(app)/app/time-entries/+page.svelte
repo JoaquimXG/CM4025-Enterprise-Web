@@ -4,18 +4,39 @@
 	import CrudTable from '$lib/components/CrudTable.svelte';
 	import BaseDetailModal from '$lib/components/detailModals/BaseDetailModal.svelte';
 	import getCrudService from '$lib/services/CrudService';
-	const secondsFormatter = (seconds) => {
-		if (seconds > 3600) return new Date(seconds * 1000).toISOString().substring(11, 19);
-		else return new Date(seconds * 1000).toISOString().substring(14, 19);
+	const minutesFormatter = (minutes) => {
+		/*
+		 * Converts minutes to HH:MM format
+		 */
+		if (minutes === undefined) return minutes;
+		let seconds = minutes % 60;
+		return `${Math.floor(minutes / 60)}:${seconds > 9 ? seconds : '0' + seconds}`;
 	};
-	const formatter = (instance) => {
-		return { ...instance, _seconds: secondsFormatter(instance.seconds) };
+	const toRepresentation = (instance) => {
+		return { ...instance, time: minutesFormatter(instance.minutes) };
+	};
+
+	const minutesToInternalValue = (time) => {
+		// Check if : in time, split into hh:mm and convert to minutes
+		// else, assume minutes
+		if (time.includes(':')) {
+			let [hh, mm] = time.split(':');
+			return parseInt(hh) * 60 + parseInt(mm);
+		} else {
+			return parseInt(time);
+		}
 	};
 
 	let resourcePath = '/quote_builder/time_entry';
 	let detailModalConfig = {
 		type: 'Time Entry',
 		identityField: 'name',
+		toRepresentation: (instance) => {
+			return { ...instance, minutes: minutesFormatter(instance.minutes) };
+		},
+		toInternalValue: (instance) => {
+			return { ...instance, minutes: minutesToInternalValue(instance.minutes) };
+		},
 		fields: [
 			{
 				key: 'Worker',
@@ -38,9 +59,9 @@
 				}
 			},
 			{
-				key: 'seconds',
+				key: 'minutes',
 				title: 'Time',
-				type: 'text',
+				type: 'time',
 				required: true
 			}
 		],
@@ -56,8 +77,8 @@
 			value: 'Task'
 		},
 		{
-			key: '_seconds', // Formatted
-			value: 'Time'
+			key: 'time', // Formatted // TODO I think we should just use minutes instead
+			value: 'Time (HH:MM)'
 		},
 		{
 			key: 'overflow',
@@ -83,7 +104,7 @@
 			title="Time Entries"
 			{detailModalConfig}
 			DetailModal={BaseDetailModal}
-			{formatter}
+			{toRepresentation}
 		/>
 	</Grid>
 </Content>

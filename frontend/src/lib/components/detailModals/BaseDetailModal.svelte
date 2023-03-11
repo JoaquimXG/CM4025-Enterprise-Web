@@ -7,7 +7,8 @@
 		Modal,
 		Form,
 		Dropdown,
-		NumberInput
+		NumberInput,
+		TimePicker
 	} from 'carbon-components-svelte';
 	import { ArrowRight } from 'carbon-icons-svelte';
 	import getCrudService from '$lib/services/CrudService';
@@ -25,13 +26,15 @@
 	export let mode = 'create'; // create | edit
 	export let fields;
 	export let resourcePath;
+	export let toInternalValue = (instance) => instance;
+	export let toRepresentation = (instance) => instance;
 	// export let buttonStatus = 'dormant'; // TODO reactivity for button
 	const CrudService = getCrudService(resourcePath);
 	let asyncItems = {};
 
 	let title = mode === 'create' ? `Create ${type}` : `Edit ${type}: ${instance[identityField]}`;
 	Fields.set(fields);
-	Instance.set(instance);
+	Instance.set(toRepresentation(instance));
 
 	onMount(() => {
 		fields.forEach(async (field) => {
@@ -44,6 +47,7 @@
 
 	const performCreate = async (object) => {
 		if (!ValidationService.validate($Fields, object)) return;
+		object = toInternalValue(object);
 		let result = await CrudService.create(object);
 		if (result.ok) {
 			dispatch('created', await result.json());
@@ -67,6 +71,7 @@
 
 	const performUpdate = async (object) => {
 		if (!ValidationService.validate($Fields, object)) return;
+		object = toInternalValue(object);
 		let result = await CrudService.update(object.id, object);
 		if (result.ok) {
 			dispatch('updated', await result.json());
@@ -120,7 +125,7 @@
 	selectorPrimaryFocus="#field-0"
 	on:click:button--secondary={() => (show = false)}
 	on:open={() => {
-		Instance.set(instance);
+		Instance.set(toRepresentation(instance));
 		ValidationService.fillEmptyDropdowns($Fields, $Instance);
 	}}
 	on:close={() => {
@@ -136,8 +141,6 @@
 						<Column>
 							{#if field.type === 'dropdown'}
 								<Dropdown
-									on:blur={() =>
-										ValidationService.validateField(field, $Instance[field.key], $Fields)}
 									on:select={() => ValidationService.clearInvalid(field, $Fields)}
 									style="height:100%"
 									id={`field-${i}`}
@@ -151,8 +154,6 @@
 								/>
 							{:else if field.type === 'text'}
 								<TextInput
-									on:blur={() =>
-										ValidationService.validateField(field, $Instance[field.key], $Fields)}
 									on:input={() => ValidationService.clearInvalid(field, $Fields)}
 									id={`field-${i}`}
 									class="modal__input-field modal__field"
@@ -165,15 +166,25 @@
 								/>
 							{:else if field.type === 'number'}
 								<NumberInput
-									defaultValue={0}
-									on:blur={() =>
-										ValidationService.validateField(field, $Instance[field.key], $Fields)}
+								allowEmpty={true}
 									on:input={() => ValidationService.clearInvalid(field, $Fields)}
 									id={`field-${i}`}
 									class="modal__input-field modal__field"
 									label={field.title}
 									required={field.required ? true : false}
 									placeholder={`Enter ${field.title.toLocaleLowerCase()}...`}
+									invalid={field.invalid}
+									invalidText={field.invalidText}
+									bind:value={$Instance[field.key]}
+								/>
+							{:else if field.type === 'time'}
+								<TimePicker
+									on:input={() => ValidationService.clearInvalid(field, $Fields)}
+									id={`field-${i}`}
+									class="modal__time-field modal__field"
+									labelText={field.title}
+									required={field.required ? true : false}
+									placeholder={`hh:mm`}
 									invalid={field.invalid}
 									invalidText={field.invalidText}
 									bind:value={$Instance[field.key]}
@@ -209,5 +220,9 @@
 	}
 	:global(.modal .bx--modal-content) {
 		overflow: visible;
+	}
+	
+	:global(.modal__time-field) {
+		padding-right: 1rem !important;
 	}
 </style>

@@ -9,10 +9,11 @@ const TimeEntry = {
       controllerType: "IntegerField",
     },
   },
-  seconds: {
+  minutes: {
     type: DataTypes.INTEGER,
     customFieldOptions: {
       controllerType: "IntegerField",
+      maxValue: 1440, // 24 hours
     },
   },
 };
