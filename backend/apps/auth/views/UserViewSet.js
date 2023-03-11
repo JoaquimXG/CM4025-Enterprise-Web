@@ -23,7 +23,6 @@ module.exports = class UserViewSet extends ModelViewSet {
     }
   }
 
-  delete = this.notAllowed;
   create = this.notAllowed;
   list = this.notAllowed;
 };

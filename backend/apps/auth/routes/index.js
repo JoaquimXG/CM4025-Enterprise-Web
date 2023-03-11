@@ -17,6 +17,7 @@ authRouter.use(
     {
       get: { handler: "retrieve", route: "/" },
       patch: { handler: "update", route: "/" },
+      delete: { handler: "destroy", route: "/" },
     },
     true
   )

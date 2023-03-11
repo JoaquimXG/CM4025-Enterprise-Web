@@ -8,18 +8,34 @@
 		Button,
 		FluidForm,
 		TextInput,
-		PasswordInput
+		PasswordInput,
+		ButtonSet,
+		Breakpoint,
+		Modal
 	} from 'carbon-components-svelte';
-	import { ArrowRight } from 'carbon-icons-svelte';
+	import { ArrowRight, TrashCan } from 'carbon-icons-svelte';
 
 	import AuthService from '$lib/services/AuthService.js';
 	import getCrudService from '$lib/services/CrudService';
 	const UserService = getCrudService('/auth/user');
 
 	import { onMount } from 'svelte';
+	import Toast from '$lib/components/notifications/Toast.svelte';
 	let email = '';
 	let firstName = '';
 	let lastName = '';
+	let size = '';
+	let confirmDelete = false;
+
+	let toastConfig = {
+		kind: 'error',
+		title: 'Error',
+		subtitle: 'Failed to delete account',
+		caption: 'Please try again',
+		show: false,
+		timeout: 3000,
+		lowContrast: false
+	};
 
 	onMount(async () => {
 		// Redirect user not logged in
@@ -35,7 +51,30 @@
 			}
 		} catch (error) {}
 	});
+
+	const performDelete = async () => {
+		let response = await UserService.delete('me');
+		if (response.ok) window.location.href = '/auth/login';
+		else toastConfig.show = true;
+	};
 </script>
+
+<Toast {...toastConfig} />
+
+<Breakpoint bind:size />
+
+<Modal
+	class="profile__modal"
+	bind:open={confirmDelete}
+	modalHeading={'Are you sure you want to delete your account?'}
+	primaryButtonText="Confirm"
+	primaryButtonIcon={TrashCan}
+	secondaryButtonText="Cancel"
+	on:click:button--secondary={() => (confirmDelete = false)}
+	on:open
+	on:close
+	on:submit={performDelete}
+/>
 
 <Grid>
 	<Content>
@@ -76,8 +115,14 @@
 				</Column>
 				<TextInput bind:value={email} labelText="Email" placeholder="Enter email..." required />
 				<Row>
-					<Column sm={{ offset: 2, span: 2 }}>
-						<Button type="submit" class="button-confirm fill" icon={ArrowRight}>Update</Button>
+					<Column class="profile__column-button">
+						<Button
+							kind="danger-tertiary"
+							iconDescription="Delete"
+							icon={TrashCan}
+							on:click={() => (confirmDelete = true)}
+						/>
+						<Button type="submit" icon={ArrowRight}>Update</Button>
 					</Column>
 				</Row>
 			</FluidForm>
@@ -104,10 +149,10 @@
 	:global(.form__splitter) {
 		padding-top: 'spacing-05';
 	}
-
-	:global(.button-confirm) {
-		padding-bottom: 'spacing-05';
-		padding-top: 'spacing-05';
+	:global(.profile__column-button) {
+		margin-top: 'spacing-05';
+		justify-content: space-between;
+		display: flex;
 	}
 
 	:global(.fill) {
