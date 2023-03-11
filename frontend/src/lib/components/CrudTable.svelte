@@ -103,9 +103,6 @@
 		{...detailModalConfig}
 	/>
 {/if}
-
-<Row>
-	<Column>
 		{#if objects === undefined}
 			<DataTableSkeleton {headers} />
 			<PaginationSkeleton />
@@ -139,8 +136,6 @@
 			</DataTable>
 			<Pagination bind:pageSize bind:page totalItems={objects.length} pageSizeInputDisabled />
 		{/if}
-	</Column>
-</Row>
 
 <style>
 	/* Set width of the last column in CRUD table to 50px. This column is only used for the menu */
