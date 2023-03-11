@@ -10,24 +10,21 @@
 	} from 'carbon-components-svelte';
 	import { UserAvatarFilledAlt } from 'carbon-icons-svelte';
 
-	import { onMount } from 'svelte';
+	import { onMount, getContext } from 'svelte';
 	import AuthService from '$lib/services/AuthService.js';
-  import getCrudService from '$lib/services/CrudService';
-  const UserService = getCrudService('/auth/user');
+	import UserContext from '$lib/contexts/UserContext';
 
 	export let isSideNavOpen = false;
-	export let isAuthenticated = false;
 
 	let isProfileOpen = false;
 	let isSwitcherOpen = false;
-	let email = '<email>';
+	let email = '';
+
+	let { User, isAuthenticated, ready } = getContext(UserContext);
 
 	onMount(async () => {
-		try {
-			// TODO(IMPORTANT) need to be able to pass this through the app in context, loading multiple times per page is a mess
-			let user = await UserService.retrieve('me');
-			if (user) email = user.email;
-		} catch (error) {}
+		await ready;
+		if ($User) email = $User.email;
 	});
 </script>
 
@@ -36,7 +33,7 @@
 		<SkipToContent />
 	</svelte:fragment>
 	<HeaderUtilities>
-		{#if isAuthenticated}
+		{#if isAuthenticated()}
 			<HeaderAction
 				bind:isOpen={isProfileOpen}
 				icon={UserAvatarFilledAlt}

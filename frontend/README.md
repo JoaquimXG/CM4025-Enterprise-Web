@@ -17,8 +17,6 @@ Built with SvelteKit as development framework and IBM Carbon Design as design sy
 4. Text on dashboard page
 
 ## Issues
-1. Optimize calls to isauthenticated, can be in a store or maybe in context
-  - Fix profile page as well
 2. Issues with tabindex on modals
 
 ## Done
@@ -42,6 +40,7 @@ Built with SvelteKit as development framework and IBM Carbon Design as design sy
 9. Button in overflow for calculating cost fields
 10. Delete self
   - with confirmation
+11. Optimize calls to isauthenticated. User context is used to store user authentication status for all pages
 
 ## Maybe
 1. I would have liked to use the StatefulButton on modal but maybe not very easy

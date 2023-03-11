@@ -15,8 +15,9 @@
 	import AuthService from '$lib/services/AuthService.js';
 	import getCrudService from '$lib/services/CrudService';
 	const UserService = getCrudService('/auth/user');
+	import UserContext from '$lib/contexts/UserContext.js';
 
-	import { onMount } from 'svelte';
+	import { getContext, onMount } from 'svelte';
 	import Toast from '$lib/components/notifications/Toast.svelte';
 	let email = '';
 	let firstName = '';
@@ -34,25 +35,32 @@
 		lowContrast: false
 	};
 
-	onMount(async () => {
-		// Redirect user not logged in
-		if (!(await AuthService.isAuthenticated())) AuthService.redirectNotAuthedUser();
+	let { User, isAuthenticated, ready } = getContext(UserContext);
 
-		try {
-			// TODO(IMPORTANT) need to be able to pass this through the app in context, loading multiple times per page is a mess
-			let user = await UserService.retrieve('me');
-			if (user) {
-				email = user.email;
-				firstName = user.firstName;
-				lastName = user.lastName;
-			}
-		} catch (error) {}
+	onMount(async () => {
+		await ready;
+		if (!isAuthenticated()) return AuthService.redirectNotAuthedUser();
+		if ($User) {
+			email = $User.email;
+			firstName = $User.firstName;
+			lastName = $User.lastName;
+		}
 	});
 
 	const performDelete = async () => {
 		let response = await UserService.delete('me');
 		if (response.ok) window.location.href = '/auth/login';
 		else toastConfig.show = true;
+	};
+
+	const performUpdate = async (e) => {
+		e.preventDefault();
+		let user = await UserService.update('me', {
+			email,
+			firstName,
+			lastName
+		});
+		User.set(user);
 	};
 </script>
 
@@ -81,17 +89,7 @@
 			</Column>
 		</Row>
 		<Row class="row-form">
-			<FluidForm
-				on:submit={(e) => {
-					e.preventDefault();
-					UserService.update('me', {
-						email,
-						firstName,
-						lastName
-					});
-				}}
-				class="fill"
-			>
+			<FluidForm on:submit={performUpdate} class="fill">
 				<Column class="form__sub-header">
 					<p class="form__detail-header">Profile Details</p>
 				</Column>
