@@ -79,6 +79,9 @@
 			dispatch('toast', {
 				kind: 'error',
 				subtitle: `Failed to update ${type}: ${object[identityField]}`,
+				caption: result._fetchError
+					? `Please try again: ${result.error}`
+					: `${result.status}: ${result.statusText}`,
 				show: true
 			});
 		}

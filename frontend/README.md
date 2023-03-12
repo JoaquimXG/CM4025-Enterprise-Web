@@ -6,13 +6,9 @@ Built with SvelteKit as development framework and IBM Carbon Design as design sy
 
 # TODO
 
-1. Allow password modification
 2. Differences for admins?
-  - View all data?
   - User management? Yes probably required.
     - Only show user management link in nav if the user is admin
-  - Worker management
-    - Should be read only for normal users and editable for admins
 3. Replace image on homepage
 4. Text on dashboard page
 5. Favicon
@@ -42,6 +38,10 @@ Built with SvelteKit as development framework and IBM Carbon Design as design sy
 10. Delete self
   - with confirmation
 11. Optimize calls to isauthenticated. User context is used to store user authentication status for all pages
+12. Differences for admins
+  - Worker management; Workers are read only for standard users but admins can create/edit/delete them
+    - This limit is both frontend and backend
 
-## Maybe
+## Maybe (Should ask in class if these are required)
 1. I would have liked to use the StatefulButton on modal but maybe not very easy
+2. Allow password modification

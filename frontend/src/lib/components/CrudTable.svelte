@@ -1,7 +1,5 @@
 <script>
 	import {
-		Row,
-		Column,
 		DataTable,
 		OverflowMenu,
 		OverflowMenuItem,
@@ -13,8 +11,9 @@
 		PaginationSkeleton,
 		Link
 	} from 'carbon-components-svelte';
-	import { onMount } from 'svelte';
+	import { onMount, getContext } from 'svelte';
 	import getCrudService from '$lib/services/CrudService';
+	import UserContext from '$lib/contexts/UserContext';
 	import Toast from './notifications/Toast.svelte';
 
 	export let resourcePath = '';
@@ -26,12 +25,16 @@
 	export let DetailModal = null;
 	export let overflowConfig = {};
 	export let toRepresentation = (o) => o; // By default, just return the object, don't mutate for representation
-	export let adminOrReadOnly = false; // TODO
+	export let adminOrReadOnly = false;
+	export let readOnly = false;
+	export let detailModalConfig = {};
+
+	const { isAdmin: _isAdmin, ready } = getContext(UserContext);
 
 	const CrudService = getCrudService(resourcePath);
 	let objects = undefined;
-	export let detailModalConfig = {};
 
+	// TODO - move this to a separate file
 	const defaultToastConfig = {
 		kind: 'error',
 		title: 'Error',
@@ -42,19 +45,17 @@
 		lowContrast: false
 	};
 	let toastConfig = defaultToastConfig;
-
+	
 	onMount(async () => {
+		// If adminOrReadOnly is true, check if user is admin, and set crudtable to be read only if not
+		await ready;
+		if (adminOrReadOnly) readOnly = !_isAdmin();
+		
+		// Load objects for table
 		let result = await CrudService.list();
 		if (result.ok) {
 			objects = (await result.json()).map((o) => toRepresentation(o));
-			// Check for id in query params
-			let urlParams = new URLSearchParams(window.location.search);
-			let id = urlParams.get('id');
-			if (id) {
-				id = parseInt(id);
-				let instance = objects.find((o) => o.id === id);
-				startEdit(instance);
-			}
+			editOnMount();
 		} else {
 			objects = [];
 			toastConfig = {
@@ -67,11 +68,30 @@
 			};
 		}
 	});
+	
+	const editOnMount= () => {
+			// Check for id in query params, and if present, open edit modal
+			let urlParams = new URLSearchParams(window.location.search);
+			let id = urlParams.get('id');
+			if (id) {
+				id = parseInt(id);
+				let instance = objects.find((o) => o.id === id);
+				startEdit(instance);
+			}
+	}
 
 	const performDelete = async (row) => {
 		let result = await CrudService.delete(row.id);
 		if (result.ok) {
 			objects = objects.filter((o) => o.id !== row.id);
+			toastConfig = {
+				...defaultToastConfig,
+				kind: 'success',
+				title: 'Success',
+				subtitle: `Deleted ${title.toLowerCase()}`,
+				caption: '',
+				show: true
+			};
 		} else {
 			toastConfig = {
 				...defaultToastConfig,
@@ -174,11 +194,15 @@
 		<svelte:fragment slot="cell" let:cell let:row>
 			{#if cell.key === 'overflow'}
 				<OverflowMenu flipped>
-					<OverflowMenuItem text="Edit" on:click={() => startEdit(row)} />
+					<OverflowMenuItem
+						text="Edit"
+						disabled={readOnly}
+						on:click={() => startEdit(row)}
+					/>
 					{#if overflowConfig && overflowConfig.getCost}
 						<OverflowMenuItem text="Get cost" on:click={() => performGetCost(row)} />
 					{/if}
-					<OverflowMenuItem danger text="Delete" on:click={() => performDelete(row)} />
+					<OverflowMenuItem disabled={readOnly} danger text="Delete" on:click={() => performDelete(row)} />
 				</OverflowMenu>
 			{:else if typeof cell.value === 'object' && cell.value.type === 'link'}
 				<!-- If cell value is of type object, then we handle it differently. Currently we only handle links  -->
@@ -187,7 +211,7 @@
 		</svelte:fragment>
 		<Toolbar>
 			<ToolbarContent>
-				<Button on:click={startCreate}>Create</Button>
+				<Button disabled={readOnly} on:click={startCreate}>Create</Button>
 			</ToolbarContent>
 		</Toolbar>
 	</DataTable>

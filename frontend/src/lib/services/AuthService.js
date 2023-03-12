@@ -49,6 +49,7 @@ const initContext = () => {
 
 		let user = await response.json();
 		User.set(user);
+		isAdmin = user.isAdmin;
 		readyResolver();
 	});
 };
