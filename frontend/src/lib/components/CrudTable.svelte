@@ -32,7 +32,7 @@
 	let objects = undefined;
 	export let detailModalConfig = {};
 
-	let toastConfig = {
+	const defaultToastConfig = {
 		kind: 'error',
 		title: 'Error',
 		subtitle: '',
@@ -41,6 +41,7 @@
 		timeout: 3000,
 		lowContrast: false
 	};
+	let toastConfig = defaultToastConfig;
 
 	onMount(async () => {
 		let result = await CrudService.list();
@@ -56,11 +57,14 @@
 			}
 		} else {
 			objects = [];
-			toastConfig.subtitle = `Failed to load ${title.toLowerCase()}`;
-			toastConfig.caption = result._fetchError
-				? `Please try again: ${result.error}`
-				: `${result.status}: ${result.statusText}`;
-			toastConfig.show = true;
+			toastConfig = {
+				...defaultToastConfig,
+				subtitle: `Failed to load ${title.toLowerCase()}`,
+				caption: result._fetchError
+					? `Please try again: ${result.error}`
+					: `${result.status}: ${result.statusText}`,
+				show: true
+			};
 		}
 	});
 
@@ -69,11 +73,14 @@
 		if (result.ok) {
 			objects = objects.filter((o) => o.id !== row.id);
 		} else {
-			toastConfig.subtitle = `Failed to delete object`;
-			toastConfig.caption = result._fetchError
-				? `Please try again: ${result.error}`
-				: `${result.status}: ${result.statusText}`;
-			toastConfig.show = true;
+			toastConfig = {
+				...defaultToastConfig,
+				subtitle: `Failed to delete object`,
+				caption: result._fetchError
+					? `Please try again: ${result.error}`
+					: `${result.status}: ${result.statusText}`,
+				show: true
+			};
 		}
 	};
 
@@ -82,13 +89,29 @@
 		let index = objects.findIndex((o) => o.id === e.detail.id);
 		objects[index] = toRepresentation(e.detail);
 		objects = objects;
+		toastConfig = {
+			...defaultToastConfig,
+			kind: 'success',
+			title: 'Success',
+			subtitle: `Updated ${title.toLowerCase()}`,
+			caption: `View the ${title.toLowerCase()} in the table below`,
+			show: true
+		};
 	};
 
 	const performCreate = async (e) => {
-		if (objects === undefined) objects = [e.detail];
+		if (objects === undefined) objects = [toRepresentation(e.detail)];
 		else objects = [...objects, toRepresentation(e.detail)];
+		toastConfig = {
+			...defaultToastConfig,
+			kind: 'success',
+			title: 'Success',
+			subtitle: `Created ${title.toLowerCase()}`,
+			caption: `View the ${title.toLowerCase()} in the table below`,
+			show: true
+		};
 	};
-	
+
 	const performGetCost = async (row) => {
 		let response = await CrudService.total(row.id);
 		if (response.ok) {
@@ -96,15 +119,18 @@
 			let cost = (await response.json()).total;
 			// Round to 2 decimal places
 			objects[index].cost = Math.round(cost * 100) / 100;
-			objects = objects
+			objects = objects;
 		} else {
-			toastConfig.subtitle = `Failed to get cost`;
-			toastConfig.caption = response._fetchError
-				? `Please try again: ${response.error}`
-				: `${response.status}: ${response.statusText}`;
-			toastConfig.show = true;
+			toastConfig = {
+				...defaultToastConfig,
+				subtitle: `Failed to get cost`,
+				caption: result._fetchError
+					? `Please try again: ${result.error}`
+					: `${result.status}: ${result.statusText}`,
+				show: true
+			};
 		}
-	}
+	};
 
 	const startEdit = (row) => {
 		detailModalConfig.show = true;
@@ -151,7 +177,7 @@
 					<OverflowMenuItem text="Edit" on:click={() => startEdit(row)} />
 					{#if overflowConfig && overflowConfig.getCost}
 						<OverflowMenuItem text="Get cost" on:click={() => performGetCost(row)} />
-					{/if}	
+					{/if}
 					<OverflowMenuItem danger text="Delete" on:click={() => performDelete(row)} />
 				</OverflowMenu>
 			{:else if typeof cell.value === 'object' && cell.value.type === 'link'}
