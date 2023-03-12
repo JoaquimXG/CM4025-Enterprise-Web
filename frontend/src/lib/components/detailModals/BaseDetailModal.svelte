@@ -15,8 +15,7 @@
 	import { onMount } from 'svelte';
 	import ValidationService from '$lib/services/ValidationService';
 	import { Fields, Instance } from '$lib/stores/DetailModalStore';
-
-	const dispatch = createEventDispatcher();
+	import ToastService from '$lib/services/ToastService';
 
 	export let show = false;
 	export let type = '';
@@ -27,10 +26,11 @@
 	export let resourcePath;
 	export let toInternalValue = (instance) => instance;
 	export let toRepresentation = (instance) => instance;
-	// export let buttonStatus = 'dormant'; // TODO reactivity for button like login page?
-	const CrudService = getCrudService(resourcePath);
-	let asyncItems = {};
+	// export let buttonStatus = 'dormant'; // TODO(OUTOFSCOPE) reactivity for button like login page?
 
+	const CrudService = getCrudService(resourcePath);
+	const dispatch = createEventDispatcher();
+	let asyncItems = {};
 	let title = mode === 'create' ? `Create ${type}` : `Edit ${type}: ${instance[identityField]}`;
 	Fields.set(fields);
 	Instance.set(toRepresentation(instance));
@@ -47,43 +47,39 @@
 	const performCreate = async (object) => {
 		if (!ValidationService.validate($Fields, object)) return;
 		object = toInternalValue(object);
-		let result = await CrudService.create(object);
-		if (result.ok) {
-			dispatch('created', await result.json());
+		let response = await CrudService.create(object);
+		if (response.ok) {
+			dispatch('created', await response.json());
 			show = false;
 		} else {
-			dispatch('toast', {
-				kind: 'error',
-				subtitle: `Failed to create ${type}`,
-				show: true
-			});
-			if (!result._fetchError) {
-				ValidationService.getBackendFieldErrors(await result.json(), fields);
-				dispatch('toast', {
-					kind: 'error',
-					title: `Failed to create ${type}`,
-					show: true
-				});
-			}
+			dispatch(
+				'toast',
+				ToastService.getErrorFromResponse({
+					subtitle: `Failed to create ${type}`,
+					response
+				})
+			);
+
+			if (!response._fetchError)
+				ValidationService.getBackendFieldErrors(await response.json(), fields);
 		}
 	};
 
 	const performUpdate = async (object) => {
 		if (!ValidationService.validate($Fields, object)) return;
 		object = toInternalValue(object);
-		let result = await CrudService.update(object.id, object);
-		if (result.ok) {
-			dispatch('updated', await result.json());
+		let response = await CrudService.update(object.id, object);
+		if (response.ok) {
+			dispatch('updated', await response.json());
 			show = false;
 		} else {
-			dispatch('toast', {
-				kind: 'error',
-				subtitle: `Failed to update ${type}: ${object[identityField]}`,
-				caption: result._fetchError
-					? `Please try again: ${result.error}`
-					: `${result.status}: ${result.statusText}`,
-				show: true
-			});
+			dispatch(
+				'toast',
+				ToastService.getErrorFromResponse({
+					subtitle: `Failed to update ${type}`,
+					response
+				})
+			);
 		}
 	};
 
@@ -96,20 +92,23 @@
 	};
 
 	const getDropdownItems = async (field) => {
-		let results = await field.items.service.list();
-		if (results.ok) {
-			let json = await results.json();
+		let response = await field.items.service.list();
+		if (response.ok) {
+			let json = await response.json();
 			let mapped = json.map((item) => ({
 				id: item.id,
 				text: item[field.items.keyField]
 			}));
 			return [{ id: -1, text: 'Please select', disabled: true }, ...mapped];
 		} else {
-			dispatch('toast', {
-				kind: 'error',
-				subtitle: `Failed to get items for ${field.title}`,
-				show: true
-			});
+			dispatch(
+				'toast',
+				ToastService.getErrorFromResponse({
+					subtitle: `Failed to get items for ${field.title}`,
+					response
+				})
+			);
+
 			return [{ id: -1, text: 'Failed to get items', disabled: true }];
 		}
 	};
@@ -166,7 +165,7 @@
 								/>
 							{:else if field.type === 'number'}
 								<NumberInput
-								allowEmpty={true}
+									allowEmpty={true}
 									on:input={() => ValidationService.clearInvalid(field, $Fields)}
 									id={`field-${i}`}
 									class="modal__input-field modal__field"
@@ -220,7 +219,7 @@
 	:global(.modal .bx--modal-content) {
 		overflow: visible;
 	}
-	
+
 	:global(.modal__time-field) {
 		padding-right: 1rem !important;
 	}

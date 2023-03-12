@@ -16,6 +16,7 @@
 	import UserContext from '$lib/contexts/UserContext.js';
 	import { getContext, onMount } from 'svelte';
 	import Toast from '$lib/components/notifications/Toast.svelte';
+	import ToastService from '$lib/services/ToastService';
 
 	const { User, isAuthenticated, ready } = getContext(UserContext);
 	const UserService = getCrudService('/auth/user');
@@ -25,18 +26,7 @@
 	let lastName = '';
 	let size = '';
 	let confirmDelete = false;
-
-	let defaultToastConfig = {
-		kind: 'error',
-		title: 'Error',
-		subtitle: 'Failed to delete account',
-		caption: 'Please try again',
-		show: false,
-		timeout: 3000,
-		lowContrast: false
-	};
-
-	let toastConfig = defaultToastConfig;
+	let toastConfig = ToastService.init();
 
 	onMount(async () => {
 		await ready;
@@ -51,7 +41,7 @@
 	const performDelete = async () => {
 		let response = await UserService.delete('me');
 		if (response.ok) window.location.href = '/auth/login';
-		else toastConfig = { ...defaultToastConfig, show: true };
+		else toastConfig = ToastService.getError({ subtitle: 'Failed to delete account' });
 	};
 
 	const performUpdate = async (e) => {
@@ -64,14 +54,15 @@
 		if (response.ok) {
 			let user = await response.json();
 			User.set(user);
-			toastConfig = {
-				...defaultToastConfig,
-				kind: 'success',
-				title: 'Success',
+			toastConfig = ToastService.getSuccess({
 				subtitle: 'Profile updated',
-				caption: 'Your profile has been updated',
-				show: true
-			};
+				caption: 'Your profile has been updated'
+			});
+		} else {
+			toastConfig = ToastService.getErrorFromResponse({
+				subtitle: 'Failed to update profile',
+				response
+			});
 		}
 	};
 </script>

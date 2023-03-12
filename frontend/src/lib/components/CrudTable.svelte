@@ -15,6 +15,7 @@
 	import getCrudService from '$lib/services/CrudService';
 	import UserContext from '$lib/contexts/UserContext';
 	import Toast from './notifications/Toast.svelte';
+	import ToastService from '$lib/services/ToastService';
 
 	export let resourcePath = '';
 	export let title = '';
@@ -38,17 +39,7 @@
 	const CrudService = getCrudService(resourcePath);
 	let objects = undefined;
 
-	// TODO - move this to a separate file
-	const defaultToastConfig = {
-		kind: 'error',
-		title: 'Error',
-		subtitle: '',
-		caption: 'Please try again',
-		show: false,
-		timeout: 3000,
-		lowContrast: false
-	};
-	let toastConfig = defaultToastConfig;
+	let toastConfig = ToastService.init();
 
 	onMount(async () => {
 		// If adminOrReadOnly is true, check if user is admin, and set crudtable to be read only if not
@@ -56,20 +47,16 @@
 		if (adminOrReadOnly && !_isAdmin()) crudConfig = { create: false, edit: false, delete: false };
 
 		// Load objects for table
-		let result = await CrudService.list();
-		if (result.ok) {
-			objects = (await result.json()).map((o) => toRepresentation(o));
+		let response = await CrudService.list();
+		if (response.ok) {
+			objects = (await response.json()).map((o) => toRepresentation(o));
 			editOnMount();
 		} else {
 			objects = [];
-			toastConfig = {
-				...defaultToastConfig,
+			toastConfig = ToastService.getErrorFromResponse({
 				subtitle: `Failed to load ${title.toLowerCase()}`,
-				caption: result._fetchError
-					? `Please try again: ${result.error}`
-					: `${result.status}: ${result.statusText}`,
-				show: true
-			};
+				response
+			});
 		}
 	});
 
@@ -85,26 +72,17 @@
 	};
 
 	const performDelete = async (row) => {
-		let result = await CrudService.delete(row.id);
-		if (result.ok) {
+		let response = await CrudService.delete(row.id);
+		if (response.ok) {
 			objects = objects.filter((o) => o.id !== row.id);
-			toastConfig = {
-				...defaultToastConfig,
-				kind: 'success',
-				title: 'Success',
-				subtitle: `Deleted ${title.toLowerCase()}`,
-				caption: '',
-				show: true
-			};
+			toastConfig = ToastService.getSuccess({
+				subtitle: `Deleted ${title.toLowerCase().slice(0, -1)}`
+			});
 		} else {
-			toastConfig = {
-				...defaultToastConfig,
+			toastConfig = ToastService.getErrorFromResponse({
 				subtitle: `Failed to delete object`,
-				caption: result._fetchError
-					? `Please try again: ${result.error}`
-					: `${result.status}: ${result.statusText}`,
-				show: true
-			};
+				response
+			});
 		}
 	};
 
@@ -113,27 +91,21 @@
 		let index = objects.findIndex((o) => o.id === e.detail.id);
 		objects[index] = toRepresentation(e.detail);
 		objects = objects;
-		toastConfig = {
-			...defaultToastConfig,
-			kind: 'success',
-			title: 'Success',
+
+		toastConfig = ToastService.getSuccess({
 			subtitle: `Updated ${title.toLowerCase()}`,
-			caption: `View the ${title.toLowerCase()} in the table below`,
-			show: true
-		};
+			caption: `View ${title.toLowerCase()} in the table below`
+		});
 	};
 
 	const performCreate = async (e) => {
 		if (objects === undefined) objects = [toRepresentation(e.detail)];
 		else objects = [...objects, toRepresentation(e.detail)];
-		toastConfig = {
-			...defaultToastConfig,
-			kind: 'success',
-			title: 'Success',
+
+		toastConfig = ToastService.getSuccess({
 			subtitle: `Created ${title.toLowerCase()}`,
-			caption: `View the ${title.toLowerCase()} in the table below`,
-			show: true
-		};
+			caption: `View ${title.toLowerCase()} in the table below`
+		});
 	};
 
 	const performGetCost = async (row) => {
@@ -145,14 +117,7 @@
 			objects[index].cost = Math.round(cost * 100) / 100;
 			objects = objects;
 		} else {
-			toastConfig = {
-				...defaultToastConfig,
-				subtitle: `Failed to get cost`,
-				caption: result._fetchError
-					? `Please try again: ${result.error}`
-					: `${result.status}: ${result.statusText}`,
-				show: true
-			};
+			toastConfig = ToastService.getErrorFromResponse({ subtitle: `Failed to get cost`, response });
 		}
 	};
 
@@ -177,7 +142,7 @@
 	<DetailModal
 		on:updated={performUpdate}
 		on:created={performCreate}
-		on:toast={(e) => (toastConfig = { ...toastConfig, ...e.detail })}
+		on:toast={(e) => (toastConfig = e.detail)}
 		{...detailModalConfig}
 	/>
 {/if}
@@ -198,7 +163,11 @@
 		<svelte:fragment slot="cell" let:cell let:row>
 			{#if cell.key === 'overflow'}
 				<OverflowMenu flipped>
-					<OverflowMenuItem text="Edit" disabled={!crudConfig.edit} on:click={() => startEdit(row)} />
+					<OverflowMenuItem
+						text="Edit"
+						disabled={!crudConfig.edit}
+						on:click={() => startEdit(row)}
+					/>
 					{#if overflowConfig && overflowConfig.getCost}
 						<OverflowMenuItem text="Get cost" on:click={() => performGetCost(row)} />
 					{/if}

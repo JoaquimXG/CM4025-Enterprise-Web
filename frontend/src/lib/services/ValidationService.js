@@ -1,5 +1,13 @@
 import { Fields, Instance } from '$lib/stores/DetailModalStore';
 
+const validateTimeField = (value) => {
+	if (!value) return true;
+
+	let timeRegex = /^(([0-1]?[0-9]|2[0-3]):[0-5][0-9]|24:00)$/;
+
+	return timeRegex.test(value);
+};
+
 const validateField = (field, value, fields, forceUpdate = true) => {
 	/**
 	 * Validate an individual field.
@@ -14,10 +22,18 @@ const validateField = (field, value, fields, forceUpdate = true) => {
 			field.invalidText = `${field.title} is required`;
 			isValid = false;
 		}
-	} else {
+	}
+	if (field.type === 'time' && !validateTimeField(value)) {
+		field.invalid = true;
+		field.invalidText = 'Time must be in the format "HH:MM", max value: 24:00';
+		isValid = false;
+	}
+
+	if (isValid) {
 		field.invalid = false;
 		field.invalidText = '';
 	}
+
 	if (forceUpdate) Fields.set(fields);
 
 	return isValid;
@@ -60,10 +76,10 @@ const getBackendFieldErrors = (errorResponse, fields) => {
 		if (key in fieldKeysToIndex) {
 			let field = fields[fieldKeysToIndex[key]];
 			field.invalid = true;
-			field.invalidText = errorResponse[key].map((e) => e.message).join(', ')
+			field.invalidText = errorResponse[key].map((e) => e.message).join(', ');
 		}
 	}
-	Fields.set(fields)
+	Fields.set(fields);
 };
 
 export default {

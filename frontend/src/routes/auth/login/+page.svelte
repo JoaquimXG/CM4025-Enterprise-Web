@@ -15,6 +15,7 @@
 	import Toast from '$lib/components/notifications/Toast.svelte';
 	import { onMount, getContext } from 'svelte';
 	import StatefulButton from '$lib/components/StatefulButton.svelte';
+	import ToastService from '$lib/services/ToastService';
 
 	let { isAuthenticated, ready } = getContext(UserContext);
 
@@ -22,14 +23,7 @@
 	let password = '';
 	let saveEmail = false;
 	let buttonStatus = 'dormant';
-	let toastConfig = {
-		kind: 'error',
-		title: 'Error',
-		subtitle: 'Login Failed',
-		caption: 'Please try again',
-		show: false,
-		timeout: 3000
-	};
+	let toastConfig = ToastService.init();
 
 	const performLogin = async (e) => {
 		//Attempt to login and respond to user accordingly via button and toast
@@ -37,14 +31,15 @@
 		let success = await AuthService.login(e, { email, password, saveEmail });
 		if (success) buttonStatus = 'finished';
 		else {
-			toastConfig.show = true;
+			toastConfig = ToastService.getError({
+				subtitle: 'Login failed'
+			});
 			buttonStatus = 'error';
 			setTimeout(() => {
 				buttonStatus = 'dormant';
 			}, 1000);
 		}
 	};
-
 
 	onMount(async () => {
 		await ready;

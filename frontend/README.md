@@ -5,11 +5,10 @@
 Built with SvelteKit as development framework and IBM Carbon Design as design system and UI library.
 
 # TODO
-
 1. Text on dashboard page
 
 ## Issues
-2. Issues with tabindex on modals
+1. Issues with tabindex on modals
 
 ## Done
 1. Login
@@ -45,3 +44,8 @@ Built with SvelteKit as development framework and IBM Carbon Design as design sy
 ## Maybe (Should ask in class if these are required)
 1. I would have liked to use the StatefulButton on modal but maybe not very easy
 2. Allow password modification
+
+# Tags
+
+- TODO
+  - (OUTOFSCOPE) - Out of scope for this submission
