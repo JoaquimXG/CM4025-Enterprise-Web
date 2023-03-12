@@ -6,12 +6,9 @@ Built with SvelteKit as development framework and IBM Carbon Design as design sy
 
 # TODO
 
-2. Differences for admins?
-  - User management? Yes probably required.
-    - Only show user management link in nav if the user is admin
-3. Replace image on homepage
-4. Text on dashboard page
-5. Favicon
+1. Replace image on homepage
+2. Text on dashboard page
+3. Favicon
 
 ## Issues
 2. Issues with tabindex on modals
@@ -41,6 +38,10 @@ Built with SvelteKit as development framework and IBM Carbon Design as design sy
 12. Differences for admins
   - Worker management; Workers are read only for standard users but admins can create/edit/delete them
     - This limit is both frontend and backend
+  - User management
+    - Only admins can manage users, and only edit or delete.
+    - Admins can't edit passwords
+    - Only admins can see link in sidebar to view users
 
 ## Maybe (Should ask in class if these are required)
 1. I would have liked to use the StatefulButton on modal but maybe not very easy

@@ -6,48 +6,71 @@
 	import UserContext from '$lib/contexts/UserContext';
 
 	import { onMount, getContext } from 'svelte';
+	import AuthService from '$lib/services/AuthService';
 
-	const { isAdmin: _isAdmin, ready } = getContext(UserContext);
-	let isAdmin = false;
+	const { isAdmin, ready } = getContext(UserContext);
 
 	onMount(async () => {
 		await ready;
-		isAdmin = _isAdmin();
+		if (!isAdmin()) AuthService.redirectNotAuthedUser();
 	});
 
-	let resourcePath = '/quote_builder/worker';
+	const toRepresentation = (instance) => {
+		return {
+			...instance,
+			_isAdmin: instance.isAdmin ? 'Yes' : 'No',
+			name: `${instance.firstName} ${instance.lastName}`
+		};
+	};
+
+	let resourcePath = '/auth/user';
 	let detailModalConfig = {
-		type: 'Worker',
-		identityField: 'title',
+		type: 'User',
+		identityField: 'email',
 		fields: [
 			{
-				key: 'title',
-				title: 'Job title',
+				key: 'email',
+				title: 'Email',
 				type: 'text',
 				required: true
 			},
 			{
-				key: 'rate',
-				title: 'Hourly Rate (£)',
-				type: 'number',
+				key: 'firstName',
+				title: 'First Name',
+				type: 'text',
 				required: true
+			},
+			{
+				key: 'lastName',
+				title: 'Last Name',
+				type: 'text',
+				required: true
+			},
+			{
+				key: 'isAdmin',
+				title: 'Is Admin?',
+				type: 'text',
 			}
 		],
 		resourcePath
 	};
 	let crudTableHeaders = [
-		{
-			key: 'title',
-			value: 'Job Title'
-		},
-		{
-			key: 'rate',
-			value: 'Hourly Rate (£)'
-		},
-		{
-			key: 'overflow',
-			empty: true
-		}
+			{
+				key: 'email',
+				value: 'Email',
+			},
+			{
+				key: 'name',
+				value: 'Full Name',
+			},
+			{
+				key: '_isAdmin',
+				value: 'Is Admin?',
+			},
+			{
+				key: 'overflow',
+				empty: true
+			}
 	];
 </script>
 
@@ -57,7 +80,7 @@
 			<Column>
 				<Breadcrumb noTrailingSlash aria-label="Page navigation">
 					<BreadcrumbItem href="/app">Dashboard</BreadcrumbItem>
-					<BreadcrumbItem href="/app/quotes">Workers</BreadcrumbItem>
+					<BreadcrumbItem href="/app/quotes">Users</BreadcrumbItem>
 				</Breadcrumb>
 			</Column>
 		</Row>
@@ -65,10 +88,16 @@
 		<CrudTable
 			{resourcePath}
 			headers={crudTableHeaders}
-			title="Workers"
+			title="Users"
 			{detailModalConfig}
 			DetailModal={BaseDetailModal}
+			{toRepresentation}
 			adminOrReadOnly
+			crudConfig={{
+				create: false,
+				edit: true,
+				delete: true
+			}}
 		/>
 	</Grid>
 </Content>

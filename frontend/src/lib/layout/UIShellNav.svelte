@@ -6,7 +6,15 @@
 		SideNavDivider,
 		Breakpoint
 	} from 'carbon-components-svelte';
-	import { Cost, Document, Hourglass, Roadmap, Task, TwoPersonLift, User } from 'carbon-icons-svelte';
+	import {
+		Cost,
+		Document,
+		Hourglass,
+		Roadmap,
+		Task,
+		TwoPersonLift,
+		User
+	} from 'carbon-icons-svelte';
 	import { getContext, onMount } from 'svelte';
 	import UserContext from '$lib/contexts/UserContext';
 	const { isAdmin: _isAdmin, ready } = getContext(UserContext);
@@ -16,7 +24,6 @@
 	onMount(async () => {
 		await ready;
 		isAdmin = _isAdmin();
-		console.log('isAdmin', isAdmin)
 	});
 
 	export let isSideNavOpen = true;

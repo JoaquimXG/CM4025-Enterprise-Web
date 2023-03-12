@@ -26,7 +26,11 @@
 	export let overflowConfig = {};
 	export let toRepresentation = (o) => o; // By default, just return the object, don't mutate for representation
 	export let adminOrReadOnly = false;
-	export let readOnly = false;
+	export let crudConfig = {
+		create: true,
+		edit: true,
+		delete: true
+	};
 	export let detailModalConfig = {};
 
 	const { isAdmin: _isAdmin, ready } = getContext(UserContext);
@@ -45,12 +49,12 @@
 		lowContrast: false
 	};
 	let toastConfig = defaultToastConfig;
-	
+
 	onMount(async () => {
 		// If adminOrReadOnly is true, check if user is admin, and set crudtable to be read only if not
 		await ready;
-		if (adminOrReadOnly) readOnly = !_isAdmin();
-		
+		if (adminOrReadOnly && !_isAdmin()) crudConfig = { create: false, edit: false, delete: false };
+
 		// Load objects for table
 		let result = await CrudService.list();
 		if (result.ok) {
@@ -68,17 +72,17 @@
 			};
 		}
 	});
-	
-	const editOnMount= () => {
-			// Check for id in query params, and if present, open edit modal
-			let urlParams = new URLSearchParams(window.location.search);
-			let id = urlParams.get('id');
-			if (id) {
-				id = parseInt(id);
-				let instance = objects.find((o) => o.id === id);
-				startEdit(instance);
-			}
-	}
+
+	const editOnMount = () => {
+		// Check for id in query params, and if present, open edit modal
+		let urlParams = new URLSearchParams(window.location.search);
+		let id = urlParams.get('id');
+		if (id) {
+			id = parseInt(id);
+			let instance = objects.find((o) => o.id === id);
+			startEdit(instance);
+		}
+	};
 
 	const performDelete = async (row) => {
 		let result = await CrudService.delete(row.id);
@@ -194,15 +198,16 @@
 		<svelte:fragment slot="cell" let:cell let:row>
 			{#if cell.key === 'overflow'}
 				<OverflowMenu flipped>
-					<OverflowMenuItem
-						text="Edit"
-						disabled={readOnly}
-						on:click={() => startEdit(row)}
-					/>
+					<OverflowMenuItem text="Edit" disabled={!crudConfig.edit} on:click={() => startEdit(row)} />
 					{#if overflowConfig && overflowConfig.getCost}
 						<OverflowMenuItem text="Get cost" on:click={() => performGetCost(row)} />
 					{/if}
-					<OverflowMenuItem disabled={readOnly} danger text="Delete" on:click={() => performDelete(row)} />
+					<OverflowMenuItem
+						disabled={!crudConfig.delete}
+						danger
+						text="Delete"
+						on:click={() => performDelete(row)}
+					/>
 				</OverflowMenu>
 			{:else if typeof cell.value === 'object' && cell.value.type === 'link'}
 				<!-- If cell value is of type object, then we handle it differently. Currently we only handle links  -->
@@ -211,7 +216,7 @@
 		</svelte:fragment>
 		<Toolbar>
 			<ToolbarContent>
-				<Button disabled={readOnly} on:click={startCreate}>Create</Button>
+				<Button disabled={!crudConfig.create} on:click={startCreate}>Create</Button>
 			</ToolbarContent>
 		</Toolbar>
 	</DataTable>

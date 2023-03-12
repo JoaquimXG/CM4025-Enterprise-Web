@@ -94,8 +94,6 @@
 			performUpdate($Instance);
 		}
 	};
-	$: console.log('Fields', $Fields);
-	$: console.log('Object', $Instance);
 
 	const getDropdownItems = async (field) => {
 		let results = await field.items.service.list();
