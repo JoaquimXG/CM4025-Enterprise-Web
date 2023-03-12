@@ -17,8 +17,7 @@ but I can evidence that these sections of these projects were implemented by me.
 
 ## TODO
 
-1. Tests for standard API
-2. Create calculation with fudge factor
+1. Create calculation with fudge factor
   - Calculate totals (DONE)
   - Fudge factor (TODO)
     - I think what we will do is take every numerical value in the formula
@@ -27,11 +26,11 @@ but I can evidence that these sections of these projects were implemented by me.
       - Factor could be ~25% of the total numerical value
       - Would need to run some analysis to gather whether the expected outcomes are close enough.
       - I think these values could be chosen once every few hours
-1. Special admin permissions
+2. Special admin permissions
    1. Calculate cost without fudge factor
    2. View rates for workers
    3. Manage workers
-2. IMPORTANT NEED TO DOCUMENT THAT NODE VERSION 18 IS REQUIRED BECAUSE OF STRUCTUREDCLONE
+3. IMPORTANT NEED TO DOCUMENT THAT NODE VERSION 18 IS REQUIRED BECAUSE OF STRUCTUREDCLONE
 
 ### Maybe TODO (probably not for this project)
     

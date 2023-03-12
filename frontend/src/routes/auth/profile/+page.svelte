@@ -26,8 +26,7 @@
 	let size = '';
 	let confirmDelete = false;
 
-
-	let toastConfig = {
+	let defaultToastConfig = {
 		kind: 'error',
 		title: 'Error',
 		subtitle: 'Failed to delete account',
@@ -37,6 +36,7 @@
 		lowContrast: false
 	};
 
+	let toastConfig = defaultToastConfig;
 
 	onMount(async () => {
 		await ready;
@@ -51,17 +51,28 @@
 	const performDelete = async () => {
 		let response = await UserService.delete('me');
 		if (response.ok) window.location.href = '/auth/login';
-		else toastConfig.show = true;
+		else toastConfig = { ...defaultToastConfig, show: true };
 	};
 
 	const performUpdate = async (e) => {
 		e.preventDefault();
-		let user = await UserService.update('me', {
+		let response = await UserService.update('me', {
 			email,
 			firstName,
 			lastName
 		});
-		User.set(user);
+		if (response.ok) {
+			let user = await response.json();
+			User.set(user);
+			toastConfig = {
+				...defaultToastConfig,
+				kind: 'success',
+				title: 'Success',
+				subtitle: 'Profile updated',
+				caption: 'Your profile has been updated',
+				show: true
+			};
+		}
 	};
 </script>
 
