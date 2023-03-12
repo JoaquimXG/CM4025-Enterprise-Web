@@ -59,13 +59,13 @@ if (settings.INIT_TESTS) {
   for (const definition of modelDefinitions) {
     model = definition(sequelize);
     if (settings.SEQUELIZE_MIGRATE) {
-      await model.sync({ alter: true }); // TODO use real migrations
+      await model.sync({ alter: true }); // TODO(OUTOFSCOPE) use real migrations. True migrations are not required for this app
     }
   }
   const relations = require("./setupRelations");
   await relations(sequelize);
   if (settings.SEQUELIZE_MIGRATE) {
-    sequelize.close()
+    sequelize.close();
   }
 })();
 

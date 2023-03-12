@@ -22,7 +22,7 @@ module.exports = class PrimaryKeyRelatedField extends RelatedField {
   }
 
   async toInternalValue(data) {
-    //TODO(RELATIONS) need to handle multi-relations
+    //TODO(OUTOFSCOPE) - Relations need to handle multi-relations
     if (this.pkField) {
       data = this.pkField.toInternalValue(data);
     }

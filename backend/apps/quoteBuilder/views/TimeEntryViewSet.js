@@ -20,7 +20,12 @@ module.exports = class TimeEntryViewSet extends ModelViewSet {
   ];
 
   async getTimeEntryTotalMiddleware(req, res) {
-    let total = await TotalService.getTimeEntryTotal(req.instance);
+    // apply fudge factor if user is not admin
+    // This is not used in the gui but might as well have it here
+    let total = await TotalService.getTimeEntryTotal(
+      req.instance,
+      !req.user.isAdmin
+    );
     return new OkResponse({ total: total }).sendJson(res);
   }
 };

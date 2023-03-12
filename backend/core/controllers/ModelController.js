@@ -57,9 +57,9 @@ module.exports = class ModelController extends Controller {
   async create(validatedData) {
     let model = this.meta.model;
     /**
-     * TODO(RELATIONS) Note there aren't any many to many relations in this app so I did not need to handle this case
-     * 2. Pop many-to-many relationships from data before create ready to be added after instance is created later
-     * 3. Manually create many-to-many relationships saved in step 2 after instance is created
+     * TODO(OUTOFSCOPE) Note there aren't any many to many relations in this app so I did not need to handle this case
+     * 1. Pop many-to-many relationships from data before create ready to be added after instance is created later
+     * 2. Manually create many-to-many relationships saved in step 2 after instance is created
      */
     try {
       return await model.create(validatedData);
@@ -73,7 +73,7 @@ module.exports = class ModelController extends Controller {
 
   async update(instance, validatedData) {
     /**
-     * TODO(RELATIONS)
+     * TODO(OUTOFSCOPE) - RELATIONS - There aren't many many to many relationships in this app so ignoring
      * 2. Handle many to many relationship updates (ID only)
      */
     try {
@@ -90,14 +90,17 @@ module.exports = class ModelController extends Controller {
     let fields = model.rawAttributes;
     fields = Object.fromEntries(
       Object.entries(fields).filter(([key, value]) => {
-        return value.references === undefined && (value.customFieldOptions || {}).hidden !== true;
+        return (
+          value.references === undefined &&
+          (value.customFieldOptions || {}).hidden !== true
+        );
       })
     );
 
     let pkFieldName = model.primaryKeyField;
     let pkField = fields[pkFieldName];
 
-    const FORWARD_RELATIONS = ["BelongsTo", "BelongsToMany"]; //TODO test BelongsToMany
+    const FORWARD_RELATIONS = ["BelongsTo", "BelongsToMany"]; //TODO(OUTOFSCOPE) test BelongsToMany
     const REVERSE_RELATIONS = ["HasOne", "HasMany"];
     let relationEntries = Object.entries(model.associations);
     let forwardRelations = Object.fromEntries(
@@ -374,7 +377,6 @@ module.exports = class ModelController extends Controller {
     options.identifier = identifier;
     options.model = model;
 
-    //TODO(LOW) this is not used
     options.modelField = model.rawAttributes[identifier];
 
     return options;
@@ -426,7 +428,8 @@ module.exports = class ModelController extends Controller {
       }
     }
 
-    // Only allow blank on charfield TODO or choice field
+    // Only allow blank on charfield
+    // TODO(OUTOFSCOPE) also allow blank on choice field
     if (!fieldClass instanceof CharField) {
       delete fieldOptions.allowBlank;
     }

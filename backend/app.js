@@ -15,11 +15,6 @@ app = applyMiddleware(app);
 
 app.use("/api/", apiRouter);
 
-app.get("/", (_, res) => {
-  // TODO should render
-  res.sendFile(path.join(__dirname, `./views/index.html`));
-});
-
 app.use(errorHandler);
 
 // Save all express routes to a file for debugging

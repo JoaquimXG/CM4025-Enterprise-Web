@@ -17,19 +17,6 @@ but I can evidence that these sections of these projects were implemented by me.
 
 ## TODO
 
-1. Create calculation with fudge factor
-  - Calculate totals (DONE)
-  - Fudge factor (TODO)
-    - I think what we will do is take every numerical value in the formula
-      - And multiply it by a factor and add a bias prior to beginning the calculation
-      - Bias could be ~10% of the total numerical value
-      - Factor could be ~25% of the total numerical value
-      - Would need to run some analysis to gather whether the expected outcomes are close enough.
-      - I think these values could be chosen once every few hours
-2. Special admin permissions
-   1. Calculate cost without fudge factor
-   2. View rates for workers
-   3. Manage workers
 3. IMPORTANT NEED TO DOCUMENT THAT NODE VERSION 18 IS REQUIRED BECAUSE OF STRUCTUREDCLONE
 
 ### Maybe TODO (probably not for this project)
@@ -37,12 +24,6 @@ but I can evidence that these sections of these projects were implemented by me.
 1. Password reset/recovery
 2. Email verification
 3. MFA
-4. Complex permissions
-  - The outline for this is done, see IsAdmin and IsAuthenticated implementations
-  - Further work can be done on more complex permissions but they are likley not required here.
-    - read, write, update, delete permissions
-5. Eager loading for related queries, should be handled at the view level
-6. Relative imports???
 7. CSRFTOKEN??? Should ask whether they are likely to care about this in class
 
 ### DONE
@@ -59,19 +40,24 @@ but I can evidence that these sections of these projects were implemented by me.
 11. User object level permissions
   - Users can only view their own objects from views, using CurrentUserAccessPolicy
   - UserS can only specify their own objects when creating or updating relations, using UserRestrictedPrimaryKeyRelatedField
+12. Admin permissions
+   - View rates for workers
+   - Manage workers
+   - Manager users
+1. Create calculation with fudge factor
+  - Calculate totals without fudge for admins on
+  - Fudge factor
+    - take every numerical value in the formula
+      - multiply it by a factor between 1 +/- a RANGE
 
 ### Tags
 
 Search the codebase for the following tags
 
 TODO - Things that need to be done
+  - (OUTOFSCOPE) - Things that are out of scope for this project
 DRF - Things that could be taken from Django Rest Framework, likely look at DRF implementation for details
-
-### Issues
-
-### Other
-1. Error formatting
-  - Errors should be formatted properly through the validation chain
+  - These are not important for the submsision. I may use this foundation in future and don't want to lose the notes so won't delete them
 
 ## CRUD Endpoints Framework
 

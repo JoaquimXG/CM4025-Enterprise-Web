@@ -20,7 +20,8 @@ module.exports = class ProjectViewSet extends ModelViewSet {
   ];
 
   async getProjectTotalMiddleware(req, res) {
-    let total = await TotalService.getProjectTotal(req.instance);
+    // apply fudge factor if user is not admin
+    let total = await TotalService.getProjectTotal(req.instance, !req.user.isAdmin);
     return new OkResponse({ total: total }).sendJson(res);
   }
 };

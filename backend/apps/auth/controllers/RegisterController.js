@@ -36,7 +36,7 @@ module.exports = class RegisterController extends ModelController {
     validatedData.isAdmin = false;
     let instance = await super.create(validatedData);
 
-    //TODO(IMPORTANT) send verification email
+    //TODO(OUTOFSCOPE) send verification email
     return instance;
   }
 };

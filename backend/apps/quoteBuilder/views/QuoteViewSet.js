@@ -20,7 +20,11 @@ module.exports = class QuoteViewSet extends ModelViewSet {
   ];
 
   async getQuoteTotalMiddleware(req, res) {
-    let total = await TotalService.getQuoteTotal(req.instance);
+    // apply fudge factor if user is not admin
+    let total = await TotalService.getQuoteTotal(
+      req.instance,
+      !req.user.isAdmin
+    );
     return new OkResponse({ total: total }).sendJson(res);
   }
 };

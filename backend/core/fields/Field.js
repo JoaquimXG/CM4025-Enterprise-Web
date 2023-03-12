@@ -130,9 +130,7 @@ module.exports = class Field {
       return instance;
     } catch (e) {
       throw e;
-      // TODO(IMPORTANT) what errors are here
-      // Probably a object missing attribute error
-      // Worth reviewing DRF implementation when testing
+      // DRF worth reviewing erorrs here at some point
     }
   }
 

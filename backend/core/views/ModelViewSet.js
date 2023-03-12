@@ -27,7 +27,7 @@ module.exports = class ModelViewSet extends ModelApiView {
   list = [
     this.getControllerContextMiddleware.bind(this),
     this.listObjectsMiddleware.bind(this),
-    // TODO(LOW) Add filter and pagination middleware
+    // TODO(OUTOFSCOPE) Add filter and pagination middleware. Pagination is handled client side and filtering is not implemented
     // this.filterObjectsMiddleware,
     // Note: I think pagination can be done simply with offset and limit via query params, no need for middleware here
     // this.paginateObjectsMiddleware,

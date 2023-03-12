@@ -20,7 +20,11 @@ module.exports = class TaskViewSet extends ModelViewSet {
   ];
 
   async getTaskTotalMiddleware(req, res) {
-    let total = await TotalService.getTaskTotal(req.instance);
+    // apply fudge factor if user is not admin
+    let total = await TotalService.getTaskTotal(
+      req.instance,
+      !req.user.isAdmin
+    );
     return new OkResponse({ total: total }).sendJson(res);
   }
 };

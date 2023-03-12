@@ -11,11 +11,11 @@ const Worker = {
   },
   rate: {
     // This is hourly rate
-    type: DataTypes.INTEGER, //TODO implement DecimalField
+    type: DataTypes.INTEGER,
     allowNull: false,
     customFieldOptions: {
       controllerType: "IntegerField",
-    }
+    },
   },
   title: {
     type: DataTypes.STRING,

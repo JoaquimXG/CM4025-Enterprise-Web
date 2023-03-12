@@ -7,7 +7,6 @@ Built with SvelteKit as development framework and IBM Carbon Design as design sy
 # TODO
 
 1. Text on dashboard page
-2. Favicon
 
 ## Issues
 2. Issues with tabindex on modals
@@ -41,6 +40,7 @@ Built with SvelteKit as development framework and IBM Carbon Design as design sy
     - Only admins can manage users, and only edit or delete.
     - Admins can't edit passwords
     - Only admins can see link in sidebar to view users
+13. Favicon
 
 ## Maybe (Should ask in class if these are required)
 1. I would have liked to use the StatefulButton on modal but maybe not very easy
