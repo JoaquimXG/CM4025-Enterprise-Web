@@ -19,7 +19,7 @@
 				<Row class="landing-page__content">
 					<Column md={4} lg={7}>
 						<h2>What is Quote Builder?</h2>
-						<p>
+						<p class="landing-page__content__blurb">
 							Quote builder is our leading platform for estimating project costs. Projects are
 							broken down into individual quotes, each having their own tasks and static costs. The
 							total cost of can be be calculated both for projects and individual quotes.
@@ -27,8 +27,7 @@
 						<Button href="/auth/login/">Log in</Button>
 					</Column>
 					<Column md={4} lg={{ span: 8, offset: 1 }}>
-						<img alt="Carbon illustration" src="/tab-illo.png" />
-						<!-- TODO(IMPORTANT) Replace image, and alt -->
+						<img alt="Carbon illustration" src="/scene.png" />
 					</Column>
 				</Row>
 			</Column>
@@ -38,10 +37,10 @@
 
 <style>
 	h1 {
-		font: 'productive-heading-05';
+		font: 'productive-heading-07';
 	}
 
-	p {
+	.landing-page__content__blurb {
 		font: 'productive-heading-03';
 		margin-top: 'spacing-06';
 		margin-bottom: 'spacing-08';
@@ -52,6 +51,16 @@
 		z-index: 1;
 	}
 
+	:global(.landing-page-grid) {
+		padding-top: 'spacing-10';
+		max-width: 1200px !important;
+	}
+
+	.landing-page__subtext {
+		font: 'productive-heading-03';
+		margin-top: 'spacing-04';
+	}
+
 	:global(.landing-page__r2 .bx--tabs__nav) {
 		right: 0;
 	}
@@ -59,6 +68,7 @@
 	:global(.landing-page-background) {
 		position: relative;
 		background-color: 'ui-01';
+		padding-top: 'spacing-12';
 	}
 
 	:global(.landing-page-background::before) {
@@ -77,12 +87,8 @@
 	}
 
 	:global(.landing-page__banner) {
-		padding-top: 'spacing-05';
-		padding-bottom: 'spacing-07';
-	}
-
-	:global(.landing-page__r2) {
-		margin-top: rem(-40px);
+		padding-top: 'spacing-10';
+		padding-bottom: 'spacing-10';
 	}
 
 	:global(.landing-page__content) {
