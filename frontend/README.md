@@ -6,9 +6,8 @@ Built with SvelteKit as development framework and IBM Carbon Design as design sy
 
 # TODO
 
-1. Replace image on homepage
-2. Text on dashboard page
-3. Favicon
+1. Text on dashboard page
+2. Favicon
 
 ## Issues
 2. Issues with tabindex on modals
