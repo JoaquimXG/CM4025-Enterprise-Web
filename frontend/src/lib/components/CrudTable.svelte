@@ -53,7 +53,7 @@
 			editOnMount();
 		} else {
 			objects = [];
-			toastConfig = ToastService.getErrorFromResponse({
+			toastConfig = await ToastService.getErrorFromResponse({
 				subtitle: `Failed to load ${title.toLowerCase()}`,
 				response
 			});
@@ -79,7 +79,7 @@
 				subtitle: `Deleted ${title.toLowerCase().slice(0, -1)}`
 			});
 		} else {
-			toastConfig = ToastService.getErrorFromResponse({
+			toastConfig = await ToastService.getErrorFromResponse({
 				subtitle: `Failed to delete object`,
 				response
 			});
@@ -117,7 +117,7 @@
 			objects[index].cost = Math.round(cost * 100) / 100;
 			objects = objects;
 		} else {
-			toastConfig = ToastService.getErrorFromResponse({ subtitle: `Failed to get cost`, response });
+			toastConfig = await ToastService.getErrorFromResponse({ subtitle: `Failed to get cost`, response });
 		}
 	};
 

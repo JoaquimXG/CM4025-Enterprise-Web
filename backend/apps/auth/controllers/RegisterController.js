@@ -12,21 +12,34 @@ module.exports = class RegisterController extends ModelController {
     writeOnly: true,
     maxLength: 255,
   });
+  password2 = new DeclaredField(CharField, {
+    required: true,
+    writeOnly: true,
+    maxLength: 255,
+  });
 
   meta = {
     model: sequelize.models.User,
     exclude: ["isAdmin", "status"],
   };
 
-  validatePassword(value) {
-    if (value.length < 8)
+  validatepassword(password) {
+    // lowercase p to match field name
+
+    if (password.length < 8)
       throw new ValidationError("Password must be at least 8 characters long");
 
-    const strength = passwordStrength(value);
+    const strength = passwordStrength(password);
     if (strength.id < 2)
       // 2 = medium, and is the minimum
       throw new ValidationError("Password is not strong enough");
-    return value;
+    return password;
+  }
+
+  validate(data) {
+    if (data.password !== data.password2)
+      throw new ValidationError("Passwords do not match");
+    return super.validate(data);
   }
 
   async create(validatedData) {

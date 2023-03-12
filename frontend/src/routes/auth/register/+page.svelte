@@ -12,6 +12,11 @@
 	import UserContext from '$lib/contexts/UserContext';
 	import AuthService from '$lib/services/AuthService.js';
 	import { onMount, getContext } from 'svelte';
+	import ToastService from '$lib/services/ToastService';
+	import Toast from '$lib/components/notifications/Toast.svelte';
+	import ValidationService from '$lib/services/ValidationService';
+
+	let toastConfig = ToastService.init();
 
 	let email = '';
 	let password = '';
@@ -26,7 +31,25 @@
 		// Redirect user if already logged in
 		if (isAuthenticated()) AuthService.redirectAuthedUser();
 	});
+
+	const performRegister = async (e) => {
+		let response = await AuthService.register(e, {
+			email,
+			password,
+			password2,
+			firstName,
+			lastName
+		});
+		console.log(response);
+		if (response.ok) return;
+		toastConfig = await ToastService.getErrorFromResponse({
+			subtitle: 'Registration failed',
+			response
+		});
+	};
 </script>
+
+<Toast {...toastConfig} />
 
 <FloatingCenteredLayout>
 	<Row class="row-header">
@@ -36,17 +59,7 @@
 		</Column>
 	</Row>
 	<Row class="row-form">
-		<FluidForm
-			on:submit={(e) =>
-				AuthService.register(e, {
-					email,
-					password,
-					password2,
-					firstName,
-					lastName
-				})}
-			class="fill"
-		>
+		<FluidForm on:submit={performRegister} class="fill">
 			<Column class="form__sub-header">
 				<p class="form__detail-header">Profile Details</p>
 			</Column>
