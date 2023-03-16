@@ -43,6 +43,7 @@ module.exports = class RegisterController extends ModelController {
   }
 
   async create(validatedData) {
+    validatedData.email = validatedData.email.toLowerCase();
     validatedData.hash = await bcrypt.hash(validatedData.password, 10);
     delete validatedData.password;
     validatedData.status = UserStatusChoice.ACTIVE;

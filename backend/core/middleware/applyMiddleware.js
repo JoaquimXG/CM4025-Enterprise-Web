@@ -20,7 +20,7 @@ module.exports = (app) => {
   var sessionArgs = {
     cookie: {
       secure: settings.HTTPS,
-      maxAge: 1000 * 60 * 60 * 24 // 1 day in milliseconds = 86,400,
+      maxAge: 1000 * 60 * 60 * 24, // 1 day in milliseconds = 86,400,
     },
     secret: secret,
     resave: true,
@@ -43,12 +43,16 @@ module.exports = (app) => {
   );
   //HTTP body parser for json post requests
   app.use(bodyParser.json());
-  app.use(
-    cors({
-      origin: settings.CORS_ORIGIN,
-      credentials: true,
-    })
-  );
+  if (settings.DISABLE_CORS) {
+    app.use(cors({origin: true, credentials: true}));
+  } else {
+    app.use(
+      cors({
+        origin: settings.DISABLE_CORS,
+        credentials: true,
+      })
+    );
+  }
   //Cookie parser
   app.use(cookieParser());
   //Public folder for images, css and js files

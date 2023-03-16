@@ -29,6 +29,7 @@ passport.use(
       usernameField: "email",
     },
     async function (req, email, password, done) {
+      email = email.toLowerCase();
       let matchingUser = await User.findAll({ where: { email: email } });
 
       //No user found with matching email address, or multiple users found

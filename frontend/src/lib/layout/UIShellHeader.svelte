@@ -43,7 +43,7 @@
 			>
 				<HeaderPanelLinks>
 					<HeaderPanelDivider>{label}</HeaderPanelDivider>
-					<HeaderPanelLink href="/auth/profile/">Profile</HeaderPanelLink>
+					<HeaderPanelLink href="/auth/profile">Profile</HeaderPanelLink>
 					<HeaderPanelDivider />
 					<HeaderPanelLink on:click={(e) => AuthService.logout(e)}>Log Out</HeaderPanelLink>
 				</HeaderPanelLinks>

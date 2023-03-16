@@ -17,7 +17,7 @@ but I can evidence that these sections of these projects were implemented by me.
 
 ## TODO
 
-3. IMPORTANT NEED TO DOCUMENT THAT NODE VERSION 18 IS REQUIRED BECAUSE OF STRUCTUREDCLONE
+None
 
 ### Maybe TODO (probably not for this project)
     

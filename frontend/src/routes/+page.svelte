@@ -24,7 +24,7 @@
 							broken down into individual quotes, each having their own tasks and static costs. The
 							total cost of can be be calculated both for projects and individual quotes.
 						</p>
-						<Button href="/auth/login/">Log in</Button>
+						<Button href="/auth/login">Log in</Button>
 					</Column>
 					<Column md={4} lg={{ span: 8, offset: 1 }}>
 						<img alt="Carbon illustration" src="/scene.png" />

@@ -1,0 +1,6 @@
+logs
+node_modules
+test-report.html
+.vscode
+.env
+.env.*
