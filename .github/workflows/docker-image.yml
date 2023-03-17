@@ -15,4 +15,4 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build Frontend Docker
-      run: docker build .frontend --file frontend/Dockerfile --tag test:latest
+      run: docker build ./frontend --file frontend/Dockerfile --tag test:latest
