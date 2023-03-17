@@ -18,7 +18,7 @@
 
 	let isProfileOpen = false;
 	let isSwitcherOpen = false;
-	let email = '';
+	let label = '';
 	let isAuthenticated = false;
 
 	let { User, isAuthenticated: _isAuthenticated, ready } = getContext(UserContext);
@@ -26,7 +26,7 @@
 	onMount(async () => {
 		await ready;
 		isAuthenticated = _isAuthenticated();
-		if ($User) email = $User.email;
+		if ($User) label = `${$User.firstName} ${$User.lastName}`;
 	});
 </script>
 
@@ -42,8 +42,8 @@
 				closeIcon={UserAvatarFilledAlt}
 			>
 				<HeaderPanelLinks>
-					<HeaderPanelDivider>{email}</HeaderPanelDivider>
-					<HeaderPanelLink href="/auth/profile/">Profile</HeaderPanelLink>
+					<HeaderPanelDivider>{label}</HeaderPanelDivider>
+					<HeaderPanelLink href="/auth/profile">Profile</HeaderPanelLink>
 					<HeaderPanelDivider />
 					<HeaderPanelLink on:click={(e) => AuthService.logout(e)}>Log Out</HeaderPanelLink>
 				</HeaderPanelLinks>

@@ -155,7 +155,7 @@ module.exports = class Controller extends BaseController {
     let fields = this.writeableFields;
 
     for (let field of fields) {
-      let validateMethod = this["validate_" + field.fieldName] || null;
+      let validateMethod = this["validate" + field.fieldName] || null;
       let primitiveValue = field.getValue(data);
       try {
         let validatedValue = await field.runValidation(primitiveValue);

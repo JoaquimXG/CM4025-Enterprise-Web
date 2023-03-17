@@ -59,7 +59,7 @@
 				caption: 'Your profile has been updated'
 			});
 		} else {
-			toastConfig = ToastService.getErrorFromResponse({
+			toastConfig = await ToastService.getErrorFromResponse({
 				subtitle: 'Failed to update profile',
 				response
 			});

@@ -54,7 +54,7 @@
 		} else {
 			dispatch(
 				'toast',
-				ToastService.getErrorFromResponse({
+				await ToastService.getErrorFromResponse({
 					subtitle: `Failed to create ${type}`,
 					response
 				})
@@ -75,7 +75,7 @@
 		} else {
 			dispatch(
 				'toast',
-				ToastService.getErrorFromResponse({
+				await ToastService.getErrorFromResponse({
 					subtitle: `Failed to update ${type}`,
 					response
 				})
@@ -103,7 +103,7 @@
 		} else {
 			dispatch(
 				'toast',
-				ToastService.getErrorFromResponse({
+				await ToastService.getErrorFromResponse({
 					subtitle: `Failed to get items for ${field.title}`,
 					response
 				})

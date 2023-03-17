@@ -96,6 +96,6 @@ export default {
 			lastName
 		});
 		if (response.ok) window.location.href = '/app/';
-		return response.ok;
+		return response;
 	}
 };

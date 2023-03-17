@@ -3,6 +3,7 @@
 	"version": "0.0.1",
 	"private": true,
 	"scripts": {
+		"prepare": "svelte-kit sync",
 		"dev": "vite dev",
 		"build": "vite build",
 		"preview": "vite preview",
@@ -14,6 +15,7 @@
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^2.0.0",
+		"@sveltejs/adapter-node": "^1.2.2",
 		"@sveltejs/adapter-static": "next",
 		"@sveltejs/kit": "^1.5.0",
 		"carbon-components-svelte": "^0.73.2",
