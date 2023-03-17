@@ -15,8 +15,6 @@ env:
   BACKEND_DOCKERFILE: backend/Dockerfile
   FRONTEND_CONTEXT: frontend
   BACKEND_CONTEXT: backend
-  # FRONTEND_IMAGE_NAME: ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}-frontend:${{ env.IMAGE_TAG }}
-  # BACKEND_IMAGE_NAME: ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}-backend:${{ env.IMAGE_TAG }}
 
 jobs:
   build-and-push:

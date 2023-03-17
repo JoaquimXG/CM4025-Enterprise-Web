@@ -1,15 +1,15 @@
-import {
-	PUBLIC_BACKEND_HOST,
-	PUBLIC_BACKEND_PORT,
-	PUBLIC_HTTPS,
-	PUBLIC_SAME_HOST
-} from '$env/static/public';
+/**
+ * Attempt to choose the correct hostname to use when speaking to the backend.
+ * This is only required when the frontend and backend are on different hosts, e.g., during development
+ * If the frontend and backend are on the same host, these variables can be left unset, or
+ * the PUBLIC_SAME_HOST variable can be set to true
+ */
+import {env} from '$env/dynamic/public';
+const { PUBLIC_BACKEND_HOST, PUBLIC_BACKEND_PORT, PUBLIC_HTTPS, PUBLIC_SAME_HOST } = env;
 
-// Use the same host for the backend if the env variable is set to true
-// Otherwise use the host and port specified in the env variables
-// Setting host and port will cause problems with mixed content if not careful
-let host = '';
-if (PUBLIC_SAME_HOST === 'true') {
+let host;
+if (PUBLIC_SAME_HOST == 'true' || !PUBLIC_BACKEND_HOST || !PUBLIC_BACKEND_PORT || !PUBLIC_HTTPS) {
+	// If either same host is set, or if any of required host specific vars are not set, use same host
 	host = '';
 } else {
 	host = `${

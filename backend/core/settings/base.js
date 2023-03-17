@@ -12,7 +12,7 @@ module.exports = {
   //HTTP host, port and protocol for app
   PROTOCOL: protocol,
   PORT: port,
-  HOST: process.env.HOST ? process.env.HOST : "localhost",
+  // HOST: process.env.HOST ? process.env.HOST : "localhost",
   CORS_ORIGIN: process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN : "*",
   DISABLE_CORS: process.env.DISABLE_CORS || false,
 
@@ -36,7 +36,9 @@ module.exports = {
     ? process.env.SESSION_SECRET
     : "secret",
   USE_SESSION_STORE: process.env.SESSION_STORE || true,
-  
+  // I would enable secure cookies by default but it is likely that you won't have SSL enabled when running the auto deploy script
+  COOKIE_SECURE: process.env.COOKIE_SECURE || false,
+
   // Debug routes
   DEBUG_ROUTES: process.env.DEBUG_ROUTES || false,
 };

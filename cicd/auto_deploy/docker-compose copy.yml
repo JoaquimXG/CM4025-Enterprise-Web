@@ -1,0 +1,46 @@
+services:
+  db:
+    container_name: cm4025-db
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-cm4025}
+      MYSQL_USER: ${MYSQL_USER:-cm4025}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-cm4025}
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: mysql --user=$$MYSQL_USER --password=$$MYSQL_PASSWORD -e 'SHOW DATABASES;'
+      interval: 3s
+      retries: 20
+    ports:
+      - "3306:3306"
+
+  frontend:
+    entrypoint: /bin/sh
+    container_name: cm4025-frontend
+    build:
+      context: ./frontend
+      args:
+        PUBLIC_BACKEND_HOST: ${PUBLIC_BACKEND_HOST:-backend}
+        PUBLIC_BACKEND_PORT: ${PUBLIC_BACKEND_PORT:-8080}
+        PUBLIC_HTTPS: ${PUBLIC_HTTPS:-false}
+    ports:
+      - "9080:80"
+    depends_on:
+      - db
+      - backend
+    env_file: .env
+
+  backend:
+    container_name: cm4025-backend
+    build: ./backend
+    ports:
+      - "8080:${PORT:-8080}"
+      - "8443:${HTTPSPORT:-8443}"
+    depends_on:
+      - db
+    env_file: .env
+
+volumes:
+  mysql-data:

@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - master
+  pull_request:
+    branches:
+      - master
 
 env:
   IMAGE_TAG: latest
@@ -12,26 +15,32 @@ env:
   BACKEND_DOCKERFILE: backend/Dockerfile
   FRONTEND_CONTEXT: frontend
   BACKEND_CONTEXT: backend
-  FRONTEND_IMAGE_NAME: ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}-frontend:${{ env.IMAGE_TAG }}
-  BACKEND_IMAGE_NAME: ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}-backend:${{ env.IMAGE_TAG }}
 
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Set container names
+        id: set-names
+        run: |
+          echo "FRONTEND_IMAGE_NAME=${{ env.DOCKER_REGISTRY }}/${OWNER,,}/cm4025-frontend:${{ env.IMAGE_TAG }}" >> $GITHUB_ENV
+          echo "BACKEND_IMAGE_NAME=${{ env.DOCKER_REGISTRY }}/${OWNER,,}/cm4025-backend:${{ env.IMAGE_TAG }}" >> $GITHUB_ENV
+        env:
+          OWNER: ${{ github.repository_owner }}
+
       - name: Checkout repository
-        uses: actions/checkout@v2
-          
+        uses: actions/checkout@v3
+
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v1
+        uses: docker/login-action@v2
         with:
           registry: ${{ env.DOCKER_REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.CR_PAT }}
 
       - name: Build frontend Docker image
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v4
         with:
           context: ${{ env.FRONTEND_CONTEXT }}
           file: ${{ env.FRONTEND_DOCKERFILE }}
@@ -39,7 +48,7 @@ jobs:
           tags: ${{ env.FRONTEND_IMAGE_NAME }}
 
       - name: Build backend Docker image
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v4
         with:
           context: ${{ env.BACKEND_CONTEXT }}
           file: ${{ env.BACKEND_DOCKERFILE }}
