@@ -60,7 +60,7 @@ jobs:
         with:
           images: ${{ env.DOCKER_REGISTRY }}/${{ env.BACKEND_IMAGE_NAME }}
 
-      - name: Build frontend Docker image
+      - name: Build backend Docker image
         uses: docker/build-push-action@v4
         with:
           context: ${{ env.BACKEND_CONTEXT }}
