@@ -48,7 +48,7 @@ module.exports = (app) => {
   } else {
     app.use(
       cors({
-        origin: settings.DISABLE_CORS,
+        origin: settings.CORS_ORIGIN,
         credentials: true,
       })
     );

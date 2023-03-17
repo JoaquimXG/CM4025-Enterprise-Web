@@ -1,16 +1,16 @@
 require("dotenv").config();
 
-let protocol = "http://";
+// let protocol = "http://";
 let port = process.env.PORT ? process.env.PORT : 8080;
 
-if (process.env.HTTPS == "true") {
-  protocol = "https://";
-  port = process.env.HTTPSPORT;
-}
+// if (process.env.HTTPS == "true") {
+//   protocol = "https://";
+//   port = process.env.HTTPSPORT;
+// }
 
 module.exports = {
   //HTTP host, port and protocol for app
-  PROTOCOL: protocol,
+  // PROTOCOL: protocol,
   PORT: port,
   // HOST: process.env.HOST ? process.env.HOST : "localhost",
   CORS_ORIGIN: process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN : "*",

@@ -8,30 +8,38 @@ if [ "$EUID" -ne 0 ]; then
   exit
 fi
 
-# Initialise environment variables
-cat .env.example >.env
+# Source environment variables
+source .env
 
-# read -p "Enter a MySQL root password: " MYSQL_ROOT_PASSWORD
-# read -p "Enter a MySQL standard password: " MYSQL_PASSWORD
-# read -p "Enter a session secret: " SESSION_SECRET
-# read -p "Enter CORS origin (host where app will be hosted, including protocol, e.g., https://joaquimgomez.com): " CORS_ORIGIN
+# Install NGINX
+apt-get update
+apt-get install -y nginx
 
-MYSQL_PASSWORD=woo
-MYSQL_ROOT_PASSWORD=woo2
-SESSION_SECRET=woo3
-CORS_ORIGIN=https://cm4025.local.joaquimgomez.com
-
-sed -i "s/{##MYSQL_ROOT_PASSWORD##}/$MYSQL_ROOT_PASSWORD/g" .env
-sed -i "s/{##MYSQL_PASSWORD##}/$MYSQL_PASSWORD/g" .env
-sed -i "s/{##SESSION_SECRET##}/$SESSION_SECRET/g" .env
-sed -i "s/{##CORS_ORIGIN##}/$CORS_ORIGIN/g" .env
-
+# Install Docker
 ./get-docker.sh
 
+# Login to ghcr
+echo $GHCR_TOKEN | docker login ghcr.io -u $GHCR_USERNAME --password-stdin
 
 # Start database container
-docker-compose up -d db
+docker compose up -d db
 # Run migrations on first launch, then remove container
-docker-compose run --rm --entrypoint /bin/sh/ backend -c "yarn migrate"
+docker compose run --rm --entrypoint /bin/sh backend -c "yarn migrate"
 # Start all containers
-docker-compose up -d
+docker compose up -d
+
+# Copy nginx config to /etc/nginx/sites-enabled/default
+cp nginx_app.conf /etc/nginx/sites-enabled/default
+
+# Copy SSL certs
+mkdir /etc/nginx/ssl
+cp cert/fullchain.pem /etc/nginx/ssl/fullchain.pem
+cp cert/privkey.pem /etc/nginx/ssl/privkey.pem
+
+
+# Restart nginx
+systemctl restart nginx
+# enable nginx on startup
+systemctl enable nginx
+
+# Containers have restart: always, so they will restart on reboot

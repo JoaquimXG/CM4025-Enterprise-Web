@@ -13,20 +13,16 @@ services:
       test: mysql --user=$$MYSQL_USER --password=$$MYSQL_PASSWORD -e 'SHOW DATABASES;'
       interval: 3s
       retries: 20
+    restart: always
     ports:
       - "3306:3306"
 
   frontend:
-    entrypoint: /bin/sh
     container_name: cm4025-frontend
-    build:
-      context: ./frontend
-      args:
-        PUBLIC_BACKEND_HOST: ${PUBLIC_BACKEND_HOST:-backend}
-        PUBLIC_BACKEND_PORT: ${PUBLIC_BACKEND_PORT:-8080}
-        PUBLIC_HTTPS: ${PUBLIC_HTTPS:-false}
+    image: ghcr.io/joaquimxg/cm4025-frontend:master
     ports:
       - "9080:80"
+    restart: always
     depends_on:
       - db
       - backend
@@ -34,12 +30,13 @@ services:
 
   backend:
     container_name: cm4025-backend
-    build: ./backend
+    image: ghcr.io/joaquimxg/cm4025-backend:master
     ports:
       - "8080:${PORT:-8080}"
       - "8443:${HTTPSPORT:-8443}"
     depends_on:
       - db
+    restart: always
     env_file: .env
 
 volumes:

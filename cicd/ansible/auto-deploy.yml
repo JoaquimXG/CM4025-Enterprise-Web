@@ -1,0 +1,44 @@
+# Ansible file to deploy the Docker images to the server
+---
+- name: Deploy script to a single host
+  hosts: cm4025
+  become: true
+  tasks:
+    - name: Make app directory
+      file:
+        path: /app
+        state: directory
+        mode: 0755
+
+    - name: Copy deploy scripts to server
+      copy:
+        src: "{{ item }}"
+        dest: /app
+        mode: 0755
+      with_items:
+        - ../auto_deploy/launch.sh
+        - ../auto_deploy/get-docker.sh
+        - ../auto_deploy/docker-compose.yml
+        - ../auto_deploy/nginx_app.conf
+
+    - name: Copy cert folder to server, read only
+      copy:
+        src: "{{ item }}"
+        dest: /app
+        mode: 0444
+      with_items:
+        - ../auto_deploy/cert
+
+    - name: Copy env file to server
+      copy:
+        src: "{{ item }}"
+        dest: /app
+        mode: 0644
+      with_items:
+        - ../auto_deploy/.env
+
+    # Run launch.sh shell script
+    - name: Run launch.sh
+      shell: /app/launch.sh
+      args:
+        chdir: /app
