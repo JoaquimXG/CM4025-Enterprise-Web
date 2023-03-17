@@ -37,7 +37,7 @@ which are auto-built and published using GitHub actions.
 The example includes settings which are unfeasible for the submission deployment, e.g. 
 
 - SSL certificate for cm4025.joaquimgomez.com
-- Secure cookies # TODO
+- Secure cookies
 - CORS restricted to a single domain, cm4025.joaquimgomez.com
 - HTTP requests are redirected to HTTPS
 
@@ -61,7 +61,6 @@ SSL termination.
 ### Setup
 
 Three components are required for a full deployment:
-
 
 1. The scripts, docker-compose file and nginx config in cicd/auto_deploy/
   - launch.sh installs nginx, docker/docker-compose, positions the certificate
