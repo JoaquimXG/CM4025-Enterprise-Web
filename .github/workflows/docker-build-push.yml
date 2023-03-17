@@ -24,11 +24,13 @@ jobs:
       - name: Set
         id: set-names
         run: |
-          echo "FRONTEND_IMAGE_NAME=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}-frontend:${{ env.IMAGE_TAG }}" >> $GITHUB_ENV
-          echo "BACKEND_IMAGE_NAME=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}-backend:${{ env.IMAGE_TAG }}" >> $GITHUB_ENV
+          echo "FRONTEND_IMAGE_NAME=${{ env.DOCKER_REGISTRY }}/${OWNER,,}-frontend:${{ env.IMAGE_TAG }}" >> $GITHUB_ENV
+          echo "BACKEND_IMAGE_NAME=${{ env.DOCKER_REGISTRY }}/${OWNER,,}-backend:${{ env.IMAGE_TAG }}" >> $GITHUB_ENV
+        env:
+          OWNER: ${{ github.repository_owner }}
 
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v1
