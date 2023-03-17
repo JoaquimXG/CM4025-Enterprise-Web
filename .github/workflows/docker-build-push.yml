@@ -1,5 +1,9 @@
 name: Docker Build and Push
 
+# Builds and pushes Docker images to GitHub Container Registry
+# Only runs on master branch
+# Only runs the build on pull_request, not push, to avoid unnecessary artifacts in the registry
+
 on:
   push:
     branches:
