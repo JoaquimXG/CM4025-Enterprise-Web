@@ -9,7 +9,9 @@ Built with SvelteKit as development framework and IBM Carbon Design as design sy
 
 ## Issues
 1. Issues with tabindex on modals
-
+   - Some modals have odd tab behaviour, e.g., when tabbing through inputs fields are selected in the wrong order or not at all.
+   - This is a major accessibility issue and would be addressed in a production product.
+   - It is not addressed here as it does not appear to be required for the submission.
 ## Done
 1. Login
 2. Logout

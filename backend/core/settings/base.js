@@ -1,5 +1,5 @@
 require("dotenv").config();
-const isTruthy = require("./isTruthy")
+const isTruthy = require("./isTruthy");
 
 // let protocol = "http://";
 let port = process.env.PORT ? process.env.PORT : 8080;
@@ -43,4 +43,10 @@ module.exports = {
 
   // Debug routes
   DEBUG_ROUTES: isTruthy(process.env.DEBUG_ROUTES, false),
+
+  // Admin User (for first time setup)
+  ADMIN_USER_EMAIL: process.env.ADMIN_USER_EMAIL,
+  ADMIN_USER_PASSWORD: process.env.ADMIN_USER_PASSWORD,
+  ADMIN_USER_FIRST_NAME: process.env.ADMIN_USER_FIRST_NAME,
+  ADMIN_USER_LAST_NAME: process.env.ADMIN_USER_LAST_NAME,
 };

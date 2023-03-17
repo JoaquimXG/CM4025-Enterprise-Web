@@ -36,6 +36,8 @@
         mode: 0644
       with_items:
         - ../auto_deploy/.env
+      tags:
+        - env
 
     # Run launch.sh shell script
     - name: Run launch.sh

@@ -23,8 +23,9 @@ echo $GHCR_TOKEN | docker login ghcr.io -u $GHCR_USERNAME --password-stdin
 
 # Start database container
 docker compose up -d db
-# Run migrations on first launch, then remove container
-docker compose run --rm --entrypoint /bin/sh backend -c "yarn migrate"
+# Run init-db on first launch, this will run initial migrations, create admin
+# user and populate database with initial workers
+docker compose run --rm --entrypoint /bin/sh backend -c "yarn init-db"
 # Start all containers
 docker compose up -d
 
@@ -35,7 +36,6 @@ cp nginx_app.conf /etc/nginx/sites-enabled/default
 mkdir /etc/nginx/ssl
 cp cert/fullchain.pem /etc/nginx/ssl/fullchain.pem
 cp cert/privkey.pem /etc/nginx/ssl/privkey.pem
-
 
 # Restart nginx
 systemctl restart nginx
