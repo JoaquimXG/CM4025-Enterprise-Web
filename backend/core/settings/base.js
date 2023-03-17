@@ -16,6 +16,7 @@ module.exports = {
   // HOST: process.env.HOST ? process.env.HOST : "localhost",
   CORS_ORIGIN: process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN : "*",
   DISABLE_CORS: isTruthy(process.env.DISABLE_CORS, false),
+  BEHIND_PROXY: isTruthy(process.env.BEHIND_PROXY, false),
 
   // MYSQL
   MYSQL_USER: process.env.MYSQL_USER,

@@ -18,6 +18,7 @@ module.exports = (app) => {
   //Express-Sessions for session data
   var secret = settings.SESSION_SECRET;
   var sessionArgs = {
+    proxy: settings.BEHIND_PROXY,
     cookie: {
       secure: settings.COOKIE_SECURE,
       maxAge: 1000 * 60 * 60 * 24, // 1 day in milliseconds = 86,400,
