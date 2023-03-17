@@ -17,14 +17,15 @@ services:
       - "3306:3306"
 
   frontend:
-    entrypoint: /bin/sh
     container_name: cm4025-frontend
     build:
       context: ./frontend
       args:
+        # These are required during the build as they are built into statically generated files
         PUBLIC_BACKEND_HOST: ${PUBLIC_BACKEND_HOST:-backend}
         PUBLIC_BACKEND_PORT: ${PUBLIC_BACKEND_PORT:-8080}
         PUBLIC_HTTPS: ${PUBLIC_HTTPS:-false}
+        PUBLIC_SAME_HOST: ${PUBLIC_SAME_HOST}
     ports:
       - "9080:80"
     depends_on:
