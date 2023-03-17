@@ -24,8 +24,8 @@ jobs:
       - name: Set container names
         id: set-names
         run: |
-          echo "FRONTEND_IMAGE_NAME=${{ env.DOCKER_REGISTRY }}/${OWNER,,}/cm4025-frontend:${{ env.IMAGE_TAG }}" >> $GITHUB_ENV
-          echo "BACKEND_IMAGE_NAME=${{ env.DOCKER_REGISTRY }}/${OWNER,,}/cm4025-backend:${{ env.IMAGE_TAG }}" >> $GITHUB_ENV
+          echo "FRONTEND_IMAGE_NAME=${OWNER,,}/cm4025-frontend" >> $GITHUB_ENV
+          echo "BACKEND_IMAGE_NAME=${OWNER,,}/cm4025-backend" >> $GITHUB_ENV
         env:
           OWNER: ${{ github.repository_owner }}
 
@@ -39,18 +39,25 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.CR_PAT }}
 
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta_frontend
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.DOCKER_REGISTRY }}/${{ env.FRONTEND_IMAGE_NAME }}
+
       - name: Build frontend Docker image
         uses: docker/build-push-action@v4
         with:
           context: ${{ env.FRONTEND_CONTEXT }}
           file: ${{ env.FRONTEND_DOCKERFILE }}
           push: true
-          tags: ${{ env.FRONTEND_IMAGE_NAME }}
+          tags: ${{ steps.meta_frontend.outputs.tags }}
+          labels: ${{ steps.meta_frontend.outputs.labels }}
 
-      - name: Build backend Docker image
-        uses: docker/build-push-action@v4
-        with:
-          context: ${{ env.BACKEND_CONTEXT }}
-          file: ${{ env.BACKEND_DOCKERFILE }}
-          push: true
-          tags: ${{ env.BACKEND_IMAGE_NAME }}
+      # - name: Build backend Docker image
+      #   uses: docker/build-push-action@v4
+      #   with:
+      #     context: ${{ env.BACKEND_CONTEXT }}
+      #     file: ${{ env.BACKEND_DOCKERFILE }}
+      #     push: true
+      #     tags: ${{ env.BACKEND_IMAGE_NAME }}
