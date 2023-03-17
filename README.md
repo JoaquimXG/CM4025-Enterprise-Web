@@ -4,8 +4,6 @@
 
 - Comments
 - 404 page
-- Admin user created by default
-- Workers created by default
 
 ## Table of Contents
 

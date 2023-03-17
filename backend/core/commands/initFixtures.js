@@ -1,9 +1,7 @@
 const sequelize_fixtures = require("sequelize-fixtures");
 const sequelize = require("../db/sequelize");
 const path = require("path");
-const log = require("../utils");
-
-console.log;
+const { log } = require("../utils");
 
 BASE_PATH = "../../fixtures/";
 
