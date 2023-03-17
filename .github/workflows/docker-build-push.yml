@@ -24,8 +24,8 @@ jobs:
       - name: Set container names
         id: set-names
         run: |
-          echo "FRONTEND_IMAGE_NAME=${OWNER,,}-cm4025-frontend:${{ env.IMAGE_TAG }}" >> $GITHUB_ENV
-          echo "BACKEND_IMAGE_NAME=${OWNER,,}cm4025-backend:${{ env.IMAGE_TAG }}" >> $GITHUB_ENV
+          echo "FRONTEND_IMAGE_NAME=${{ env.DOCKER_REGISTRY }}/${OWNER,,}/cm4025-frontend:${{ env.IMAGE_TAG }}" >> $GITHUB_ENV
+          echo "BACKEND_IMAGE_NAME=${{ env.DOCKER_REGISTRY }}/${OWNER,,}/cm4025-backend:${{ env.IMAGE_TAG }}" >> $GITHUB_ENV
         env:
           OWNER: ${{ github.repository_owner }}
 
