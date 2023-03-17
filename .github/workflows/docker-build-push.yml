@@ -1,0 +1,47 @@
+name: Docker Build and Push
+
+on:
+  push:
+    branches:
+      - master
+
+env:
+  IMAGE_TAG: latest
+  DOCKER_REGISTRY: ghcr.io
+  FRONTEND_DOCKERFILE: frontend/Dockerfile
+  BACKEND_DOCKERFILE: backend/Dockerfile
+  FRONTEND_CONTEXT: frontend
+  BACKEND_CONTEXT: backend
+  FRONTEND_IMAGE_NAME: ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}-frontend:${{ env.IMAGE_TAG }}
+  BACKEND_IMAGE_NAME: ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}-backend:${{ env.IMAGE_TAG }}
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+          
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ env.DOCKER_REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.CR_PAT }}
+
+      - name: Build frontend Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: ${{ env.FRONTEND_CONTEXT }}
+          file: ${{ env.FRONTEND_DOCKERFILE }}
+          push: true
+          tags: ${{ env.FRONTEND_IMAGE_NAME }}
+
+      - name: Build backend Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: ${{ env.BACKEND_CONTEXT }}
+          file: ${{ env.BACKEND_DOCKERFILE }}
+          push: true
+          tags: ${{ env.BACKEND_IMAGE_NAME }}
