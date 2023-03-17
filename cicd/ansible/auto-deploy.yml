@@ -20,7 +20,7 @@
         - ../auto_deploy/get-docker.sh
         - ../auto_deploy/docker-compose.yml
         - ../auto_deploy/nginx_app.conf
-          
+
     - name: Copy cert folder to server, read only
       copy:
         src: "{{ item }}"
@@ -28,7 +28,7 @@
         mode: 0444
       with_items:
         - ../auto_deploy/cert
-    
+
     - name: Copy env file to server
       copy:
         src: "{{ item }}"
@@ -37,5 +37,8 @@
       with_items:
         - ../auto_deploy/.env
 
-    # - name: source env and run launch.sh
-    #   command: /bin/bash -c "source /app/.env && /app/launch.sh"
+    # Run launch.sh shell script
+    - name: Run launch.sh
+      shell: /app/launch.sh
+      args:
+        chdir: /app
