@@ -1,8 +1,6 @@
 name: Docker Image CI
 
 on:
-  push:
-    branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
 
@@ -15,4 +13,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build Frontend Docker
+      run: docker build ./frontend --file frontend/Dockerfile --tag test:latest
+
+    - name: Build backend Docker
       run: docker build ./frontend --file frontend/Dockerfile --tag test:latest
