@@ -54,10 +54,17 @@ jobs:
           tags: ${{ steps.meta_frontend.outputs.tags }}
           labels: ${{ steps.meta_frontend.outputs.labels }}
 
-      # - name: Build backend Docker image
-      #   uses: docker/build-push-action@v4
-      #   with:
-      #     context: ${{ env.BACKEND_CONTEXT }}
-      #     file: ${{ env.BACKEND_DOCKERFILE }}
-      #     push: true
-      #     tags: ${{ env.BACKEND_IMAGE_NAME }}
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta_backend
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.DOCKER_REGISTRY }}/${{ env.BACKEND_IMAGE_NAME }}
+
+      - name: Build frontend Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: ${{ env.BACKEND_CONTEXT }}
+          file: ${{ env.BACKEND_DOCKERFILE }}
+          push: true
+          tags: ${{ steps.meta_backend.outputs.tags }}
+          labels: ${{ steps.meta_backend.outputs.labels }}
