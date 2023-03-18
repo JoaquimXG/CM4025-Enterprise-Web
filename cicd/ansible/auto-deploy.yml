@@ -41,6 +41,6 @@
 
     # Run launch.sh shell script
     - name: Run launch.sh
-      shell: /app/launch.sh
+      shell: /app/launch.sh > /app/launch.log
       args:
         chdir: /app
