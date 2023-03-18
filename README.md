@@ -3,7 +3,6 @@
 ## TODO
 
 - Comments
-- 404 page
 
 ## Table of Contents
 
@@ -84,7 +83,6 @@ submission.
 3. You should now be able to view the app at localhost:80 and localhost:443, though you will get an SSL error as the certificate is setup for cm4025.joaquimgomez.com
 
 launch.sh should only be run one time as it will run destructive migrations. NGINX and containers will be configured by launch.sh to restart on boot.
-
 
 
 ### Auto Deployment

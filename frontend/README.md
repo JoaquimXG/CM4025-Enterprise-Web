@@ -5,7 +5,8 @@
 Built with SvelteKit as development framework and IBM Carbon Design as design system and UI library.
 
 # TODO
-1. Text on dashboard page
+
+None
 
 ## Issues
 1. Issues with tabindex on modals
