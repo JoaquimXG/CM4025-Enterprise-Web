@@ -32,10 +32,10 @@
     - name: Copy env file to server
       copy:
         src: "{{ item }}"
-        dest: /app
+        dest: /app/.env
         mode: 0644
       with_items:
-        - ../auto_deploy/.env
+        - ../auto_deploy/withHttps.env
       tags:
         - env
 

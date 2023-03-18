@@ -91,6 +91,7 @@ This is not for the submission, just for my notes.
 
 1. Launch instance with terraform
   - cd cicd/tf/deployments/app-instance/ && terraform apply -var-file=../environments/prod.tfvars
+  - may need to run again to set correct IP for route53
 2. Update inventory file with instance IP
 3. Run ansible playbook
   - cd cicd/ansible && ansible-playbook -i inventory.yml auto-deploy.yml
