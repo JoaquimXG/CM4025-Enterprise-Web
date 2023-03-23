@@ -93,5 +93,6 @@ This is not for the submission, just for my notes.
   - cd cicd/tf/deployments/app-instance/ && terraform apply -var-file=../environments/prod.tfvars
   - may need to run again to set correct IP for route53
 2. Update inventory file with instance IP
-3. Run ansible playbook
+3. Uncomment lines in cicd/auto_deploy/nginx_app.conf for HTTPS redirect
+2. Run ansible playbook
   - cd cicd/ansible && ansible-playbook -i inventory.yml auto-deploy.yml
