@@ -214,10 +214,10 @@
 	/* This is a hack to ensure that dropdowns in the modal don't require scrolling w
 		within the modal to be viewed. It is scoped to only impact this modal*/
 	:global(.modal .bx--modal-container) {
-		overflow: visible;
+		overflow: visible !important;
 	}
 	:global(.modal .bx--modal-content) {
-		overflow: visible;
+		overflow: visible !important;
 	}
 
 	:global(.modal__time-field) {
