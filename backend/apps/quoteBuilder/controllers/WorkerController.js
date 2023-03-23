@@ -6,4 +6,14 @@ module.exports = class WorkerController extends ModelController {
     model: sequelize.models.Worker,
     fields: "__all__",
   };
+
+  getFieldNames(declaredFields, info) {
+    let fields = super.getFieldNames(declaredFields, info);
+
+    // Remove rate if user is not admin
+    if (!this.context.req.user.isAdmin) {
+      fields.delete("rate");
+    }
+    return fields;
+  }
 };

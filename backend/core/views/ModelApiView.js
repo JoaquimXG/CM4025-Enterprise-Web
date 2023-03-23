@@ -164,7 +164,10 @@ module.exports = class ModelApiView extends ApiView {
     try {
       let many = req.instances ? true : false;
       let data = req.instance ? req.instance : req.instances;
-      let controller = this.getController({ many });
+      let controller = this.getController({
+        many,
+        context: req.controllerContext,
+      });
       data = await controller.toRepresentation(data);
       if (req.controllerContext.create)
         return new CreatedResponse(data).sendJson(res);

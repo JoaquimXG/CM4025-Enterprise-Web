@@ -16,6 +16,7 @@ apt-get update
 apt-get install -y nginx
 
 # Install Docker
+chmod +x ./get-docker.sh
 ./get-docker.sh
 
 # Login to ghcr

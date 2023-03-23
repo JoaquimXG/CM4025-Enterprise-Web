@@ -10,6 +10,13 @@
 	const { isAdmin: _isAdmin, ready } = getContext(UserContext);
 	let isAdmin = false;
 
+	const toRepresentation = (instance) => {
+		return {
+			...instance,
+			rate: instance.rate ? `£${instance.rate}` : '--'
+		};
+	};
+
 	onMount(async () => {
 		await ready;
 		isAdmin = _isAdmin();
@@ -69,6 +76,7 @@
 			{detailModalConfig}
 			DetailModal={BaseDetailModal}
 			adminOrReadOnly
+			{toRepresentation}
 		/>
 	</Grid>
 </Content>
