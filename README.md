@@ -3,7 +3,6 @@
 ## Table of Contents
 
 - [Quote Builder App CM4025](#quote-builder-app-cm4025)
-  - [TODO](#todo)
   - [Table of Contents](#table-of-contents)
   - [Overview](#overview)
   - [Example](#example)
