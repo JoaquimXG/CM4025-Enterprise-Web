@@ -61,6 +61,42 @@ module.exports = class TotalService {
     return this.getFudgeBias(total, fudge);
   }
 
+  static async getQuoteTotalDetail(quote) {
+    /**
+     * This is only required for quotes
+     */
+    let result = "Calculated using \n";
+
+    // Find the total number of hours worked by each worker on all tasks
+    let tasks = await quote.getTasks();
+    let workers = {};
+    for (let task of tasks) {
+      let timeEntries = await task.getTimeEntries();
+      for (let timeEntry of timeEntries) {
+        let worker = await timeEntry.getWorker();
+        if (worker.id in workers) {
+          workers[worker.id].hours += timeEntry.minutes / 60;
+        } else {
+          workers[worker.id] = {
+            title: worker.title,
+            hours: timeEntry.minutes / 60,
+          };
+        }
+      }
+    }
+
+    // Format a string showing how many hours each worker worked
+    for (let workerId in workers) {
+      result +=
+        workers[workerId].title +
+        ": " +
+        workers[workerId].hours.toFixed(2) +
+        " hours\n";
+    }
+
+    return result;
+  }
+
   static async getProjectTotal(project, fudge = true) {
     // Apply fudge bias to return value
     let total = 0;

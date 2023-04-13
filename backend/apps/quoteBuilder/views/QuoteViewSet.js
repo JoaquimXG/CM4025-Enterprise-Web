@@ -25,6 +25,7 @@ module.exports = class QuoteViewSet extends ModelViewSet {
       req.instance,
       !req.user.isAdmin
     );
-    return new OkResponse({ total: total }).sendJson(res);
+    let detail = await TotalService.getQuoteTotalDetail(req.instance);
+    return new OkResponse({ total: total, detail: detail }).sendJson(res);
   }
 };

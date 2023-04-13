@@ -112,10 +112,16 @@
 		let response = await CrudService.total(row.id);
 		if (response.ok) {
 			let index = objects.findIndex((o) => o.id === row.id);
-			let cost = (await response.json()).total;
+			let responseJson = await response.json();
+			let cost = responseJson.total;
 			// Round to 2 decimal places
 			objects[index].cost = Math.round(cost * 100) / 100;
 			objects = objects;
+			if (responseJson.detail) {
+				toastConfig = ToastService.getSuccess({
+					subtitle: responseJson.detail
+				});
+			}
 		} else {
 			toastConfig = await ToastService.getErrorFromResponse({ subtitle: `Failed to get cost`, response });
 		}
