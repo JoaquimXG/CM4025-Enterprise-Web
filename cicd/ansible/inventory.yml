@@ -1,6 +1,6 @@
 # Only for me locally
 cm4025:
-  hosts: 13.41.148.8
+  hosts: 18.135.209.54
   vars:
     ansible_ssh_user: ubuntu
     ansible_ssh_private_key_file: /home/main/.ssh/aws-personal.pem
