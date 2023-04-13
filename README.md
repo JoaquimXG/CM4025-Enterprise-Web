@@ -1,9 +1,5 @@
 # Quote Builder App CM4025
 
-## TODO
-
-- Comments
-
 ## Table of Contents
 
 - [Quote Builder App CM4025](#quote-builder-app-cm4025)
